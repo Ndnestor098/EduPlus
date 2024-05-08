@@ -10,6 +10,12 @@ export default {
     ],
 
     theme: {
+        colors :{
+            'verde' : '#37afad',
+            'rojo' : '#e9696a',
+            'marron' : '#cd926a',
+            'naranja' : '#fc9141'
+        },
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
