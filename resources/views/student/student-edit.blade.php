@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="title">
-        Alumnos Edit
+        Alumnos Editar
     </x-slot>
 
     <x-slot name="header">
@@ -16,7 +16,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 container mx-auto">
                     <div class="flex gap-5 mb-8">
-                        <a href="{{route("alumnos")}}"><img src="/assets/img/back.png" alt="back" style="height: 25px"></a><span class="text-lg font-semibold">Profesor/a {{$user->name}}</span>
+                        <a href="{{route("alumnos")}}"><img src="/assets/img/back.png" alt="back" style="height: 25px"></a><span class="text-lg font-semibold">Alumno/a {{$user->name}}</span>
                     </div>
 
                     <div class="flex items-center justify-center flex-col">
@@ -44,6 +44,11 @@
                                 <button type="submit" class="button-update">Actualizar</button>
                             </div>
                         </form>
+
+                        <form action="" method="POST" class="form mt-5">
+                            <a href="{{route('alumnos.notas', ["id"=>$user->id])}}" class="button-update text-center">Ver Notas del Estudiante</a>
+                        </form>
+
                         <form action="" method="POST" class="form mt-5">
                             @csrf
                             @method("delete")

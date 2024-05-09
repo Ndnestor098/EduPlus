@@ -27,17 +27,18 @@ Route::controller(ProfesoresController::class)->group(function(){
 })->middleware(['auth', 'verified']);
 
 Route::controller(AlumnosController::class)->group(function(){
-    //===========================Visualizar Profesores===========================
+    //===========================Visualizar Alumnos===========================
     Route::get("/alumnos", [AlumnosController::class, 'index'])->name('alumnos');
+    Route::get("/alumno/nota", [AlumnosController::class, 'showNote'])->name('alumnos.notas');
 
-    //===========================Agregar Profesores===========================
-    // Route::get("/profesor/add", [ProfesoresController::class, 'showAdd'])->name('profesor.add');
-    // Route::put("/profesor/add", [ProfesoresController::class, 'create']);
+    //===========================Agregar Alumnos===========================
+    Route::get("/alumno/add", [AlumnosController::class, 'showAdd'])->name('alumno.add');
+    Route::put("/alumno/add", [AlumnosController::class, 'create']);
 
-    // //===========================Editar Profesores===========================
+    // //===========================Editar Alumnos===========================
     Route::get("/alumno/edit", [AlumnosController::class, 'showEdit'])->name('alumno.edit');
-    Route::post("/alumno/edit", [ProfesoresController::class, 'update']);
-    // Route::delete("/profesor/edit", [ProfesoresController::class, 'destroy']);
+    Route::post("/alumno/edit", [AlumnosController::class, 'update']);
+    Route::delete("/alumno/edit", [AlumnosController::class, 'destroy']);
 
 })->middleware(['auth', 'verified']);
 

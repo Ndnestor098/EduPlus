@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Hash;
 
 class ProfesoresController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         if(!auth()->user()->admin){
@@ -21,9 +18,9 @@ class ProfesoresController extends Controller
         if($request->orden){
             $search =  explode("/", $request->orden);
 
-            $teachers = Teacher::orderBy($search[0], $search[1])->get();
+            $teachers = Teacher::orderBy($search[0], $search[1])->where("director", auth()->user()->id)->get();
         }else{
-            $teachers = Teacher::orderBy("name", "asc")->get();
+            $teachers = Teacher::orderBy("name", "asc")->where("director", auth()->user()->id)->get();
         }
 
         return view('teacher.profesores', ['teachers' => $teachers]);
@@ -38,30 +35,24 @@ class ProfesoresController extends Controller
         return view('teacher.profesor-add');
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function showEdit(Request $request)
     {
         if(!auth()->user()->admin){
             return redirect(route("home"));
         }
 
-        $user = Teacher::where("name", $request->name)->get()[0];
+        $user = Teacher::where("name", $request->name)->where("id", $request->id)->where("director", auth()->user()->id)->get()[0];
 
         return view('teacher.profesor-edit', ['user'=>$user]);
     }
     
-    /**
-     * created new resource in storage.
-     */
+
     public function create(Request $request)
     {
-        $messages = [
-            'required' => 'El campo :attribute es obligatorio.',
-            'string' => 'El campo :attribute debe ser una cadena de caracteres.',
-            'email' => 'El campo :attribute debe ser una dirección de correo electrónico válida.',
-        ]; 
+        if(!auth()->user()->admin){
+            return redirect(route("home"));
+        }
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -70,10 +61,15 @@ class ProfesoresController extends Controller
             'salary' => 'required',
             'started' => 'required',
             'password' => 'required|string|min:8|confirmed',
-        ], $messages);
+        ]);
 
         if ($validator->fails()) {
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
+        }
+        
+
+        if(!empty(Teacher::where('email', $request->email)->where('director', auth()->user()->id)->get()[0]->email) && Teacher::where('email', $request->email)->where('director', auth()->user()->id)->get()[0]->email == $request->email){
+            return redirect()->back()->with('errors', 'El email existente.');
         }
 
         $teacher = new Teacher();
@@ -84,17 +80,20 @@ class ProfesoresController extends Controller
         $teacher->salary = $request->salary;
         $teacher->started = $request->started;
         $teacher->password = Hash::make($request->password);
+        $teacher->director = auth()->user()->id;
 
         $teacher->save();
 
         return redirect(route("profesores"));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request)
     {
+        if(!auth()->user()->admin){
+            return redirect(route("home"));
+        }
+
         $messages = [
             'required' => 'El campo :attribute es obligatorio.',
             'string' => 'El campo :attribute debe ser una cadena de caracteres.',
@@ -126,12 +125,15 @@ class ProfesoresController extends Controller
         return redirect(route("profesores"));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(Request $request)
     {
+        if(!auth()->user()->admin){
+            return redirect(route("home"));
+        }
+
         Teacher::find($request->id)->delete();
+
         return redirect(route("profesores"));
     }
 }

@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\student;
+use App\Models\subject;
+use App\Models\Teacher;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 
 class AlumnosController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         if(!auth()->user()->admin){
@@ -20,10 +21,9 @@ class AlumnosController extends Controller
         if($request->orden){
             $search =  explode("/", $request->orden);
 
-            $students = student::orderBy($search[0], $search[1])->paginate(25);
+            $students = student::orderBy($search[0], $search[1])->where("director", auth()->user()->id)->paginate(25);
         }else{
-            $students = student::orderBy('course', 'ASC')->paginate(25);
-
+            $students = student::orderBy('course', 'ASC')->where("director", auth()->user()->id)->paginate(25);
         }
 
         $students->appends([
@@ -33,21 +33,6 @@ class AlumnosController extends Controller
         return view('student.students', ['students'=>$students]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     public function showEdit(Request $request)
     {
@@ -55,24 +40,82 @@ class AlumnosController extends Controller
             return redirect(route("home"));
         }
 
-        $student = student::where("name", $request->name)->get()[0];
+        $student = student::where("name", $request->name)->where("id", $request->id)->where("director", auth()->user()->id)->get()[0];
 
         return view("student.student-edit", ['user'=>$student]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+
+    public function showNote(Request $request)
     {
-        //
+        if(!auth()->user()->admin){
+            return redirect(route("home"));
+        }
+        $student = student::where("director", auth()->user()->id)->where('id', $request->id)->get()[0];
+        $subjects = subject::find($request->id);
+
+        return view("student.note", ['subjects'=>$subjects, 'student'=>$student]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
+    public function showAdd()
+    {
+        return view("student.student-add");
+    }
+
+
+    public function create(Request $request)
+    {
+        if(!auth()->user()->admin){
+            return redirect(route("home"));
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'course' => 'required',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
+        }
+        
+        if(!empty(student::where('email', $request->email)->where('director', auth()->user()->id)->get()[0]->email) && student::where('email', $request->email)->where('director', auth()->user()->id)->get()[0]->email == $request->email){
+            return redirect()->back()->with('errors', 'El email existente.');
+        }
+
+        $student = new student();
+        $note = new subject();
+
+        $student->name = $request->name;
+        $student->email = $request->email;
+        $student->course = $request->course;
+        $student->password = Hash::make($request->password);
+        $student->director = auth()->user()->id;
+
+        $note->matematicas = 0;
+        $note->ingles = 0; 
+        $note->fisica = 0; 
+        $note->ciencia = 0; 
+        $note->computacion = 0; 
+        $note->arte = 0; 
+        $note->literatura = 0; 
+        $note->historia = 0; 
+
+        $student->save();
+        $note->save();
+
+        return redirect(route("alumnos"));
+    }
+
+    
     public function update(Request $request)
     {
+        if(!auth()->user()->admin){
+            return redirect(route("home"));
+        }
+
         $messages = [
             'required' => 'El campo :attribute es obligatorio.',
             'string' => 'El campo :attribute debe ser una cadena de caracteres.',
@@ -100,11 +143,17 @@ class AlumnosController extends Controller
         return redirect(route("alumnos"));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+
+    public function destroy(Request $request)
     {
-        //
+        if(!auth()->user()->admin){
+            return redirect(route("home"));
+        }
+
+        student::find($request->id)->delete();
+
+        subject::find($request->id)->delete();
+
+        return redirect(route("alumnos"));
     }
 }

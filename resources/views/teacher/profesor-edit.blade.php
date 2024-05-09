@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="title">
-        Profesores
+        Profesores Editar
     </x-slot>
 
     <x-slot name="header">

@@ -25,7 +25,8 @@ class TeacherFactory extends Factory
             'subjects' => $this->faker->randomElement(['matematicas', 'fisica', 'ciencia', 'historia', 'ingles', 'literatura', 'arte', 'computacion']),
             'salary' => $this->faker->randomElement([1200, 1100, 1400]),
             'started' => $this->faker->date(),
-            'password' => static::$password ??= Hash::make('password')
+            'password' => static::$password ??= Hash::make('password'),
+            'director' => 1
         ];
     }
 }

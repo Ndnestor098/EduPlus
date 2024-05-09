@@ -39,21 +39,23 @@
                             <th>Nombre</th>
                             <th>Email</th>
                             <th>Año C.</th>
+                            <th>Notas</th>
                         </tr>
                         @foreach ($students as $item)
                             <tr>
-                                <td><a href="{{route("alumno.edit", ['name'=>$item->name])}}">{{ $item->name }}</a></td>
-                                <td><a href="{{route("alumno.edit", ['name'=>$item->name])}}">{{ Str::limit($item->email,20) }}</a></td>
-                                <td class="text-center"><a href="{{route("alumno.edit", ['name'=>$item->name])}}">{{ $item->course }}</a></td>
-                                
+                                <td><a href="{{route("alumno.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->name }}</a></td>
+                                <td><a href="{{route("alumno.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ Str::limit($item->email,20) }}</a></td>
+                                <td class="text-center"><a href="{{route("alumno.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->course }}</a></td>
+                                <td style="background-color: #fafafa; font-weight: 600;" ><a href="{{route('alumnos.notas', ["id"=>$item->id])}}">Notas</a></td>
                             </tr>
                         @endforeach
                     </table>
                     {{$students->links()}}
 
                 </div>
+                
                 <div class="flex justify-center" style="width: 100%; height: 100%; padding: 10px 0px;">
-                    <a href="{{route("profesor.add")}}" class="button-search">Agregar Profesor</a>
+                    <a href="{{route("alumno.add")}}" class="button-search">Agregar Alumno</a>
                 </div>
             </div>
         </div>

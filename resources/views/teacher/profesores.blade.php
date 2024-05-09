@@ -48,11 +48,11 @@
                         </tr>
                         @foreach ($teachers as $item)
                             <tr>
-                                <td><a href="{{route("profesor.edit", ['name'=>$item->name])}}">{{ $item->name }}</a></td>
-                                <td><a href="{{route("profesor.edit", ['name'=>$item->name])}}">{{ Str::limit($item->email,20) }}</a></td>
-                                <td class="text-center"><a href="{{route("profesor.edit", ['name'=>$item->name])}}">{{ $item->subjects }}</a></td>
-                                <td class="text-center"><a href="{{route("profesor.edit", ['name'=>$item->name])}}">{{ $item->salary }}</a></td>
-                                <td class="text-center"><a href="{{route("profesor.edit", ['name'=>$item->name])}}">{{ $item->started }}</a></td>
+                                <td><a href="{{route("profesor.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->name }}</a></td>
+                                <td><a href="{{route("profesor.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ Str::limit($item->email,20) }}</a></td>
+                                <td class="text-center"><a href="{{route("profesor.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->subjects }}</a></td>
+                                <td class="text-center"><a href="{{route("profesor.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->salary }}</a></td>
+                                <td class="text-center"><a href="{{route("profesor.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->started }}</a></td>
                                 
                             </tr>
                         @endforeach
