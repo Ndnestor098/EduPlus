@@ -2,6 +2,8 @@
     <x-slot name="title">
         Profesores
     </x-slot>
+    
+    <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
 
     <x-slot name="header">
         <a href="{{route("profesores")}}" class="font-semibold text-xl text-gray-800 leading-tight">
@@ -25,8 +27,8 @@
                                     <option value="name/DESC">Nombre | DESC</option>
                                     <option value="email/ASC">Email | ASC</option>
                                     <option value="email/DESC">Email | DESC</option>
-                                    <option value="subjects/ASC">Asignatura | ASC</option>
-                                    <option value="subjects/DESC">Asignatura | DESC</option>
+                                    <option value="subject/ASC">Asignatura | ASC</option>
+                                    <option value="subject/DESC">Asignatura | DESC</option>
                                     <option value="salary/ASC">Salario | ASC</option>
                                     <option value="salary/DESC">Salario | DESC</option>
                                     <option value="started/ASC">F. Inico | ASC</option>
@@ -50,7 +52,7 @@
                             <tr>
                                 <td><a href="{{route("profesor.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->name }}</a></td>
                                 <td><a href="{{route("profesor.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ Str::limit($item->email,20) }}</a></td>
-                                <td class="text-center"><a href="{{route("profesor.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->subjects }}</a></td>
+                                <td class="text-center"><a href="{{route("profesor.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->subject }}</a></td>
                                 <td class="text-center"><a href="{{route("profesor.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->salary }}</a></td>
                                 <td class="text-center"><a href="{{route("profesor.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->started }}</a></td>
                                 

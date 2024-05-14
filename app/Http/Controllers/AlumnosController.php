@@ -2,28 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Qualification;
 use App\Models\student;
 use App\Models\subject;
-use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+use App\Models\Role;
+use App\Models\RolesUser;
 
 class AlumnosController extends Controller
 {
+    public function role(){
+        return auth()->user()->RolesUser->first()->role_id == 1;
+    }
+
     public function index(Request $request)
     {
-        if(!auth()->user()->admin){
-            return redirect(route("home"));
-        }
+        if(!$this->role()) return redirect(route("home"));
 
         if($request->orden){
             $search =  explode("/", $request->orden);
 
-            $students = student::orderBy($search[0], $search[1])->where("director", auth()->user()->id)->paginate(25);
+            $students = student::orderBy($search[0], $search[1])->paginate(25);
         }else{
-            $students = student::orderBy('course', 'ASC')->where("director", auth()->user()->id)->paginate(25);
+            $students = student::orderBy('course', 'ASC')->paginate(25);
         }
 
         $students->appends([
@@ -36,11 +40,9 @@ class AlumnosController extends Controller
 
     public function showEdit(Request $request)
     {
-        if(!auth()->user()->admin){
-            return redirect(route("home"));
-        }
+        if(!$this->role()) return redirect(route("home"));
 
-        $student = student::where("name", $request->name)->where("id", $request->id)->where("director", auth()->user()->id)->get()[0];
+        $student = student::where("name", $request->name)->where("id", $request->id)->first();
 
         return view("student.student-edit", ['user'=>$student]);
     }
@@ -48,11 +50,9 @@ class AlumnosController extends Controller
 
     public function showNote(Request $request)
     {
-        if(!auth()->user()->admin){
-            return redirect(route("home"));
-        }
-        $student = student::where("director", auth()->user()->id)->where('id', $request->id)->get()[0];
-        $subjects = subject::find($request->id);
+        if(!$this->role()) return redirect(route("home"));
+        $student = student::where('id', $request->id)->first();
+        $subjects = $student->qualification;
 
         return view("student.note", ['subjects'=>$subjects, 'student'=>$student]);
     }
@@ -66,9 +66,7 @@ class AlumnosController extends Controller
 
     public function create(Request $request)
     {
-        if(!auth()->user()->admin){
-            return redirect(route("home"));
-        }
+        if(!$this->role()) return redirect(route("home"));
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -80,31 +78,43 @@ class AlumnosController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
-        
-        if(!empty(student::where('email', $request->email)->where('director', auth()->user()->id)->get()[0]->email) && student::where('email', $request->email)->where('director', auth()->user()->id)->get()[0]->email == $request->email){
-            return redirect()->back()->with('errors', 'El email existente.');
+
+        try {
+            $bool = User::where('email', $request->email)->first()->email == $request->email;
+        } catch (\Throwable $th) {
+            $bool = false;
         }
 
-        $student = new student();
-        $note = new subject();
+        if($bool){
+            return redirect()->back()->with('errors', 'Email ya en uso.');
+        }
 
+        //Crear el Profesor con su tabla
+        $student = new student();
         $student->name = $request->name;
         $student->email = $request->email;
         $student->course = $request->course;
         $student->password = Hash::make($request->password);
-        $student->director = auth()->user()->id;
-
-        $note->matematicas = 0;
-        $note->ingles = 0; 
-        $note->fisica = 0; 
-        $note->ciencia = 0; 
-        $note->computacion = 0; 
-        $note->arte = 0; 
-        $note->literatura = 0; 
-        $note->historia = 0; 
-
         $student->save();
-        $note->save();
+
+        //Crear el usuario para que inicie sesion
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        //Crear el role de Profesor
+        $role = new RolesUser();
+        $role->user_id = $user->id;
+        $role->role_id = 3;
+        $role->save();
+
+        //Crear tabla de Calificaciones del usuario
+        $qualification = new Qualification();
+        $qualification->student_id = $student->id;
+        $qualification->save();
+
 
         return redirect(route("alumnos"));
     }
@@ -112,9 +122,7 @@ class AlumnosController extends Controller
     
     public function update(Request $request)
     {
-        if(!auth()->user()->admin){
-            return redirect(route("home"));
-        }
+        if(!$this->role()) return redirect(route("home"));
 
         $messages = [
             'required' => 'El campo :attribute es obligatorio.',
@@ -132,13 +140,59 @@ class AlumnosController extends Controller
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
 
+        try {
+            $bool = User::where('email', $request->email)->first()->email == $request->email;
+        } catch (\Throwable $th) {
+            $bool = false;
+        }
+
+        if($bool){
+            return redirect()->back()->with('errors', 'Email ya en uso.');
+        }
+
         $student = student::find($request->id);
 
-        $student->name = $request->name;
-        $student->email = $request->email;
-        $student->course = $request->course;
+        if($student->email != $request->email){
+            //=========Validar email en tabla Teachers=========
+            try {
+                $bool = student::where('email', $request->email)->first()->email == $request->email;
+                $bool = true;
+            } catch (\Throwable $th) {
+                $bool = false;
+            }
 
-        $student->save();
+            //=========Validar si el nuevo email existe en la tabla Users=========
+            try {
+                $bool = User::where('email', $request->email)->first()->email;
+                $bool = true;
+            } catch (\Throwable $th) {
+                $bool = false;
+            }
+
+            //=========Confirmar si hay email iguales=========
+            if($bool){
+                return redirect()->back()->with('errors', 'Email ya en uso.');
+            }
+
+            //=========Guardar datos de los nuevos cambios=========
+            //Actualizar usuario
+            $user = User::where("email", $student->email)->first();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->save();
+
+            //Actualizar estudiante
+            $student->name = $request->name;
+            $student->email = $request->email;
+            $student->course = $request->course;
+            $student->save();
+
+        }else{
+
+            $student->name = $request->name;
+            $student->course = $request->course;
+            $student->save();
+        }
 
         return redirect(route("alumnos"));
     }
@@ -146,13 +200,16 @@ class AlumnosController extends Controller
 
     public function destroy(Request $request)
     {
-        if(!auth()->user()->admin){
-            return redirect(route("home"));
-        }
+        if(!$this->role()) return redirect(route("home"));
 
-        student::find($request->id)->delete();
+        //Buscar el id del profesor en la tabla user
+        $user =  User::where("email", $request->email)->first();
 
-        subject::find($request->id)->delete();
+        RolesUser::where("user_id", $user->id)->delete();
+
+        $user->delete();
+
+        Student::find($request->id_student)->delete();
 
         return redirect(route("alumnos"));
     }

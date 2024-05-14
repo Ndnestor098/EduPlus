@@ -2,6 +2,9 @@
     <x-slot name="title">
         Alumnos
     </x-slot>
+    
+    <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
+
 
     <x-slot name="header">
         <a href="{{route("alumnos")}}" class="font-semibold text-xl text-gray-800 leading-tight">

@@ -2,25 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
+use App\Models\RolesUser;
 use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class ProfesoresController extends Controller
 {
+    public function role(){
+        return auth()->user()->RolesUser->first()->role_id == 1;
+    }
+
     public function index(Request $request)
     {
-        if(!auth()->user()->admin){
-            return redirect(route("home"));
-        }
+        if(!$this->role()) return redirect(route("home"));
+
 
         if($request->orden){
             $search =  explode("/", $request->orden);
 
-            $teachers = Teacher::orderBy($search[0], $search[1])->where("director", auth()->user()->id)->get();
+            $teachers = Teacher::orderBy($search[0], $search[1])->get();
         }else{
-            $teachers = Teacher::orderBy("name", "asc")->where("director", auth()->user()->id)->get();
+            $teachers = Teacher::orderBy("name", "asc")->get();
         }
 
         return view('teacher.profesores', ['teachers' => $teachers]);
@@ -28,9 +34,8 @@ class ProfesoresController extends Controller
 
     public function showAdd()
     {
-        if(!auth()->user()->admin){
-            return redirect(route("home"));
-        }
+        if(!$this->role()) return redirect(route("home"));
+
 
         return view('teacher.profesor-add');
     }
@@ -38,11 +43,10 @@ class ProfesoresController extends Controller
 
     public function showEdit(Request $request)
     {
-        if(!auth()->user()->admin){
-            return redirect(route("home"));
-        }
+        if(!$this->role()) return redirect(route("home"));
 
-        $user = Teacher::where("name", $request->name)->where("id", $request->id)->where("director", auth()->user()->id)->get()[0];
+
+        $user = Teacher::where("name", $request->name)->where("id", $request->id)->get()[0];
 
         return view('teacher.profesor-edit', ['user'=>$user]);
     }
@@ -50,9 +54,7 @@ class ProfesoresController extends Controller
 
     public function create(Request $request)
     {
-        if(!auth()->user()->admin){
-            return redirect(route("home"));
-        }
+        if(!$this->role()) return redirect(route("home"));
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -63,26 +65,44 @@ class ProfesoresController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        //Ver si las validaciones se cumplen
         if ($validator->fails()) {
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
-        
 
-        if(!empty(Teacher::where('email', $request->email)->where('director', auth()->user()->id)->get()[0]->email) && Teacher::where('email', $request->email)->where('director', auth()->user()->id)->get()[0]->email == $request->email){
-            return redirect()->back()->with('errors', 'El email existente.');
+        //Ver si el email ingresado pertenece a otro usuario
+        try {
+            $bool = User::where('email', $request->email)->first()->email == $request->email;
+        } catch (\Throwable $th) {
+            $bool = false;
         }
 
+        if($bool){
+            return redirect()->back()->with('errors', 'Email ya en uso.');
+        }
+        
+        //Crear el Profesor con su tabla
         $teacher = new Teacher();
-
         $teacher->name = $request->name;
         $teacher->email = $request->email;
-        $teacher->subjects = $request->subject;
+        $teacher->subject = $request->subject;
         $teacher->salary = $request->salary;
         $teacher->started = $request->started;
         $teacher->password = Hash::make($request->password);
-        $teacher->director = auth()->user()->id;
-
         $teacher->save();
+
+        //Crear el usuario para que inicie sesion
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        //Crear el role de Profesor
+        $role = new RolesUser();
+        $role->user_id = $user->id;
+        $role->role_id = 2;
+        $role->save();
 
         return redirect(route("profesores"));
     }
@@ -90,10 +110,9 @@ class ProfesoresController extends Controller
 
     public function update(Request $request)
     {
-        if(!auth()->user()->admin){
-            return redirect(route("home"));
-        }
+        if(!$this->role()) return redirect(route("home"));
 
+        //=========Validar las entradas=========
         $messages = [
             'required' => 'El campo :attribute es obligatorio.',
             'string' => 'El campo :attribute debe ser una cadena de caracteres.',
@@ -114,13 +133,48 @@ class ProfesoresController extends Controller
 
         $teacher = Teacher::find($request->id);
 
-        $teacher->name = $request->name;
-        $teacher->email = $request->email;
-        $teacher->subjects = $request->subject;
-        $teacher->salary = $request->salary;
-        $teacher->started = $request->started;
+        //=========Validar si hay cambio en el email=========
+        if($teacher->email != $request->email){
+            //=========Validar email en tabla Teachers=========
+            try {
+                $bool = Teacher::where('email', $request->email)->first()->email == $request->email;
+                $bool = true;
+            } catch (\Throwable $th) {
+                $bool = false;
+            }
 
-        $teacher->save();
+            //=========Validar si el nuevo email existe en la tabla Users=========
+            try {
+                $bool = User::where('email', $request->email)->first()->email;
+                $bool = true;
+            } catch (\Throwable $th) {
+                $bool = false;
+            }
+
+            if($bool){
+                return redirect()->back()->with('errors', 'Email ya en uso.');
+            }
+
+            $user = User::where("email", $teacher->email)->first();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->save();
+
+            $teacher->name = $request->name;
+            $teacher->email = $request->email;
+            $teacher->subject = $request->subject;
+            $teacher->salary = $request->salary;
+            $teacher->started = $request->started;
+            $teacher->save();
+
+        }else{
+            //El email no se cambio, asi que solo se actualizan estos datos
+            $teacher->name = $request->name;
+            $teacher->subject = $request->subject;
+            $teacher->salary = $request->salary;
+            $teacher->started = $request->started;
+            $teacher->save();
+        }
 
         return redirect(route("profesores"));
     }
@@ -128,11 +182,14 @@ class ProfesoresController extends Controller
 
     public function destroy(Request $request)
     {
-        if(!auth()->user()->admin){
-            return redirect(route("home"));
-        }
+        if(!$this->role()) return redirect(route("home"));
 
-        Teacher::find($request->id)->delete();
+        //Buscar el id del profesor en la tabla user
+        $user =  User::where("email", $request->email)->first();
+
+        RolesUser::where("user_id", $user->id)->delete();
+        $user->delete();
+        Teacher::find($request->id_teacher)->delete();
 
         return redirect(route("profesores"));
     }

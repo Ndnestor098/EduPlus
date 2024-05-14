@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class student extends Model
 {
     use HasFactory;
+    public function qualification()
+    {
+        return $this->hasOne('App\Models\Qualification');
+    }
 }

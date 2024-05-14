@@ -3,6 +3,9 @@
         Alumnos Editar
     </x-slot>
 
+    <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
+
+
     <x-slot name="header">
         <a href="{{route("alumnos")}}" class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Alumnos') }}
@@ -45,14 +48,15 @@
                             </div>
                         </form>
 
-                        <form action="" method="POST" class="form mt-5">
+                        <form action="" method="POST" class="form mt-5" enctype="application/x-www-form-urlencoded" novalidate autocomplete="on">
                             <a href="{{route('alumnos.notas', ["id"=>$user->id])}}" class="button-update text-center">Ver Notas del Estudiante</a>
                         </form>
 
-                        <form action="" method="POST" class="form mt-5">
+                        <form action="" method="POST" class="form mt-5" enctype="application/x-www-form-urlencoded" novalidate autocomplete="on">
                             @csrf
                             @method("delete")
-                            <input type="hidden" name="id"  value="{{$user->id}}">
+                            <input type="hidden" name="email" value="{{$user->email}}">
+                            <input type="hidden" name="id_student" value="{{$user->id}}">
                             <button type="submit" class="button-delete">Eleminar</button>
                         </form>
                     </div>

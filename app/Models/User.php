@@ -44,4 +44,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    //Relacion uno a muchos con la tabla RolesUser
+    public function RolesUser()
+    {
+        return $this->hasMany('App\Models\RolesUser');
+    }
 }

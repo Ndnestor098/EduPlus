@@ -3,6 +3,8 @@
         Notas
     </x-slot>
 
+    <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
+
     <x-slot name="header">
         <a href="{{route('alumnos')}}" class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Alumnos') }}
@@ -30,14 +32,94 @@
                             <th style="background-color: rgb(238, 238, 238)">Historia</th>
                         </tr>
                         <tr>
-                            <td class="text-center w-6" @if($subjects->matematicas < 5) style="background-color: #e969697c; font-weight: 600;" @else style="background-color: #3cc2437a; font-weight: 600;" @endif>{{ $subjects->matematicas }}</td>
-                            <td class="text-center" @if($subjects->ingles < 5) style="background-color: #e969697c; font-weight: 600;" @else style="background-color: #3cc2437a; font-weight: 600;" @endif>{{ $subjects->ingles }}</td>
-                            <td class="text-center" @if($subjects->fisica < 5) style="background-color: #e969697c; font-weight: 600;" @else style="background-color: #3cc2437a; font-weight: 600;" @endif>{{ $subjects->fisica }}</td>
-                            <td class="text-center" @if($subjects->ciencia < 5) style="background-color: #e969697c; font-weight: 600;" @else style="background-color: #3cc2437a; font-weight: 600;" @endif>{{ $subjects->ciencia }}</td>
-                            <td class="text-center" @if($subjects->computacion < 5) style="background-color: #e969697c; font-weight: 600;" @else style="background-color: #3cc2437a; font-weight: 600;" @endif>{{ $subjects->computacion }}</td>
-                            <td class="text-center" @if($subjects->literatura < 5) style="background-color: #e969697c; font-weight: 600;" @else style="background-color: #3cc2437a; font-weight: 600;" @endif>{{ $subjects->literatura }}</td>
-                            <td class="text-center" @if($subjects->arte < 5) style="background-color: #e969697c; font-weight: 600;" @else style="background-color: #3cc2437a; font-weight: 600;" @endif>{{ $subjects->arte }}</td>
-                            <td class="text-center" @if($subjects->historia < 5) style="background-color: #e969697c; font-weight: 600;" @else style="background-color: #3cc2437a; font-weight: 600;" @endif>{{ $subjects->historia }}</td>
+                            <td class="text-center w-6" @if($subjects->matematicas < 5) style="background-color: #e969697c; font-weight: 600;" 
+                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
+                                                        @endif>
+                                                        @if($subjects->matematicas)
+                                                            {{ $subjects->matematicas }} 
+                                                        @else 
+                                                            No hay nota 
+                                                        @endif
+                                                    
+                            </td>
+
+                            <td class="text-center" @if($subjects->ingles < 5) style="background-color: #e969697c; font-weight: 600;"
+                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
+                                                        @endif>
+                                                        @if($subjects->ingles)
+                                                            {{ $subjects->ingles }} 
+                                                        @else 
+                                                            No hay nota 
+                                                        @endif
+                                                    
+                            </td>
+
+                            <td class="text-center" @if($subjects->fisica < 5) style="background-color: #e969697c; font-weight: 600;"
+                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
+                                                        @endif>
+                                                        @if($subjects->fisica)
+                                                            {{ $subjects->fisica }} 
+                                                        @else 
+                                                            No hay nota 
+                                                        @endif
+                                                    
+                            </td>
+
+                            <td class="text-center" @if($subjects->ciencia < 5) style="background-color: #e969697c; font-weight: 600;"
+                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
+                                                        @endif>
+                                                        @if($subjects->ciencia)
+                                                            {{ $subjects->ciencia }} 
+                                                        @else 
+                                                            No hay nota 
+                                                        @endif
+                                                    
+                            </td>
+
+                            <td class="text-center" @if($subjects->computacion < 5) style="background-color: #e969697c; font-weight: 600;"
+                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
+                                                        @endif>
+                                                        @if($subjects->computacion)
+                                                            {{ $subjects->computacion }} 
+                                                        @else 
+                                                            No hay nota 
+                                                        @endif
+                                                    
+                            </td>
+
+                            <td class="text-center" @if($subjects->literatura < 5) style="background-color: #e969697c; font-weight: 600;"
+                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
+                                                        @endif>
+                                                        @if($subjects->literatura)
+                                                            {{ $subjects->literatura }} 
+                                                        @else 
+                                                            No hay nota 
+                                                        @endif
+                                                    
+                            </td>
+
+                            <td class="text-center" @if($subjects->arte < 5) style="background-color: #e969697c; font-weight: 600;"
+                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
+                                                        @endif>
+                                                        @if($subjects->arte)
+                                                            {{ $subjects->arte }} 
+                                                        @else 
+                                                            No hay nota 
+                                                        @endif
+                                                    
+                            </td>
+
+                            <td class="text-center" @if($subjects->historia < 5) style="background-color: #e969697c; font-weight: 600;"
+                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
+                                                        @endif>
+                                                        @if($subjects->historia){{ $subjects->historia }} 
+
+                                                        @else 
+                                                            No hay nota 
+                                                        @endif
+                                                    
+                            </td>
+
                         </tr>
                     </table>
 

@@ -3,6 +3,8 @@
         Profesores Agregar
     </x-slot>
 
+    <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
+
     <x-slot name="header">
         <a href="{{route("profesores")}}" class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Profesores') }}
@@ -20,16 +22,16 @@
                     </div>
 
                     <div class="flex items-center justify-center flex-col">
-                        <form action="" method="POST" class="form" enctype="application/x-www-form-urlencoded" novalidate autocomplete="off">
+                        <form action="" method="POST" class="form" enctype="application/x-www-form-urlencoded" novalidate autocomplete="on">
                             @csrf
                             @method("put")
                             <div>
                                 <label for="name">Nombre</label>
-                                <input type="text" name="name" id="name" placeholder="Nombre y Apellido *" required>
+                                <input type="text" name="name" id="name" placeholder="Nombre y Apellido *" required autofocus>
                             </div>
                             <div>
                                 <label for="email">Email</label>
-                                <input type="email" name="email" id="email" placeholder="Email *" required>
+                                <input type="email" name="email" id="email" placeholder="Email *" required autofocus>
                             </div>
                             <div>
                                 <label for="subject">Asignatura</label>
@@ -46,19 +48,19 @@
                             </div>
                             <div>
                                 <label for="salary">Salario</label>
-                                <input type="number" name="salary" id="salary" placeholder="Salario *" required >
+                                <input type="number" name="salary" id="salary" placeholder="Salario *" required autofocus >
                             </div>
                             <div>
                                 <label for="started">Fecha de Inicio</label>
-                                <input type="date" name="started" id="started" required>
+                                <input type="date" name="started" id="started" required autofocus>
                             </div>
                             <div>
                                 <label for="password">Password</label>
-                                <input type="password" name="password" id="password" placeholder="Password *" required>
+                                <input type="password" name="password" id="password" placeholder="Password *" required autofocus>
                             </div>
                             <div>
                                 <label for="password_confirmation">Confirmar Password</label>
-                                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmar Password *" required>
+                                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmar Password *" required autofocus>
                             </div>
                             <p class="error text-center font-semibold" style="color: rgb(161, 44, 44)">
                                 @if (gettype($errors) != gettype((object)array('1'=>1)))

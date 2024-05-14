@@ -3,6 +3,8 @@
         Profesores Editar
     </x-slot>
 
+    <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
+
     <x-slot name="header">
         <a href="{{route("profesores")}}" class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Profesores') }}
@@ -64,10 +66,12 @@
                                 <button type="submit" class="button-update">Actualizar</button>
                             </div>
                         </form>
-                        <form action="" method="POST" class="form mt-5">
+                        <form action="" method="POST" class="form mt-5" enctype="application/x-www-form-urlencoded" novalidate autocomplete="on">
                             @csrf
                             @method("delete")
-                            <input type="hidden" name="id"  value="{{$user->id}}">
+                            <input type="hidden" name="id"  value="{{auth()->user()->id}}">
+                            <input type="hidden" name="email"  value="{{$user->email}}">
+                            <input type="hidden" name="id_teacher" value="{{$user->id}}">
                             <button type="submit" class="button-delete">Eleminar</button>
                         </form>
                     </div>

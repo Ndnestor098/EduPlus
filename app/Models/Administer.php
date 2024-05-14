@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class subject extends Model
+class Administer extends Model
 {
     use HasFactory;
+
+    private $table = 'administer';
 }

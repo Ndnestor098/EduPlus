@@ -8,7 +8,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <!-- =======================================DESCRIPCION======================================= -->
-        <title>@yield("name-page") - ACIZ</title>
+        <title>{{ $title }} - ACIZ</title>
         <meta name="description" content="Vendemos zapatos de tu preferencias para que estes comodo y contento con tus elecciones.">
         
         <meta name="product_id" content="102856451">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\RolesUser;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -39,9 +40,14 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'admin' => 1
         ]);
 
+        $role = RolesUser::create([
+            'user_id' => $user->id,
+            'role_id' => 1,
+        ]);
+
+        event(new Registered($role));
         event(new Registered($user));
 
         Auth::login($user);

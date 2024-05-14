@@ -13,17 +13,42 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
-                        {{ __('Inicio') }}
+                        {{ __('Inicio') }} 
                     </x-nav-link>
-                    @if (Auth::user()->admin)
-                        <x-nav-link :href="route('profesores')" :active="request()->routeIs('profesores')">
-                            {{ __('Profesores') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('alumnos')" :active="request()->routeIs('alumnos')">
-                            {{ __('Alumnos') }}
-                        </x-nav-link>
-                    @endif
-                    
+
+                        @if(auth()->user()->RolesUser->first()->role_id  == 1)
+                            <!-- Menú para director -->
+                            <x-nav-link :href="route('profesores')" :active="request()->routeIs('profesores')">
+                                {{ __('Profesores') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('alumnos')" :active="request()->routeIs('alumnos')">
+                                {{ __('Alumnos') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('alumnos')" :active="request()->routeIs('alumnos')">
+                                {{ __('Administradores') }}
+                            </x-nav-link>
+                        @endif
+
+                        @if(auth()->user()->RolesUser->first()->role_id  == 3)
+                            <!-- Menú para estudiante -->
+                            <x-nav-link :href="route('alumnos')" :active="request()->routeIs('alumnos')">
+                                {{ __('Tarea y Proyectos') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('alumnos')" :active="request()->routeIs('alumnos')">
+                                {{ __('Notas') }}
+                            </x-nav-link>
+                        @endif
+
+                        @if(auth()->user()->RolesUser->first()->role_id  == 2)
+                            <!-- Menú para profesor -->
+                            <x-nav-link :href="route('alumnos')" :active="request()->routeIs('alumnos')">
+                                {{ __('Proyectos') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('alumnos')" :active="request()->routeIs('alumnos')">
+                                {{ __('Calificaciones') }}
+                            </x-nav-link>
+                        @endif
+
                 </div>
             </div>
 

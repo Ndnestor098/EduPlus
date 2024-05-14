@@ -3,6 +3,8 @@
     <x-slot name="title">
         Home
     </x-slot>
+    
+    <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -20,5 +22,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> 
 </x-app-layout>
