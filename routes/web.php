@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AlumnosController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfesoresController;
@@ -38,6 +39,21 @@ Route::controller(AlumnosController::class)->group(function(){
     Route::get("/alumno/edit", [AlumnosController::class, 'showEdit'])->name('alumno.edit')->middleware(['auth', 'verified']);
     Route::post("/alumno/edit", [AlumnosController::class, 'update'])->middleware(['auth', 'verified']);
     Route::delete("/alumno/edit", [AlumnosController::class, 'destroy'])->middleware(['auth', 'verified']);
+
+});
+
+Route::controller(AdminController::class)->group(function(){
+    //===========================Visualizar Alumnos===========================
+    Route::get("/administrador", [AdminController::class, 'index'])->name('administrador')->middleware(['auth', 'verified']);
+
+    // //===========================Agregar Alumnos===========================
+    Route::get("/administrador/add", [AdminController::class, 'showAdd'])->name('administrador.add')->middleware(['auth', 'verified']);
+    Route::put("/administrador/add", [AdminController::class, 'create'])->middleware(['auth', 'verified']);
+
+    // // //===========================Editar Alumnos===========================
+    Route::get("/administrador/edit", [AdminController::class, 'showEdit'])->name('administrador.edit')->middleware(['auth', 'verified']);
+    Route::post("/administrador/edit", [AdminController::class, 'update'])->middleware(['auth', 'verified']);
+    Route::delete("/administrador/edit", [AdminController::class, 'destroy'])->middleware(['auth', 'verified']);
 
 });
 

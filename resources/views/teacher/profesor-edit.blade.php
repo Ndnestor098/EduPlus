@@ -34,6 +34,10 @@
                                 <input type="email" name="email" id="email" required value="{{$user->email}}">
                             </div>
                             <div>
+                                <label for="cellphone">Telefono</label>
+                                <input type="number" name="cellphone" id="cellphone" placeholder="Telefono *" value="{{$user->cellphone}}" required >
+                            </div>
+                            <div>
                                 <label for="subject">Asignatura</label>
                                 <select name="subject" id="subject">
                                     @if ( $user->subjects )

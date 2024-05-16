@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string("name", 50);
             $table->string('email', 70);
+            $table->string('cellphone');
             $table->string('subject', 100);
-            $table->float('salary', 10);
+            $table->decimal('salary', 10);
             $table->date('started');
             $table->string('password');
             

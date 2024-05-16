@@ -2,64 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Teacher;
-use App\Services\TeacherServices;
-use Illuminate\Support\Facades\Validator;
+use App\Models\Administer;
+use App\Services\AdministerServices;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class ProfesoresController extends Controller
+
+class AdminController extends Controller
 {
     public function role(){
         return auth()->user()->RolesUser->first()->role_id == 1;
     }
 
-
     public function index(Request $request)
     {
         if(!$this->role()) return redirect(route("home"));
 
-
         if($request->orden){
             $search =  explode("/", $request->orden);
 
-            $teachers = Teacher::orderBy($search[0], $search[1])->get();
+            $admin = Administer::orderBy($search[0], $search[1])->paginate(25);
         }else{
-            $teachers = Teacher::orderBy("name", "asc")->get();
+            $admin = Administer::orderBy('name', 'ASC')->paginate(25);
         }
 
-        return view('teacher.profesores', ['teachers' => $teachers]);
-    }
+        $admin->appends([
+            'orden' => $request->orden
+        ]);
 
+        return view('administrator.index', ['admin'=>$admin]);
+    }
 
     public function showAdd()
     {
         if(!$this->role()) return redirect(route("home"));
 
-
-        return view('teacher.profesor-add');
+        return view('administrator.create');
     }
-
 
     public function showEdit(Request $request)
     {
         if(!$this->role()) return redirect(route("home"));
 
+        $admin = Administer::where("name", $request->name)->where("id", $request->id)->first();
 
-        $user = Teacher::where("name", $request->name)->where("id", $request->id)->get()[0];
-
-        return view('teacher.profesor-edit', ['user'=>$user]);
+        return view('administrator.edit', ['user'=>$admin]);
     }
-    
 
-    public function create(Request $request, TeacherServices $requestTeacher)
+    public function create(Request $request, AdministerServices $requestAdmin)
     {
-        if(!$this->role()) return redirect(route("home"));
-
         //=========Validar las Entradas=========
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
-            'subject' => 'required|string|max:255',
             'cellphone' => 'required',
             'salary' => 'required',
             'started' => 'required',
@@ -70,18 +65,18 @@ class ProfesoresController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
+
+        //=========Ver si el email ingresado pertenece a otro usuario=========
+        $requestAdmin->checkEmailNew($request);
         
-        //=========Visualizar si el email exitste=========
-        $requestTeacher->checkEmailNew($request);
-
         //=========Guardar datos de los nuevos cambios=========
-        $requestTeacher->createTeacher($request);
+        $requestAdmin->createAdminister($request);
 
-        return redirect(route("profesores"));
+        return redirect(route("administrador"));
     }
 
 
-    public function update(Request $request, TeacherServices $requestTeacher)
+    public function update(Request $request, AdministerServices $requestAdmin)
     {
         if(!$this->role()) return redirect(route("home"));
 
@@ -90,7 +85,6 @@ class ProfesoresController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
             'cellphone' => 'required', 
-            'subject' => 'required|string|max:255',
             'salary' => 'required',
             'started' => 'required',
         ]);
@@ -99,23 +93,23 @@ class ProfesoresController extends Controller
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
 
-        //=========Validar email en tabla Teachers y User=========
-        $requestTeacher->checkEmailNew($request);
+        //=========Ver si el email ingresado pertenece a otro usuario=========
+        $requestAdmin->checkEmailNew($request);
 
-        //=========Actualizar los datos del usuario=========
-        $requestTeacher->updateTeacher($request);
+        //=========Guardar datos de los nuevos cambios=========
+        $requestAdmin->updateAdminister($request);
 
-        return redirect(route("profesores"));
+        return redirect(route("administrador"));
     }
 
 
-    public function destroy(Request $request, TeacherServices $requestTeacher)
+    public function destroy(Request $request, AdministerServices $requestAdmin)
     {
         if(!$this->role()) return redirect(route("home"));
 
-        //=========Buscar el id del student en la tabla user=========
-        $requestTeacher->deleteTeacher($request);
+        //=========Buscar el id del administrador en la tabla user=========
+        $requestAdmin->deleteAdminister($request);
 
-        return redirect(route("profesores"));
+        return redirect(route("administrador"));
     }
 }

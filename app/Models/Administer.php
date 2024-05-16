@@ -9,5 +9,5 @@ class Administer extends Model
 {
     use HasFactory;
 
-    private $table = 'administer';
+    protected $table = 'administer';
 }

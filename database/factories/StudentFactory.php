@@ -23,7 +23,6 @@ class StudentFactory extends Factory
             'email' => $this->faker->email(),
             'course' => $this->faker->randomElement([1, 2, 3, 4, 5]),
             'password' => static::$password ??= Hash::make('password'),
-            'director' => 1
         ];
     }
 }

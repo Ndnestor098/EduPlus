@@ -34,6 +34,10 @@
                                 <input type="email" name="email" id="email" placeholder="Email *" required autofocus>
                             </div>
                             <div>
+                                <label for="cellphone">Telefono</label>
+                                <input type="number" name="cellphone" id="cellphone" placeholder="Telefono *" required autofocus>
+                            </div>
+                            <div>
                                 <label for="subject">Asignatura</label>
                                 <select name="subject" id="subject">
                                     <option value="literatera">Literatera</option>

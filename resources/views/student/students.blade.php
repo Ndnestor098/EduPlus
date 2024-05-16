@@ -28,6 +28,8 @@
                                     <option value="name/DESC">Nombre | DESC</option>
                                     <option value="email/ASC">Email | ASC</option>
                                     <option value="email/DESC">Email | DESC</option>
+                                    <option value="cellphone/ASC">Telefono | ASC</option>
+                                    <option value="cellphone/DESC">Telefono | DESC</option>
                                     <option value="course/ASC">Año | ASC</option>
                                     <option value="course/DESC">Año | DESC</option>
                                 </select>
@@ -41,6 +43,7 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Email</th>
+                            <th>Telefono</th>
                             <th>Año C.</th>
                             <th>Notas</th>
                         </tr>
@@ -48,6 +51,7 @@
                             <tr>
                                 <td><a href="{{route("alumno.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->name }}</a></td>
                                 <td><a href="{{route("alumno.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ Str::limit($item->email,20) }}</a></td>
+                                <td><a href="{{route("alumno.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->cellphone }}</a></td>
                                 <td class="text-center"><a href="{{route("alumno.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->course }}</a></td>
                                 <td style="background-color: #fafafa; font-weight: 600;" ><a href="{{route('alumnos.notas', ["id"=>$item->id])}}">Notas</a></td>
                             </tr>
