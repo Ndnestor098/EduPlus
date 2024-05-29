@@ -10,8 +10,8 @@ class Role extends Model
     use HasFactory;
 
     //Relacion uno a muchos con la tabla RolesUser
-    public function RolesUser()
+    public function user()
     {
-        return $this->hasMany('App\Models\RolesUser');
+        return $this->belongsToMany(User::class);
     }
 }

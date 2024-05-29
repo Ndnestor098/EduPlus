@@ -21,8 +21,9 @@ class StudentFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->email(),
+            'cellphone' => $this->faker->phoneNumber(),
             'course' => $this->faker->randomElement([1, 2, 3, 4, 5]),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => Hash::make('cronos'),
         ];
     }
 }

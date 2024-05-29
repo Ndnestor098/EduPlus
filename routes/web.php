@@ -1,59 +1,96 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AlumnosController;
+use App\Http\Controllers\StudentAdminController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProfesoresController;
+use App\Http\Controllers\TeacherAdminController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Middleware\CheckAdmin;
+use App\Http\Controllers\TeachersController;
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\TeacherMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->middleware(['auth', 'verified'])->name('home');
 
 
-Route::controller(ProfesoresController::class)->group(function(){
+Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(TeacherAdminController::class)->group(function(){
     //===========================Visualizar Profesores===========================
-    Route::get("/profesores", [ProfesoresController::class, 'index'])->name('profesores')->middleware(['auth', 'verified']);
+    Route::get("/teachers/admin", 'index')->name('teacher.admin');
 
     //===========================Agregar Profesores===========================
-    Route::get("/profesor/add", [ProfesoresController::class, 'showAdd'])->name('profesor.add')->middleware(['auth', 'verified']);
-    Route::put("/profesor/add", [ProfesoresController::class, 'create'])->middleware(['auth', 'verified']);
+    Route::get("/teacher/admin/add", 'showAdd')->name('teacher.admin.add');
+    Route::put("/teacher/admin/add", 'create');
 
     //===========================Editar Profesores===========================
-    Route::post("/profesor/edit", [ProfesoresController::class, 'update'])->middleware(['auth', 'verified']);
-    Route::get("/profesor/edit", [ProfesoresController::class, 'showEdit'])->name('profesor.edit')->middleware(['auth', 'verified']);
-    Route::delete("/profesor/edit", [ProfesoresController::class, 'destroy'])->middleware(['auth', 'verified']);
+    Route::post("/teacher/admin/edit", 'update');
+    Route::get("/teacher/admin/edit", 'showEdit')->name('teacher.admin.edit');
+    Route::delete("/teacher/admin/edit", 'destroy');
 
 });
 
-Route::controller(AlumnosController::class)->group(function(){
+Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(StudentAdminController::class)->group(function(){
     //===========================Visualizar Alumnos===========================
-    Route::get("/alumnos", [AlumnosController::class, 'index'])->name('alumnos')->middleware(['auth', 'verified']);
-    Route::get("/alumno/nota", [AlumnosController::class, 'showNote'])->name('alumnos.notas')->middleware(['auth', 'verified']);
+    Route::get("/students/admin", 'index')->name('student.admin');
+    Route::get("/students/admin/nota", 'showNote')->name('student.admin.notas');
 
     //===========================Agregar Alumnos===========================
-    Route::get("/alumno/add", [AlumnosController::class, 'showAdd'])->name('alumno.add')->middleware(['auth', 'verified']);
-    Route::put("/alumno/add", [AlumnosController::class, 'create'])->middleware(['auth', 'verified']);
+    Route::get("/students/admin/add", 'showAdd')->name('student.admin.add');
+    Route::put("/students/admin/add", 'create');
 
     // //===========================Editar Alumnos===========================
-    Route::get("/alumno/edit", [AlumnosController::class, 'showEdit'])->name('alumno.edit')->middleware(['auth', 'verified']);
-    Route::post("/alumno/edit", [AlumnosController::class, 'update'])->middleware(['auth', 'verified']);
-    Route::delete("/alumno/edit", [AlumnosController::class, 'destroy'])->middleware(['auth', 'verified']);
+    Route::get("/students/admin/edit", 'showEdit')->name('student.admin.edit');
+    Route::post("/students/admin/edit", 'update');
+    Route::delete("/students/admin/edit", 'destroy');
 
 });
 
-Route::controller(AdminController::class)->group(function(){
+Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(AdminController::class)->group(function(){
     //===========================Visualizar Alumnos===========================
-    Route::get("/administrador", [AdminController::class, 'index'])->name('administrador')->middleware(['auth', 'verified']);
+    Route::get("/administrator", 'index')->name('administrador');
 
     // //===========================Agregar Alumnos===========================
-    Route::get("/administrador/add", [AdminController::class, 'showAdd'])->name('administrador.add')->middleware(['auth', 'verified']);
-    Route::put("/administrador/add", [AdminController::class, 'create'])->middleware(['auth', 'verified']);
+    Route::get("/administrator/add", 'showAdd')->name('administrador.add');
+    Route::put("/administrator/add", 'create');
 
     // // //===========================Editar Alumnos===========================
-    Route::get("/administrador/edit", [AdminController::class, 'showEdit'])->name('administrador.edit')->middleware(['auth', 'verified']);
-    Route::post("/administrador/edit", [AdminController::class, 'update'])->middleware(['auth', 'verified']);
-    Route::delete("/administrador/edit", [AdminController::class, 'destroy'])->middleware(['auth', 'verified']);
+    Route::get("/administrator/edit", 'showEdit')->name('administrador.edit');
+    Route::post("/administrator/edit", 'update');
+    Route::delete("/administrator/edit", 'destroy');
+
+});
+
+Route::middleware(['auth', 'verified', TeacherMiddleware::class])->controller(TeachersController::class)->group(function(){
+    //===========================Taeras===========================
+    Route::get("/teacher/works", 'showWorks')->name('teacher.works');
+
+    //Add - Qualification
+    Route::get("/teacher/work/add", 'showAddWork')->name('teacher.work.add');
+    Route::post("/teacher/work/add", 'orderQualification');
+    Route::put("/teacher/work/add", 'addWork');
+
+    //Update - Qualification
+    Route::get("/teacher/work/edit", 'showEditWork')->name('teacher.work.edit');
+
+    //Delete - Qualification
+
+    //===========================Metodo de Calificacion===========================
+    Route::get("/teacher/qualification", 'showQualification')->name('teacher.qualification');
+    //Add - Qualification
+    Route::get("/teacher/qualification/add", 'ShowAddQualification')->name('teacher.qualification.add');
+    Route::post("/teacher/qualification/add", 'AddQualification');
+
+    //Update - Qualification
+    Route::get("/teacher/qualification/edit", 'showEditQualification')->name('teacher.qualification.edit');
+    Route::post("/teacher/qualification/edit", 'updateQualification');
+
+    //Delete - Qualification
+    Route::delete("/teacher/qualification/edit", 'deleteQualification');
+
+
+
+
+    // Route::post("/teacher/edit", 'update');
+    // Route::delete("/teacher/edit", 'destroy');
 
 });
 

@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles_users', function (Blueprint $table) {
+        Schema::create('role_user', function (Blueprint $table) {
             $table->id();
 
             // One to Many con la tabla Roles y Users
-            $table->unsignedBigInteger('role_id')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('role_id');
+            $table->unsignedBigInteger('user_id');
 
-            $table->foreign('role_id')->references('id')->on('roles')->onDelete('set null');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->timestamps();
         });
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles_users');
+        Schema::dropIfExists('role_user');
     }
 };

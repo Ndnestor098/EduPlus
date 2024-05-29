@@ -42,9 +42,12 @@
         label{
             font-size: 16px;
             font-weight: 500;
-        }
 
-        
+            span{
+                font-size: 11px;
+                text-align: start;
+            }
+        }
     }
 }
 

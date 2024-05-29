@@ -10,14 +10,9 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
-    public function role(){
-        return auth()->user()->RolesUser->first()->role_id == 1;
-    }
-
+    // Vizualizar la Pagina Principal
     public function index(Request $request)
     {
-        if(!$this->role()) return redirect(route("home"));
-
         if($request->orden){
             $search =  explode("/", $request->orden);
 
@@ -33,22 +28,21 @@ class AdminController extends Controller
         return view('administrator.index', ['admin'=>$admin]);
     }
 
+    // Vizualizar la Pagina Agregar Administrador
     public function showAdd()
     {
-        if(!$this->role()) return redirect(route("home"));
-
         return view('administrator.create');
     }
 
+    // Vizualizar la Pagina de Editar Administrador
     public function showEdit(Request $request)
     {
-        if(!$this->role()) return redirect(route("home"));
-
         $admin = Administer::where("name", $request->name)->where("id", $request->id)->first();
 
         return view('administrator.edit', ['user'=>$admin]);
     }
 
+    // Cracion de Administrador con metodo PUT
     public function create(Request $request, AdministerServices $requestAdmin)
     {
         //=========Validar las Entradas=========
@@ -75,11 +69,9 @@ class AdminController extends Controller
         return redirect(route("administrador"));
     }
 
-
+    // Actualizacion de Administrador con metodo POST
     public function update(Request $request, AdministerServices $requestAdmin)
     {
-        if(!$this->role()) return redirect(route("home"));
-
         //=========Validar las entradas=========
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -102,11 +94,9 @@ class AdminController extends Controller
         return redirect(route("administrador"));
     }
 
-
+    // Eliminacion de Administrador con metodo DELETE
     public function destroy(Request $request, AdministerServices $requestAdmin)
     {
-        if(!$this->role()) return redirect(route("home"));
-
         //=========Buscar el id del administrador en la tabla user=========
         $requestAdmin->deleteAdminister($request);
 

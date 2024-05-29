@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}">
-                        <img src="/assets/img/logo.png" alt="Logo" style="height: 50px; width:55px">
+                        <img src="/assets/img/logo.png" alt="Logo" style="height: 50px; width:45px">
                     </a>
                 </div>
 
@@ -16,12 +16,12 @@
                         {{ __('Inicio') }} 
                     </x-nav-link>
 
-                        @if(auth()->user()->RolesUser->first()->role_id  == 1)
+                        @if(auth()->user()->role[0]->name  == 'admin')
                             <!-- Menú para director -->
-                            <x-nav-link :href="route('profesores')" :active="request()->routeIs('profesores')">
+                            <x-nav-link :href="route('teacher.admin')" :active="request()->routeIs('teacher.admin')">
                                 {{ __('Profesores') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('alumnos')" :active="request()->routeIs('alumnos')">
+                            <x-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
                                 {{ __('Alumnos') }}
                             </x-nav-link>
                             <x-nav-link :href="route('administrador')" :active="request()->routeIs('administrador')">
@@ -29,23 +29,26 @@
                             </x-nav-link>
                         @endif
 
-                        @if(auth()->user()->RolesUser->first()->role_id  == 3)
+                        @if(auth()->user()->role[0]->name  == 'student')
                             <!-- Menú para estudiante -->
-                            <x-nav-link :href="route('alumnos')" :active="request()->routeIs('alumnos')">
-                                {{ __('Tarea y Proyectos') }}
+                            <x-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
+                                {{ __('Tareas y Proyectos') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('alumnos')" :active="request()->routeIs('alumnos')">
-                                {{ __('Notas') }}
+                            <x-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
+                                {{ __('Calificaciones') }}
                             </x-nav-link>
                         @endif
 
-                        @if(auth()->user()->RolesUser->first()->role_id  == 2)
+                        @if(auth()->user()->role[0]->name  == 'teacher')
                             <!-- Menú para profesor -->
-                            <x-nav-link :href="route('alumnos')" :active="request()->routeIs('alumnos')">
-                                {{ __('Proyectos') }}
+                            <x-nav-link :href="route('teacher.works')" {{-- :active="request()->routeIs('teacher.works')"--}}>
+                                {{ __('Notas de Alumnos') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('alumnos')" :active="request()->routeIs('alumnos')">
-                                {{ __('Calificaciones') }}
+                            <x-nav-link :href="route('teacher.works')" :active="request()->routeIs('teacher.works')"> 
+                                {{ __('Tareas y Proyectos') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
+                                {{ __('Metodo de Calificacion') }}
                             </x-nav-link>
                         @endif
 
@@ -104,6 +107,41 @@
             <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">
                 {{ __('Home') }}
             </x-responsive-nav-link>
+            @if(auth()->user()->role[0]->name  == 'admin')
+                <!-- Menú para director -->
+                <x-responsive-nav-link :href="route('teacher.admin')" :active="request()->routeIs('teacher.admin')">
+                    {{ __('Profesores') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
+                    {{ __('Alumnos') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('administrador')" :active="request()->routeIs('administrador')">
+                    {{ __('Administradores') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if(auth()->user()->role[0]->name  == 'student')
+                <!-- Menú para estudiante -->
+                <x-responsive-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
+                    {{ __('Tareas y Proyectos') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
+                    {{ __('Calificaciones') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if(auth()->user()->role[0]->name  == 'teacher')
+                <!-- Menú para profesor -->
+                <x-responsive-nav-link :href="route('teacher.works')" :active="request()->routeIs('teacher.works')">
+                    {{ __('Notas de Alumnos') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('teacher.works')" :active="request()->routeIs('teacher.works')">
+                    {{ __('Asginar Tareas') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
+                    {{ __('Metodo de Calificacion') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

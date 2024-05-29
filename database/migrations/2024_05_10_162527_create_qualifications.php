@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('historia')->nullable();
             $table->integer('informatica')->nullable();
             $table->integer('arte')->nullable();
+            $table->integer('ciencia')->nullable();
             $table->integer('edu_fisica')->nullable();
             $table->integer('ingles')->nullable();
             $table->integer('lenguaje')->nullable();

@@ -22,11 +22,11 @@ class TeacherFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->email(),
-            'subjects' => $this->faker->randomElement(['matematicas', 'fisica', 'ciencia', 'historia', 'ingles', 'literatura', 'arte', 'computacion']),
+            'cellphone' => $this->faker->phoneNumber(),
+            'subject' => $this->faker->randomElement(['matematicas', 'fisica', 'ciencia', 'edu_fisica', 'historia', 'ingles', 'literatura', 'arte', 'computacion', 'quimica']),
             'salary' => $this->faker->randomElement([1200, 1100, 1400]),
             'started' => $this->faker->date(),
-            'password' => static::$password ??= Hash::make('password'),
-            'director' => 1
+            'password' => Hash::make('cronos'),
         ];
     }
 }

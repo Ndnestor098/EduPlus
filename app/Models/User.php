@@ -46,8 +46,8 @@ class User extends Authenticatable
     }
 
     //Relacion uno a muchos con la tabla RolesUser
-    public function RolesUser()
+    public function role()
     {
-        return $this->hasMany('App\Models\RolesUser');
+        return $this->belongsToMany(Role::class);
     }
 }

@@ -16,11 +16,11 @@ class RolesUser extends Model
 
     public function user()
     {
-        return $this->BelongsTo('App\Models\User');
+        return $this->BelongsTo(User::class);
     }
 
     public function role()
     {
-        return $this->BelongsTo('App\Models\Role');
+        return $this->BelongsTo(Role::class);
     }
 }

@@ -8,7 +8,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <!-- =======================================DESCRIPCION======================================= -->
-        <title>{{ $title }} - ACIZ</title>
+        <title>{{ $title }} - EduPlus</title>
         <meta name="description" content="Vendemos zapatos de tu preferencias para que estes comodo y contento con tus elecciones.">
         
         <meta name="product_id" content="102856451">
@@ -37,30 +37,22 @@
         <meta rel="canonical" href="{{request()->url()}}">
         <meta name="robots" content="NOODP,NOYDIR">
 
-        <link rel="stylesheet" href="/css/style.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://kit.fontawesome.com">
         <script src="https://kit.fontawesome.com/8f34396e62.js" crossorigin="anonymous"></script>
 
         <!-- =======================================FAVICON======================================= -->
-        <link rel="shortcut icon" href="/assets/img/favicon/favicon.ico" type="image/x-icon">
-        <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicon/apple-icon-57x57.png">
-        <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicon/apple-icon-60x60.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicon/apple-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/favicon/apple-icon-76x76.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/favicon/apple-icon-114x114.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/favicon/apple-icon-120x120.png">
-        <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/favicon/apple-icon-144x144.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/favicon/apple-icon-152x152.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-icon-180x180.png">
-        <link rel="icon" type="image/png" sizes="192x192"  href="/assets/img/favicon/android-icon-192x192.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon/favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon/favicon-16x16.png">
-        {{-- <link rel="manifest" href="/assets/img/favicon/manifest.json"> --}}
-        <meta name="msapplication-TileColor" content="#ffffff">
-        <meta name="msapplication-TileImage" content="/assets/img/favicon/ms-icon-144x144.png">
-        <meta name="theme-color" content="#ffffff">
+        <link rel="manifest" href="/assets/img/favicon/site.webmanifest">
+        <link rel="mask-icon" href="/assets/img/favicon/safari-pinned-tab.svg" color="#273746">
+        <link rel="shortcut icon" href="/assets/img/favicon/favicon.ico">
+        <meta name="apple-mobile-web-app-title" content="EduPlus">
+        <meta name="application-name" content="EduPlus">
+        <meta name="msapplication-TileColor" content="#ffc40d">
+        <meta name="msapplication-config" content="/assets/img/favicon/browserconfig.xml">
+        <meta name="theme-color" content="#eaf2f8">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

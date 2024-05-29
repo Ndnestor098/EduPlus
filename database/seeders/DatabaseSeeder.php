@@ -2,12 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\student;
-use App\Models\subject;
-use App\Models\Teacher;
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+
+use function Pest\Laravel\call;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,12 +14,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call(RoleSeeder::class);
 
-        // Teacher::factory(8)->create();
+        $this->call(UserSeeder::class);
 
-        // student::factory(125)->create();
+        $this->call(StudentSeeder::class);
 
-        // subject::factory(125)->create();
+        $this->call(TeacherSeeder::class);
+    
+        $this->call(WorkTypeSeeder::class);
     }
 }

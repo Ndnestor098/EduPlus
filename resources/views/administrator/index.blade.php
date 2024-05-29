@@ -18,11 +18,12 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 container mx-auto">
                     <div>
-                        <form action="" method="GET" class="flex justify-between mb-10"  enctype="application/x-www-form-urlencoded" novalidate autocomplete="off">
+                        <form action="" method="GET" class="flex flex-wrap md:flex-nowrap justify-between mb-10 items-center gap-5"  enctype="application/x-www-form-urlencoded" novalidate autocomplete="off">
                             @csrf
                             <div class="ml-5">
-                                <label for="orden">Ordenar por:</label>
                                 <select name="orden" id="orden">
+                                    <option value="" disabled selected>Ordenar por:</option>
+                                    
                                     <option value="name/ASC">Nombre | ASC</option>
                                     <option value="name/DESC">Nombre | DESC</option>
                                     <option value="email/ASC">Email | ASC</option>
@@ -35,7 +36,7 @@
                                     <option value="started/DESC">F. Inico | DESC</option>
                                 </select>
                             </div>
-                            <div>
+                            <div class="flex items-center justify-center w-full md:justify-end">
                                 <button class="button-search mr-5">Buscar</button>
                             </div>
                         </form>
