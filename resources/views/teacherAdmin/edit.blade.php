@@ -40,9 +40,8 @@
                             <div>
                                 <label for="subject">Asignatura</label>
                                 <select name="subject" id="subject">
-                                    @if ( $user->subjects )
-                                        <option value="{{$user->subjects}}">{{ucfirst($user->subjects)}}</option>                                                                                                                  
-                                    @endif
+                                    <option value="{{$user->subject}}" selected>Seleccionado: {{ucfirst($user->subject)}}</option>                                                                                                                  
+                                    
                                     <option value="literatera">Literatera</option>
                                     <option value="ingles">Ingles</option>
                                     <option value="historia">Historia</option>

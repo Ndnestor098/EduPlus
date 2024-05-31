@@ -20,4 +20,18 @@ class Percentages extends Model
     {
         return $this->belongsTo(WorkType::class, 'work_type_id');
     }
+
+    //Scope
+    public function scopeCourse($query, $course)
+    {
+        if($course)
+            return $query->where('course', $course);
+    }
+
+    public function scopeNone($query, $none)
+    {
+        if(!$none)
+            return $query->where('course', 1);
+    }
+
 }

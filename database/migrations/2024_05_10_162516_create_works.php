@@ -20,9 +20,9 @@ return new class extends Migration
             $table->decimal('scored');
             $table->string('mtcf');
             $table->integer('course');
-            $table->string('pdf')->nullable();
-            $table->string('img')->nullable();
-
+            $table->string('file')->nullable();
+            $table->string('image')->nullable();
+            $table->boolean('public')->default(0);
             $table->string('subject', 50);
             $table->string('deliver');
 

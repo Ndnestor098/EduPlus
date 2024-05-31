@@ -92,8 +92,6 @@ class WorkServices
             ->with('workType')
             ->first();
 
-        return $scored;
-
         $teacher = Teacher::where('email', auth()->user()->email)->first();
 
         Work::create([
@@ -103,17 +101,44 @@ class WorkServices
             'scored' => floatval($scored->percentage),
             'mtcf' => $scored->workType->name,
             'course' => intval($request->course),
-            'pdf' => $file,
-            'img' => $image,
+            'file' => $file,
+            'image' => $image,
             'subject' => $teacher->subject,
             'deliver' => $request->deliver,
             'teacher_id' => intval($teacher->id),
+            'public' => $request->public
         ]);
-
     }
 
-    public function updateWork(Request $request)
+    public function updateWork(Request $request, $file = null, $image = null)
     {
+        $scored = Percentages::whereHas('workType', function ($query) use ($request) {
+            $query->where('name', $request->qualification);
+        })
+        ->with('workType')
+        ->first();
 
+        $work = Work::find($request->id);
+
+        $updates = [
+            'title' => $request->title,
+            'slug' => $request->title,
+            'description' => $request->description,
+            'scored' => floatval($scored->percentage),
+            'mtcf' => $scored->workType->name,
+            'course' => intval($request->course),
+            'deliver' => $request->deliver,
+            'public' => $request->public
+        ];
+
+        if($image){
+            $updates['image'] = $image;
+        }
+
+        if($file){
+            $updates['file'] = $file;
+        }
+
+        $work->update($updates);
     }
 }

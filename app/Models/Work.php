@@ -9,17 +9,7 @@ class Work extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'title',
-        'description',
-        'scored',
-        'course',
-        'pdf',
-        'img',
-        'subject',
-        'deliver',
-        'teacher_id'
-    ];
+    protected $guarded = [];
 
     public function teacher()
     {
@@ -27,8 +17,21 @@ class Work extends Model
     }
 
     //Mutadores
-    public function setSlugAttribute($slug)
+    public function setSlugAttribute($value)
     {
-        $this->attributes['slug'] = str_replace(' ', '-', $slug);
+        $this->attributes['slug'] = str_replace(' ', '-', $value);
+    }
+
+    //Scope
+    public function scopeCourse($query, $course)
+    {
+        if($course)
+            return $query->where('course', $course);
+    }
+
+    public function scopeNone($query, $none)
+    {
+        if(!$none)
+            return $query->where('course', 1);
     }
 }

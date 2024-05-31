@@ -20,13 +20,16 @@ class TeachersController extends Controller
 
 
     //========================================Tareas========================================
-    public function showWorks()
+    public function showWorks(Request $request)
     {
         $course = student::select('course')->distinct()->orderBy('course')->get();
 
         $teacher = Teacher::where('email', auth()->user()->email)->first();
 
-        $work = Work::where('teacher_id', $teacher->id)->get();
+        $work = Work::where('teacher_id', $teacher->id)
+            ->none($request->all())
+            ->course($request->get('course'))
+            ->get();
 
         return view('teacher.work.works', ['course' => $course, 'work' => $work]);
     }
@@ -51,7 +54,8 @@ class TeachersController extends Controller
             'description' => 'required',
             'course' => 'required',
             'qualification' => 'required',
-            'deliver' => 'required'
+            'deliver' => 'required',
+            'public' => 'required'
         ]);
 
         //Ver si las validaciones se cumplen
@@ -90,19 +94,72 @@ class TeachersController extends Controller
         return view('teacher.work.edit-work', ['work' => $work, 'course' => $course]);
     }
 
+    public function updateWork(Request $request, WorkServices $requestWork)
+    {
+        $validator = Validator::make($request->all(),[
+            'title' => 'required',
+            'description' => 'required',
+            'course' => 'required',
+            'qualification' => 'required',
+            'deliver' => 'required',
+            'public' => 'required'
+        ]);
+
+        //Ver si las validaciones se cumplen
+        if ($validator->fails()) {
+            return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
+        }
+
+        $file = null;
+        $image = null;
+        
+        if($request->hasFile('file'))
+        {
+            $file = $requestWork->addFileWork($request);
+
+            if(!$file) return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
+        }
+
+        if($request->hasFile('image'))
+        {
+            $image = $requestWork->addImageWork($request);
+
+            if(!$image) return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
+        }
+
+        $requestWork->updateWork($request, $file, $image);
+
+        return redirect()->route('teacher.works');
+    }
+
+    public function deleteWork(Request $request)
+    {
+        $work = Work::find($request->id);
+
+        if (isset($work->pdf)) {
+            Storage::disk('public')->delete($work->pdf);
+        }
+    
+        if (isset($work->img)) {
+            Storage::disk('public')->delete($work->img);
+        }
+
+        $work->delete();
+
+        return redirect()->route('teacher.works');
+    }
     //========================================Metodo de Calificacions========================================
     public function showQualification(Request $request)
     {
         $teacher = Teacher::where('email', auth()->user()->email)->first();
         $course = student::select('course')->distinct()->orderBy('course')->get();
 
-        if($request->course){
-            $percentages = Percentages::with('workType')->where('teacher_id', $teacher->id)->where('course', $request->course)->get();
+        $percentages = Percentages::with('workType')
+            ->where('teacher_id', $teacher->id)
+            ->course($request->get("course"))
+            ->none($request->all())
+            ->get();
 
-        }else{
-            $percentages = Percentages::with('workType')->where('teacher_id', $teacher->id)->where('course', 1)->get();
-
-        }
 
         $valor = 0;
         foreach ($percentages as $key) {

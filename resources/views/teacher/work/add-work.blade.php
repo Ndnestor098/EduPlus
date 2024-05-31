@@ -60,9 +60,20 @@
                                     <option value="" disabled selected>Selecciona el metodo calificativo:</option>
                                 </select>
                             </div>
+                            <div class="flex gap-5" style="flex-direction: row"> 
+                                <label for="">Publicar: </label>
+                                <div class="flex items-center" style="flex-direction: row">
+                                    <span class="w-7">No</span>
+                                    <input class="p-2 rounded" type="radio" name="public" required id="public" value="0">
+                                </div>
+                                <div class="flex items-center" style="flex-direction: row">
+                                    <span class="w-5">Si</span>
+                                    <input class="p-2 rounded" type="radio" name="public" required id="public" value="1">
+                                </div>
+                            </div>
                             <div>
                                 <label for="deliver">Fecha de Entrega</label>
-                                <input type="date" name="deliver" id="deliver" required autofocus>
+                                <input type="date" name="deliver" id="deliver" min="{{ date('Y-m-d') }}" required autofocus>
                             </div>
                             
                             <p class="error text-center font-semibold" style="color: rgb(161, 44, 44)">

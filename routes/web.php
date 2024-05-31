@@ -70,8 +70,10 @@ Route::middleware(['auth', 'verified', TeacherMiddleware::class])->controller(Te
 
     //Update - Qualification
     Route::get("/teacher/work/edit", 'showEditWork')->name('teacher.work.edit');
+    Route::put("/teacher/work/edit", 'updateWork');
 
     //Delete - Qualification
+    Route::delete("/teacher/work/edit", 'deleteWork');
 
     //===========================Metodo de Calificacion===========================
     Route::get("/teacher/qualification", 'showQualification')->name('teacher.qualification');
