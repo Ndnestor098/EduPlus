@@ -10,6 +10,7 @@ class Percentages extends Model
     use HasFactory;
 
     protected $table = 'percentages';
+    protected $guarded = [];
 
     public function teacher()
     {

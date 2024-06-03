@@ -17,10 +17,20 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 container mx-auto">
-                    <div class="flex gap-5 mb-8">
-                        <a href="{{route("teacher.works")}}"><img src="/assets/img/back.png" alt="back" style="height: 25px"></a><span class="text-lg font-semibold">Crea una nueva tarea</span>
+                    <div class="flex @if (isset($work->students[0])) {{'justify-center'}} @endif items-center mb-8">
+                        <div class="flex gap-5">
+                            <a href="{{route("teacher.works")}}">
+                                <img src="/assets/img/back.png" alt="back" style="height: 25px">
+                            </a>
+                            <span class="text-lg font-semibold" style="width: 245px">Actualiza o corrige la tarea</span>
+                        </div>
+                        @if (isset($work->students[0]))
+                            <div class="flex w-full justify-end items-center">
+                                <a class=" bg-marron p-1 text-[#f8fafc] font-bold rounded-md" style="box-shadow: 0px 13px 15px -13px rgba(153,153,153,1);" href="{{route("teacher.works.students", ['nameWork'=>$work->slug])}}">Corregir las tareas de los alumnos</a>
+                            </div>
+                        @endif
                     </div>
-
+                    
                     <div class="flex items-center justify-center flex-col">
                         <form action="" method="POST" class="form" enctype="multipart/form-data" novalidate autocomplete="on">
                             @csrf

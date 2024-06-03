@@ -8,9 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Student extends Model
 {
     use HasFactory;
+    
     public function qualification()
     {
         return $this->hasOne('App\Models\Qualification');
+    }
+
+    public function works()
+    {
+        return $this->hasMany(WorkStudent::class);
     }
 
     //Scope de busquedas Query

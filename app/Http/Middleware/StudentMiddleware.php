@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class TeacherMiddleware
+class StudentMiddleware
 {
     /**
      * Handle an incoming request.
@@ -15,9 +15,8 @@ class TeacherMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(auth()->user()->role[0]->name == 'teacher'){
+        if(auth()->user()->role[0]->name == 'student')
             return $next($request);
-        }
 
         return redirect()->route('home');
     }

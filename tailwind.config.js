@@ -20,6 +20,11 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            boxShadow: {
+                'gray': [
+                    'box-shadow: 0px 13px 15px -13px rgba(153,153,153,1)'
+                ]
+            }
         },
         screens: {
             'sm': '640px',
@@ -36,7 +41,7 @@ export default {
       
             '2xl': '1536px',
             // => @media (min-width: 1536px) { ... }
-          }
+        }
     },
 
     plugins: [forms],

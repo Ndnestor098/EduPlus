@@ -23,6 +23,7 @@ class StudentSeeder extends Seeder
                 'name' => $student->name,
                 'email' => $student->email,
                 'password' => bcrypt('cronos'),
+                'timezone' => 'Europe/Rome'
             ])->role()->sync(3);
         }
     }

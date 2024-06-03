@@ -7,6 +7,7 @@ use App\Models\Qualification;
 use App\Models\student;
 use App\Models\Teacher;
 use App\Models\Work;
+use App\Models\WorkStudent;
 use App\Models\WorkType;
 use App\Services\TeacherServices;
 use App\Services\WorkServices;
@@ -136,12 +137,14 @@ class TeachersController extends Controller
     {
         $work = Work::find($request->id);
 
-        if (isset($work->pdf)) {
-            Storage::disk('public')->delete($work->pdf);
+        if (isset($work->file)) {
+            $relativePath = str_replace('/storage/', '', $work->pdf);
+            Storage::delete($relativePath);
         }
     
-        if (isset($work->img)) {
-            Storage::disk('public')->delete($work->img);
+        if (isset($work->image)) {
+            $relativePath = str_replace('/storage/', '', $work->img);
+            Storage::delete($relativePath);
         }
 
         $work->delete();
@@ -251,5 +254,70 @@ class TeachersController extends Controller
         Percentages::find($request->search)->delete();
 
         return redirect()->route('teacher.qualification');
+    }
+
+
+    //========================================Corregir las Tareas========================================
+    public function showWorksStudents(Request $request, $nameWork)
+    {
+        $teacher = Teacher::where('email', auth()->user()->email)->first();
+
+        $studentWorks = Work::with(['students' => 
+            function ($query) use ($request) {
+                if (isset($request->name)) {
+                    $query->where('name', 'like', "%$request->name%");
+                }
+            }])
+            ->where('slug', $nameWork)
+            ->where('teacher_id', $teacher->id)
+            ->first();
+
+        return view('teacher.worksStudents.index', ['studentWorks'=>$studentWorks]); 
+    }
+
+    public function showCorrectWorkStudent(Request $request, $nameStudent)
+    {
+        $teacher = Teacher::where('email', auth()->user()->email)->first();
+
+        $studentWork = WorkStudent::with(['work'=>
+            function($query) use ($teacher){
+                $query->where('teacher_id', $teacher->id);
+            }])
+            ->where('slug', $nameStudent)
+            ->first();
+
+        return view('teacher.worksStudents.correct', ['student'=>$studentWork]); 
+    }
+
+    public function correctWork(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'note' => 'required|numeric|between:0,10',
+        ]);
+
+        //Ver si las validaciones se cumplen
+        if ($validator->fails()) {
+            return redirect()->back()->with('errors', 'Error en la calificacion.');
+        }
+
+        $work = WorkStudent::find($request->workStudent_id);
+        $work->qualification = $request->note;
+        $work->save();
+
+        return redirect()->route("teacher.works.students", ['nameWork'=>$request->slug]);
+    }
+
+    public function deleteWorks(Request $request)
+    {
+        $work = WorkStudent::find($request->workStudent_id);
+
+        foreach(json_decode($work->image, true) as $item){
+            $relativePath = str_replace('/storage/', '', $item);
+            Storage::delete($relativePath);
+        }
+
+        $work->delete();
+
+        return redirect()->route("teacher.works.students", ['nameWork'=>$request->slug]);
     }
 }

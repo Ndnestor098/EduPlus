@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,6 +15,11 @@ class Work extends Model
     public function teacher()
     {
         return $this->belongsTo('App\Models\Teacher');
+    }
+
+    public function students()
+    {
+        return $this->hasMany(WorkStudent::class);
     }
 
     //Mutadores
@@ -33,5 +39,21 @@ class Work extends Model
     {
         if(!$none)
             return $query->where('course', 1);
+    }
+
+    public function scopeToday($query)
+    {
+        return $query->where('deliver', '>', Carbon::today());
+    }
+
+    public function scopeSubject($query, $subject)
+    {
+        if($subject)
+            return $query->where('subject', $subject);
+    }
+
+    public function scopePublic($query)
+    {
+        return $query->where('public', true);
     }
 }

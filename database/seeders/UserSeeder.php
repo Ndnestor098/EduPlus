@@ -16,7 +16,8 @@ class UserSeeder extends Seeder
         $user = User::create([
             'name' => 'Nestor Daniel',
             'email' => 'trabajo.nestor.098@gmail.com',
-            'password' => bcrypt('cronos098'),
+            'password' => bcrypt('cronos'),
+            'timezone' => 'Europe/Rome'
         ]);
 
         $user->role()->sync(1);

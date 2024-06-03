@@ -29,21 +29,11 @@
                             </x-nav-link>
                         @endif
 
-                        @if(auth()->user()->role[0]->name  == 'student')
-                            <!-- Menú para estudiante -->
-                            <x-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
-                                {{ __('Tareas y Proyectos') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
-                                {{ __('Calificaciones') }}
-                            </x-nav-link>
-                        @endif
-
                         @if(auth()->user()->role[0]->name  == 'teacher')
                             <!-- Menú para profesor -->
-                            <x-nav-link :href="route('teacher.works')" {{-- :active="request()->routeIs('teacher.works')"--}}>
-                                {{ __('Notas de Alumnos') }}
-                            </x-nav-link>
+                            {{-- <x-nav-link :href="route('teacher.works.students')" :active="request()->routeIs('teacher.works.students')">
+                                {{ __('Corregir Actividades') }}
+                            </x-nav-link> --}}
                             <x-nav-link :href="route('teacher.works')" :active="request()->routeIs('teacher.works')"> 
                                 {{ __('Tareas y Proyectos') }}
                             </x-nav-link>
@@ -52,6 +42,15 @@
                             </x-nav-link>
                         @endif
 
+                        @if(auth()->user()->role[0]->name  == 'student')
+                            <!-- Menú para estudiante -->
+                            <x-nav-link :href="route('student.works')" :active="request()->routeIs('student.works')">
+                                {{ __('Tareas y Proyectos') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
+                                {{ __('Calificaciones') }}
+                            </x-nav-link>
+                        @endif
                 </div>
             </div>
 
@@ -120,26 +119,26 @@
                 </x-responsive-nav-link>
             @endif
 
-            @if(auth()->user()->role[0]->name  == 'student')
-                <!-- Menú para estudiante -->
-                <x-responsive-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
-                    {{ __('Tareas y Proyectos') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
-                    {{ __('Calificaciones') }}
-                </x-responsive-nav-link>
-            @endif
-
             @if(auth()->user()->role[0]->name  == 'teacher')
                 <!-- Menú para profesor -->
-                <x-responsive-nav-link :href="route('teacher.works')" :active="request()->routeIs('teacher.works')">
-                    {{ __('Notas de Alumnos') }}
-                </x-responsive-nav-link>
+                {{-- <x-responsive-nav-link :href="route('teacher.works.students')" :active="request()->routeIs('teacher.works.students')">
+                    {{ __('Corregir Actividades') }}
+                </x-responsive-nav-link> --}}
                 <x-responsive-nav-link :href="route('teacher.works')" :active="request()->routeIs('teacher.works')">
                     {{ __('Asginar Tareas') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
                     {{ __('Metodo de Calificacion') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if(auth()->user()->role[0]->name  == 'student')
+                <!-- Menú para estudiante -->
+                <x-responsive-nav-link :href="route('student.works')" :active="request()->routeIs('student.works')">
+                    {{ __('Tareas y Proyectos') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
+                    {{ __('Calificaciones') }}
                 </x-responsive-nav-link>
             @endif
         </div>
@@ -152,10 +151,11 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
+                @if(auth()->user()->role[0]->name  == 'admin')
+                    <x-responsive-nav-link :href="route('profile.edit')">
+                        {{ __('Profile') }}
+                    </x-responsive-nav-link>
+                @endif
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

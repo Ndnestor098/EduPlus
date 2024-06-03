@@ -38,23 +38,35 @@
                             <th>Titulo</th>
                             <th>Descripcion</th>
                             <th>Documento</th>
-                            <th>Imagenes</th>
-                            <th>Materia</th>
                             <th>Año C.</th>
                             <th>Publicado</th>
                             <th>F. Entrega</th>
+                            @if (isset($work[0]->students[0]))
+                                <th>P. Corregir</th>
+                            @endif
                         </tr>
                         @foreach($work as $item)
                             <tr>
                                 <td><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ $item->title }}</a></td>
                                 <td><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ Str::limit($item->description, 20) }}</a></td>
-                                <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">@if($item->file){{'Exist'}}@else{{'No exist'}}@endif</a></td>
-                                <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">@if($item->image){{'Exist'}}@else{{'No exist'}}@endif</a></td>
                                 <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ ucfirst($item->subject) }}</a></td>
                                 <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ $item->course }}</a></td>
                                 <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">@if($item->public){{'Publicado'}}@else{{'No publicado'}}@endif</a></td>
                                 <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ $item->deliver }}</a></td>
-                                
+
+                                @if(isset($work[0]->students[0]))
+                                    <td>
+                                        <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">
+                                            <img class="m-auto" src="/assets/img/portapapeles.png" alt="Tareas a revisar: Pendiente" width="30px">
+                                        </a>
+                                    </td>
+                                @else
+                                    <td>
+                                        <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">
+                                            <img class="m-auto" src="/assets/img/evaluacion.png" alt="Tareas a revisadas: OK" width="30px">
+                                        </a>
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                     </table>

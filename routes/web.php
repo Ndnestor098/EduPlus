@@ -5,8 +5,10 @@ use App\Http\Controllers\StudentAdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TeacherAdminController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeachersController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\StudentMiddleware;
 use App\Http\Middleware\TeacherMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -88,12 +90,23 @@ Route::middleware(['auth', 'verified', TeacherMiddleware::class])->controller(Te
     //Delete - Qualification
     Route::delete("/teacher/qualification/edit", 'deleteQualification');
 
+    //===========================Corregir Actividades===========================
+    Route::get("/teacher/works/students/{nameWork}", "showWorksStudents")->name('teacher.works.students');
+    Route::get("/teacher/correct/student/{nameStudent}", "showCorrectWorkStudent")->name('teacher.correct');
 
+    //Correct - Work
+    Route::post("/teacher/correct/", "correctWork")->name('correct.work');
 
+    //Delete - Work
+    Route::delete("/teacher/correct/", "deleteWorks")->name('delete.work');
+    
+});
 
-    // Route::post("/teacher/edit", 'update');
-    // Route::delete("/teacher/edit", 'destroy');
+Route::middleware(['auth', 'verified', StudentMiddleware::class])->controller(StudentController::class)->group(function(){
+    Route::get('/student/works', 'showWorks')->name('student.works');
+    Route::get('/student/work/{name}', 'readWork')->name('student.work.show');
 
+    Route::post('/student/up/work', 'upWork')->name('upWork');
 });
 
 Route::middleware('auth')->group(function () {
