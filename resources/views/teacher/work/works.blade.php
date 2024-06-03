@@ -41,9 +41,13 @@
                             <th>Año C.</th>
                             <th>Publicado</th>
                             <th>F. Entrega</th>
-                            @if (isset($work[0]->students[0]))
+
+                            @if ($bool)
                                 <th>P. Corregir</th>
+                            @else
+                                <th>T. Corregido</th>
                             @endif
+
                         </tr>
                         @foreach($work as $item)
                             <tr>
@@ -54,19 +58,44 @@
                                 <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">@if($item->public){{'Publicado'}}@else{{'No publicado'}}@endif</a></td>
                                 <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ $item->deliver }}</a></td>
 
-                                @if(isset($work[0]->students[0]))
+                                @if ($item->students->isEmpty())
                                     <td>
                                         <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">
-                                            <img class="m-auto" src="/assets/img/portapapeles.png" alt="Tareas a revisar: Pendiente" width="30px">
+                                            <img class="m-auto" src="/assets/img/evaluacion.png" alt="Tareas a revisar: Pendiente" width="30px">
                                         </a>
                                     </td>
                                 @else
-                                    <td>
-                                        <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">
-                                            <img class="m-auto" src="/assets/img/evaluacion.png" alt="Tareas a revisadas: OK" width="30px">
-                                        </a>
-                                    </td>
+                                    @foreach ($item->students as $value)
+                                        @if(!$value->qualification)
+                                            <td>
+                                                <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">
+                                                    <img class="m-auto" src="/assets/img/portapapeles.png" alt="Tareas a revisar: Pendiente" width="30px">
+                                                </a>
+                                            </td>
+                                            @php
+                                                $boocle = false;
+                                            @endphp
+                                            @break
+
+                                        @else
+                                            @php    
+                                                $boocle = true;
+                                            @endphp
+
+                                        @endif
+
+                                    @endforeach
+
+                                    @if ($boocle)
+                                        <td>
+                                            <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">
+                                                <img class="m-auto" src="/assets/img/evaluacion.png" alt="Tareas a revisar: Pendiente" width="30px">
+                                            </a>
+                                        </td>
+                                    @endif
                                 @endif
+                                
+                                
                             </tr>
                         @endforeach
                     </table>

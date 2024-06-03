@@ -33,15 +33,28 @@ class TeachersController extends Controller
             ->none($request->all())
             ->course($request->get('course'))
             ->get();
+        
+        $bool = false;
+
+        foreach ($work as $value) {
+            foreach ($value->students as $item) {
+                if(!$item->qualification){
+                    $bool = true;
+                }
+            }
+        }
 
         // Retornar la vista con las tareas y cursos
-        return view('teacher.work.works', ['course' => $course, 'work' => $work]);
+        return view('teacher.work.works', ['course' => $course, 'work' => $work, 'bool' => $bool]);
     }
 
     // Mostrar formulario para agregar una nueva tarea
     public function showAddWork()
     {
+        //Buscar los valores del teacher para el filtrado
         $info = Teacher::where('email', auth()->user()->email)->first()->subject;
+
+        //filtrado para la lista de cursos o años
         $course = student::select('course')->orderBy('course')->distinct()->get();
 
         return view('teacher.work.add-work', ['info' => $info, 'course' => $course]);
@@ -50,7 +63,15 @@ class TeachersController extends Controller
     // Obtener el orden de calificaciones según la materia y curso
     public function orderQualification(Request $request)
     {
-        return Percentages::with('workType')->where('subject', $request->subject)->where('course', $request->course)->get();
+        //Buscar los valores del teacher para el filtrado
+        $info = Teacher::where('email', auth()->user()->email)->first();
+
+        //Filtrado de informacion de metodo calificativo
+        return Percentages::with('workType')
+            ->where('subject', 'historia')
+            ->where('teacher_id', $info->id)
+            ->where('course', 1)
+            ->get();
     }
 
     // Agregar una nueva tarea
