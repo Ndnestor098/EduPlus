@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 
 class WorkServices
 {
+    // Método para agregar un archivo de trabajo
     public function addFileWork(Request $request)
     {
         try {
@@ -40,60 +41,63 @@ class WorkServices
                     return false;
                 }
             }
-
         } catch (ValidationException $e) {
             // Capturar los errores de validación y devolverlos en la respuesta
             return false;
         }
     }
 
+    // Método para agregar una imagen de trabajo
     public function addImageWork(Request $request)
     {
         try {
-            // Validar el archivo en la solicitud
+            // Validar la imagen en la solicitud
             $request->validate([
-                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096', // Tamaño máximo ajustado a 20MB
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096', // Tamaño máximo ajustado a 4MB
             ]);
 
-            // Verificar si el archivo está presente en la solicitud
+            // Verificar si la imagen está presente en la solicitud
             if ($request->hasFile('image')) {
-                // Obtener el archivo del request
+                // Obtener la imagen del request
                 $image = $request->file('image');
 
-                // Verificar si el archivo es válido
+                // Verificar si la imagen es válida
                 if ($image->isValid()) {
-                    // Generar un nombre aleatorio para el archivo
+                    // Generar un nombre aleatorio para la imagen
                     $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
 
-                    // Mover el archivo a la carpeta de almacenamiento con el nuevo nombre
-                    $storedImage = $image->storeAs('public/image', $imageName);
+                    // Mover la imagen a la carpeta de almacenamiento con el nuevo nombre
+                    $storedImage = $image->storeAs('public/images', $imageName);
 
-                    // Obtener la URL del archivo almacenado
+                    // Obtener la URL de la imagen almacenada
                     $url = Storage::url($storedImage);
 
-                    // Devolver la URL del archivo almacenado
+                    // Devolver la URL de la imagen almacenada
                     return $url;
                 } else {
                     return false;
                 }
             }
-
         } catch (ValidationException $e) {
             // Capturar los errores de validación y devolverlos en la respuesta
             return false;
         }
     }
 
+    // Método para agregar un trabajo
     public function addWork(Request $request, $file = null, $image = null)
     {
+        // Obtener el porcentaje de puntuación del tipo de trabajo
         $scored = Percentages::whereHas('workType', function ($query) use ($request) {
                 $query->where('name', $request->qualification);
             })
             ->with('workType')
             ->first();
 
+        // Obtener el profesor actualmente autenticado
         $teacher = Teacher::where('email', auth()->user()->email)->first();
 
+        // Crear un nuevo trabajo
         Work::create([
             'title' => $request->title,
             'slug' => $request->title,
@@ -110,16 +114,20 @@ class WorkServices
         ]);
     }
 
+    // Método para actualizar un trabajo
     public function updateWork(Request $request, $file = null, $image = null)
     {
+        // Obtener el porcentaje de puntuación del tipo de trabajo
         $scored = Percentages::whereHas('workType', function ($query) use ($request) {
             $query->where('name', $request->qualification);
         })
         ->with('workType')
         ->first();
 
+        // Encontrar el trabajo por su ID
         $work = Work::find($request->id);
 
+        // Definir los campos de actualización
         $updates = [
             'title' => $request->title,
             'slug' => $request->title,
@@ -131,14 +139,17 @@ class WorkServices
             'public' => $request->public
         ];
 
+        // Si se proporciona una nueva imagen, actualizarla
         if($image){
             $updates['image'] = $image;
         }
 
+        // Si se proporciona un nuevo archivo, actualizarlo
         if($file){
             $updates['file'] = $file;
         }
 
+        // Actualizar el trabajo con los cambios
         $work->update($updates);
     }
 }

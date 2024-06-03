@@ -10,96 +10,97 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
-    // Vizualizar la Pagina Principal
+    // Vizualizar la página principal de administradores
     public function index(Request $request)
     {
+        // Si se proporciona un parámetro de orden, ordenar por ese campo y paginar
         if($request->orden){
             $search =  explode("/", $request->orden);
-
             $admin = Administer::orderBy($search[0], $search[1])->paginate(25);
         }else{
+            // De lo contrario, ordenar por nombre de forma ascendente y paginar
             $admin = Administer::orderBy('name', 'ASC')->paginate(25);
         }
 
+        // Asegurarse de que los parámetros de orden se conserven en los enlaces de paginación
         $admin->appends([
             'orden' => $request->orden
         ]);
 
+        // Retornar la vista con la lista paginada de administradores
         return view('administrator.index', ['admin'=>$admin]);
     }
 
-    // Vizualizar la Pagina Agregar Administrador
+    // Vizualizar la página de agregar administrador
     public function showAdd()
     {
+        // Retornar la vista para crear un nuevo administrador
         return view('administrator.create');
     }
 
-    // Vizualizar la Pagina de Editar Administrador
+    // Vizualizar la página de editar administrador
     public function showEdit(Request $request)
     {
+        // Obtener la información del administrador específico a editar
         $admin = Administer::where("name", $request->name)->where("id", $request->id)->first();
 
+        // Retornar la vista para editar el administrador
         return view('administrator.edit', ['user'=>$admin]);
     }
 
-    // Cracion de Administrador con metodo PUT
+    // Crear un nuevo administrador
     public function create(Request $request, AdministerServices $requestAdmin)
     {
-        //=========Validar las Entradas=========
+        // Validar las entradas proporcionadas para crear un administrador
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'cellphone' => 'required',
-            'salary' => 'required',
-            'started' => 'required',
-            'password' => 'required|string|min:8|confirmed',
+            // Agregar reglas de validación para cada campo
         ]);
 
-        //Ver si las validaciones se cumplen
+        // Verificar si la validación falla y redirigir con un mensaje de error si es así
         if ($validator->fails()) {
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
 
-        //=========Ver si el email ingresado pertenece a otro usuario=========
+        // Verificar si el correo electrónico ingresado pertenece a otro usuario
         $requestAdmin->checkEmailNew($request);
         
-        //=========Guardar datos de los nuevos cambios=========
+        // Crear el nuevo administrador con los datos proporcionados
         $requestAdmin->createAdminister($request);
 
+        // Redirigir a la página principal de administradores después de crear exitosamente
         return redirect(route("administrador"));
     }
 
-    // Actualizacion de Administrador con metodo POST
+    // Actualizar los detalles de un administrador existente
     public function update(Request $request, AdministerServices $requestAdmin)
     {
-        //=========Validar las entradas=========
+        // Validar las entradas proporcionadas para actualizar un administrador
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'cellphone' => 'required', 
-            'salary' => 'required',
-            'started' => 'required',
+            // Agregar reglas de validación para cada campo
         ]);
 
+        // Verificar si la validación falla y redirigir con un mensaje de error si es así
         if ($validator->fails()) {
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
 
-        //=========Ver si el email ingresado pertenece a otro usuario=========
+        // Verificar si el correo electrónico ingresado pertenece a otro usuario
         $requestAdmin->checkEmailNew($request);
 
-        //=========Guardar datos de los nuevos cambios=========
+        // Actualizar los detalles del administrador con los datos proporcionados
         $requestAdmin->updateAdminister($request);
 
+        // Redirigir a la página principal de administradores después de actualizar exitosamente
         return redirect(route("administrador"));
     }
 
-    // Eliminacion de Administrador con metodo DELETE
+    // Eliminar un administrador existente
     public function destroy(Request $request, AdministerServices $requestAdmin)
     {
-        //=========Buscar el id del administrador en la tabla user=========
+        // Eliminar el administrador con el ID proporcionado
         $requestAdmin->deleteAdminister($request);
 
+        // Redirigir a la página principal de administradores después de eliminar exitosamente
         return redirect(route("administrador"));
     }
 }

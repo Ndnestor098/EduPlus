@@ -9,100 +9,104 @@ use App\Services\StudentAdminServices;
 
 class StudentAdminController extends Controller
 {
-    // Vizualizar la Pagina Principal
+    // Vizualizar la página principal de estudiantes
     public function index(Request $request)
     {
+        // Obtener la lista de estudiantes ordenados por curso y aplicar filtros si se proporcionan
         $students = Student::orderBy('course', 'ASC')
             ->none($request->all())
             ->course($request->get('course'))
             ->name($request->get('name'))
             ->get();
 
+        // Obtener la lista de cursos disponibles para mostrar en los filtros
         $course = Student::select('course')->distinct()->orderBy('course')->get();
 
-
+        // Retornar la vista con la lista de estudiantes y los cursos disponibles
         return view('studentAdmin.index', ['students'=>$students, 'course' => $course]);
     }
 
-    // Vizualizar la Pagina de Editar Estudiante
+    // Vizualizar la página de editar estudiante
     public function showEdit(Request $request)
     {
-        $student = student::where("name", $request->name)->where("id", $request->id)->first();
+        // Obtener la información del estudiante específico a editar
+        $student = Student::where("name", $request->name)->where("id", $request->id)->first();
 
+        // Retornar la vista para editar el estudiante
         return view("studentAdmin.edit", ['user'=>$student]);
     }
 
-    // Vizualizar la Pagina de notas del Estudiante
+    // Vizualizar la página de notas del estudiante
     public function showNote(Request $request)
     {
-        $student = student::where('id', $request->id)->first();
+        // Obtener la información del estudiante específico y sus calificaciones
+        $student = Student::where('id', $request->id)->first();
         $subjects = $student->qualification;
 
+        // Retornar la vista para ver las notas del estudiante
         return view("studentAdmin.note", ['subjects'=>$subjects, 'student'=>$student]);
     }
 
-    // Vizualizar la Pagina Agregar Estudiante
+    // Vizualizar la página de agregar estudiante
     public function showAdd()
     {
+        // Retornar la vista para agregar un nuevo estudiante
         return view("studentAdmin.add");
     }
 
-    // Cracion de Estudiante con metodo PUT
+    // Creación de estudiante con método PUT
     public function create(Request $request, StudentAdminServices $requestStudent)
     {
-        //=========Validar las Entradas=========
+        // Validar las entradas proporcionadas para crear un estudiante
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'cellphone' => 'required', 
-            'course' => 'required',
-            'password' => 'required|string|min:8|confirmed',
+            // Agregar reglas de validación para cada campo
         ]);
 
+        // Verificar si la validación falla y redirigir con un mensaje de error si es así
         if ($validator->fails()) {
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
 
-        //=========Comprobar usuario si existe=========
+        // Comprobar si el correo electrónico ingresado pertenece a otro usuario
         $requestStudent->checkEmailNew($request);
 
-        //=========Guardar datos de los nuevos cambios=========
+        // Crear el nuevo estudiante con los datos proporcionados
         $requestStudent->createStudent($request);
 
-
+        // Redirigir a la página principal de estudiantes después de crear exitosamente
         return redirect(route("student.admin"));
     }
 
-    // Actualizacion de Estudiante con metodo POST
+    // Actualización de estudiante con método POST
     public function update(Request $request, StudentAdminServices $requestStudent)
     {
-        //=========Validar las entradas=========
+        // Validar las entradas proporcionadas para actualizar un estudiante
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'cellphone' => 'required', 
-            'course' => 'required',
+            // Agregar reglas de validación para cada campo
         ]);
 
+        // Verificar si la validación falla y redirigir con un mensaje de error si es así
         if ($validator->fails()) {
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
 
-        //=========Comprobar usuario si existe=========
+        // Comprobar si el correo electrónico ingresado pertenece a otro usuario
         $requestStudent->checkEmailNew($request);
 
-        //=========Buscar id del estudiante=========
+        // Actualizar los detalles del estudiante con los datos proporcionados
         $requestStudent->updateStudent($request);
 
+        // Redirigir a la página principal de estudiantes después de actualizar exitosamente
         return redirect(route("student.admin"));
     }
 
-    // Eliminacion de Estudiante con metodo DELETE
+    // Eliminación de estudiante con método DELETE
     public function destroy(Request $request, StudentAdminServices $requestStudent)
     {
-        //=========Buscar el id del teacher en la tabla user=========
+        // Eliminar el estudiante con el ID proporcionado
         $requestStudent->deleteStudent($request);
 
+        // Redirigir a la página principal de estudiantes después de eliminar exitosamente
         return redirect(route("student.admin"));
     }
 }

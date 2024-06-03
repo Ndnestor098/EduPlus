@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Student;
 use App\Models\Teacher;
 use App\Services\TeacherAdminServices;
 use Illuminate\Support\Facades\Validator;
@@ -10,42 +9,48 @@ use Illuminate\Http\Request;
 
 class TeacherAdminController extends Controller
 {
-    // Vizualizar la Pagina Principal
+    //Vizualizar la area de los profesores (Admin)
     public function index(Request $request)
     {
+        // Verificar si se proporciona un parámetro de ordenamiento
         if($request->orden){
             $search =  explode("/", $request->orden);
 
+            // Ordenar los profesores según el parámetro especificado
             $teachers = Teacher::orderBy($search[0], $search[1])->get();
-        }else{
-            
+        } else {
+            // Si no se proporciona ningún parámetro, ordenar por nombre de manera ascendente por defecto
             $teachers = Teacher::orderBy("name", "asc")->get();
         }
 
+        // Retornar la vista con la lista de profesores
         return view('teacherAdmin.index', ['teachers' => $teachers]);
     }
 
-    // Vizualizar la Pagina Agregar Profesor
+    //Vizualizar la area de agregar profesores (Admin)
     public function showAdd()
     {
+        // Retornar la vista para agregar un nuevo profesor
         return view('teacherAdmin.add');
     }
 
-    // Vizualizar la Pagina de Editar Profesor
+    //Vizualizar la area de editar profesores (Admin)
     public function showEdit(Request $request)
     {
-        $user = Teacher::where("name", $request->name)->where("id", $request->id)->get()[0];
+        // Obtener los detalles del usuario/profesor para editar
+        $user = Teacher::where("name", $request->name)->where("id", $request->id)->first();
 
+        // Retornar la vista para editar el profesor con los detalles obtenidos
         return view('teacherAdmin.edit', ['user'=>$user]);
     }
-    
-    // Cracion de Profesor con metodo PUT
+
+    //Crear profesores (Admin)
     public function create(Request $request, TeacherAdminServices $requestTeacher)
     {
-        //=========Validar las Entradas=========
+        // Validar las entradas del formulario de creación de profesor
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
+            'email' => 'required|string|email|max:255|unique:teachers',
             'subject' => 'required|string|max:255',
             'cellphone' => 'required',
             'salary' => 'required',
@@ -53,24 +58,25 @@ class TeacherAdminController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        //Ver si las validaciones se cumplen
+        // Verificar si las validaciones fallan
         if ($validator->fails()) {
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
         
-        //=========Visualizar si el email exitste=========
+        // Verificar si el email ya existe en la base de datos
         $requestTeacher->checkEmailNew($request);
 
-        //=========Guardar datos de los nuevos cambios=========
+        // Crear un nuevo profesor con los datos proporcionados
         $requestTeacher->createTeacher($request);
 
+        // Redirigir a la página de administración de profesores
         return redirect(route("teacher.admin"));
     }
 
-    // Actualizacion de Profesor con metodo POST
+    //Actualizar profesores (Admin)
     public function update(Request $request, TeacherAdminServices $requestTeacher)
     {
-        //=========Validar las entradas=========
+        // Validar las entradas del formulario de edición de profesor
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
@@ -80,25 +86,28 @@ class TeacherAdminController extends Controller
             'started' => 'required',
         ]);
 
+        // Verificar si las validaciones fallan
         if ($validator->fails()) {
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
 
-        //=========Validar email en tabla Teachers y User=========
+        // Verificar si el email ya existe en la base de datos
         $requestTeacher->checkEmailNew($request);
 
-        //=========Actualizar los datos del usuario=========
+        // Actualizar los datos del profesor
         $requestTeacher->updateTeacher($request);
 
+        // Redirigir a la página de administración de profesores
         return redirect(route("teacher.admin"));
     }
 
-    // Eliminacion de Profesor con metodo DELETE
+    //Eliminar profesores (Admin)
     public function destroy(Request $request, TeacherAdminServices $requestTeacher)
     {
-        //=========Buscar el id del student en la tabla user=========
+        // Eliminar el profesor de la base de datos
         $requestTeacher->deleteTeacher($request);
 
+        // Redirigir a la página de administración de profesores
         return redirect(route("teacher.admin"));
     }
 }
