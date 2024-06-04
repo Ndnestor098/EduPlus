@@ -21,7 +21,8 @@ class StudentController extends Controller
         $excludedWorkIds = $student->works->pluck('work_id');
 
         // Obtener los trabajos disponibles para el estudiante
-        $works = Work::where('course', $student->course)
+        $works = Work::with('teacher')
+                    ->where('course', $student->course)
                     ->whereNotIn('id', $excludedWorkIds)
                     ->today() // Filtrar por trabajos asignados para hoy
                     ->public() // Filtrar por trabajos públicos
@@ -53,48 +54,53 @@ class StudentController extends Controller
     {
         // Validar los archivos enviados por el estudiante
         $request->validate([
-            'files.*' => 'required|file|mimes:pdf,doc,docx|max:15420', // permite archivos PDF y documentos de Word de hasta 2MB
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:15420', // permite imágenes de hasta 2MB
+            'files.*' => 'required|file|mimes:pdf,doc,docx,xlsx|max:15420', // permite archivos PDF y documentos de Word de hasta 2MB
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:15420', // permite imágenes de hasta 2MB
         ]);
 
         // Guardar rutas de archivos y de imágenes
         $filePaths = [];
+        $fileBool = false;
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $files) {
                 if ($files->isValid()) {
                     $fileName = uniqid() . '.' . $files->getClientOriginalExtension();
-                    $filePath = $files->storeAs('public/image', $fileName);
+                    $filePath = $files->storeAs('public/files', $fileName);
                     $filePaths[] = Storage::url($filePath);
+                    $fileBool = true;
                 }
             }
         }
 
         $imagePaths = [];
+        $imageBool =false;
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 if ($image->isValid()) {
                     $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
                     $imagePath = $image->storeAs('public/image', $imageName);
                     $imagePaths[] = Storage::url($imagePath);
+                    $imageBool = true;
                 }
             }
         }
 
-        // Obtener la información del estudiante actual
-        $student = Student::where('email', auth()->user()->email)->first();
+        if($fileBool || $imageBool){
+            // Obtener la información del estudiante actual
+            $student = Student::where('email', auth()->user()->email)->first();
 
-        // Crear un nuevo registro de trabajo realizado por el estudiante
-        WorkStudent::create([
-            'name' => $student->name,
-            'slug' => $student->name, // ¿Estás seguro de que el slug del trabajo debe ser el nombre del estudiante?
-            'course' => $student->course,
-            'file' => $filePaths ? json_encode($filePaths) : null,
-            'image' => $imagePaths ? json_encode($imagePaths) : null,
-            'subject' => $request->input('subject'),
-            'student_id' => $student->id,
-            'work_id' => $request->input('work_id'),
-        ]);
-
+            // Crear un nuevo registro de trabajo realizado por el estudiante
+            WorkStudent::create([
+                'name' => $student->name,
+                'slug' => $student->name, // ¿Estás seguro de que el slug del trabajo debe ser el nombre del estudiante?
+                'course' => $student->course,
+                'file' => $filePaths ? json_encode($filePaths) : null,
+                'image' => $imagePaths ? json_encode($imagePaths) : null,
+                'student_id' => $student->id,
+                'work_id' => $request->input('work_id'),
+            ]);
+        }
+        
         // Redirigir al estudiante de nuevo a sus trabajos
         return redirect()->route('student.works');
     }

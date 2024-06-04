@@ -70,9 +70,11 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Perfil') }}
-                        </x-dropdown-link>
+                        @if (auth()->user()->role[0]->name  == 'admin')
+                            <x-dropdown-link :href="route('profile.edit')">
+                                {{ __('Perfil') }}
+                            </x-dropdown-link>
+                        @endif
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">

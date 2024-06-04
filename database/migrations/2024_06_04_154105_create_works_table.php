@@ -15,21 +15,28 @@ return new class extends Migration
             $table->id();
             $table->string('title', 200);
             $table->string('slug', 200);
-
             $table->text('description');
-            $table->decimal('scored');
-            $table->string('mtcf');
+            $table->decimal('scored', 8, 2);
             $table->integer('course');
             $table->string('file')->nullable();
             $table->string('image')->nullable();
             $table->boolean('public')->default(0);
-            $table->string('subject', 50);
             $table->string('deliver');
+            $table->unsignedBigInteger('teacher_id')->nullable();
+            $table->unsignedBigInteger('work_type_id'); // Usar work_type_id
 
-            $table->unsignedBigInteger('teacher_id')->nullable(); // Cambiar el tipo de datos según corresponda
-            $table->foreign('teacher_id')->references('id')->on('teachers')->onDelete('set null');
-            
             $table->timestamps();
+
+            // Definición de las claves foráneas
+            $table->foreign('work_type_id')
+                ->references('id')
+                ->on('work_types')
+                ->onDelete('cascade');
+
+            $table->foreign('teacher_id')
+                ->references('id')
+                ->on('teachers')
+                ->onDelete('set null');
         });
     }
 

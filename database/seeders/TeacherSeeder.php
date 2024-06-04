@@ -30,7 +30,6 @@ class TeacherSeeder extends Seeder
 
             Percentages::create([
                 'percentage' => 50,
-                'subject' => $teacher->subject,
                 'course' => 1, 
                 'work_type_id' => 5,
                 'teacher_id' => $teacher->id
@@ -43,13 +42,12 @@ class TeacherSeeder extends Seeder
                 'slug' => $name,
                 'description' => $faker->paragraph(40),
                 'scored' => 50,
-                'mtcf' => 'Tarea',
                 'course' => 1,
-                'file' => $faker->randomElement(['/storage/files/6659fa036711e.pdf', null]),
-                'image' => $faker->randomElement(['/storage/image/6659ecd408f16.jpeg', null]),
-                'subject' => $teacher->subject,
+                'file' => json_encode(["/storage/files/665f2cef81a0f.pdf","/storage/files/665f2cef849f8.pdf","/storage/files/665f2cef868fa.pdf"]),
+                'image' => json_encode(["/storage/image/665f2d0d8bd8c.webp","/storage/image/665f2d0d8d697.webp","/storage/image/665f2d0d8d81b.webp"]),
                 'deliver' => '2024-07-04',
                 'teacher_id' => $teacher->id,
+                'work_type_id' => 5,
                 'public' => 1
             ]);
         }

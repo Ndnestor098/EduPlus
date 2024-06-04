@@ -20,7 +20,6 @@ return new class extends Migration
             $table->decimal('qualification')->nullable();
             $table->string('file')->nullable();
             $table->string('image')->nullable();
-            $table->string('subject', 50);
 
             $table->unsignedBigInteger('student_id'); // Cambiar el tipo de datos según corresponda
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');

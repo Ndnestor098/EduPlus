@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('percentages', function (Blueprint $table) {
             $table->id();
             $table->decimal('percentage');
-            $table->string('subject', 50);
             $table->integer('course');
 
             $table->unsignedBigInteger('work_type_id')->nullable();

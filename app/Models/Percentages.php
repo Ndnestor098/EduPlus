@@ -14,7 +14,7 @@ class Percentages extends Model
 
     public function teacher()
     {
-        return $this->BelongsTo(Teacher::class);
+        return $this->belongsTo(Teacher::class);
     }
 
     public function workType()

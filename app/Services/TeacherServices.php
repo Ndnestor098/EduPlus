@@ -84,7 +84,6 @@ class TeacherServices
 
         // Asignar valores proporcionados
         $percentage->percentage = $request->percentage;
-        $percentage->subject = $teacher->subject;
         $percentage->course = $request->course;
         $percentage->work_type_id = WorkType::where('name', $request->workType)->first()->id;
         $percentage->teacher_id = $teacher->id;

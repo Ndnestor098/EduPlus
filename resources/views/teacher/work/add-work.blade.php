@@ -35,11 +35,11 @@
                             </div>
                             <div>
                                 <label for="file">File (pdf, doc, etc..) <span>No obligatorio</span></label>
-                                <input type="file" name="file" id="file">
+                                <input type="file" name="file[]" id="file" accept=".doc,.docx,.xls,.xlsx,.pdf,.ppt,.pptx" multiple required>
                             </div>
                             <div>
                                 <label for="image">Imagen <span>No obligatorio</span></label>
-                                <input type="file" name="image" id="image">
+                                <input type="file" name="image[]" id="image" accept="image/*" multiple required>
                             </div>
                             <div>
                                 <label>Materia</label>

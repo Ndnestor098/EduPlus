@@ -30,19 +30,23 @@
                         </div>
 
                         @if ($work->image)
-                            <div class="flex justify-center items-center">
-                                <a class="flex justify-center" href="{{ $work->image }}" target="_blank">
-                                    <img class="w-7/12 shadow-xl" style="box-shadow: 0px 13px 15px -15px rgba(153,153,153,1);" src="{{ $work->image }}" alt="imagen de la tarea o proyecto">
-                                </a>
-                            </div> 
+                            @foreach (json_decode($work->image, true) as $item)
+                                <div class="flex justify-center items-center">
+                                    <a class="flex justify-center" href="{{ $item }}" target="_blank">
+                                        <img class="w-7/12 shadow-xl" style="box-shadow: 0px 13px 15px -15px rgba(153,153,153,1);" src="{{ $item }}" alt="imagen de la tarea o proyecto">
+                                    </a>
+                                </div> 
+                            @endforeach
                         @endif
 
                         @if ($work->file)
-                            <div class="flex justify-center items-center w-full">
-                                <a class="flex flex-col items-center gap-2" href="{{ $work->file }}">
-                                    <img class="w-14" src="/assets/img/pdf.png" alt="logo pdf">
-                                    <span>Archivo de apoyo de la tarea.</span>
-                                </a>
+                            <div class="flex justify-center items-center flex-wrap w-full gap-4">
+                                @foreach (json_decode($work->file, true) as $item)
+                                        <a class="flex flex-col items-center gap-2" href="{{ $item }}" target="_blank">
+                                            <img class="w-14" src="/assets/img/pdf.png" alt="logo pdf">
+                                            <span>Archivo de apoyo de la tarea.</span>
+                                        </a>
+                                @endforeach
                             </div>
                         @endif
                         

@@ -16,7 +16,7 @@ class Teacher extends Model
 
     public function percentage()
     {
-        return $this->hasMany('App\Models\Percentages');
+        return $this->hasMany(Percentages::class);
     }
     
 }

@@ -37,7 +37,7 @@
                         <tr>
                             <th>Titulo</th>
                             <th>Descripcion</th>
-                            <th>Documento</th>
+                            <th>Materia</th>
                             <th>Año C.</th>
                             <th>Publicado</th>
                             <th>F. Entrega</th>
@@ -53,7 +53,7 @@
                             <tr>
                                 <td><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ $item->title }}</a></td>
                                 <td><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ Str::limit($item->description, 20) }}</a></td>
-                                <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ ucfirst($item->subject) }}</a></td>
+                                <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ ucfirst($item->teacher->subject) }}</a></td>
                                 <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ $item->course }}</a></td>
                                 <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">@if($item->public){{'Publicado'}}@else{{'No publicado'}}@endif</a></td>
                                 <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ $item->deliver }}</a></td>

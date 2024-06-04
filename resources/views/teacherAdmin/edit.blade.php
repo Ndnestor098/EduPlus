@@ -42,7 +42,7 @@
                                 <select name="subject" id="subject">
                                     <option value="{{$user->subject}}" selected>Seleccionado: {{ucfirst($user->subject)}}</option>                                                                                                                  
                                     
-                                    <option value="literatera">Literatera</option>
+                                    <option value="literatura">Literatura</option>
                                     <option value="ingles">Ingles</option>
                                     <option value="historia">Historia</option>
                                     <option value="fisica">Fisica</option>
@@ -50,6 +50,7 @@
                                     <option value="arte">Arte</option>
                                     <option value="ciencia">Ciencia</option>
                                     <option value="matematicas">Matematicas</option>
+                                    <option value="edu_fisica">Educacion Fisica</option>
                                 </select>
                             </div>
                             <div>

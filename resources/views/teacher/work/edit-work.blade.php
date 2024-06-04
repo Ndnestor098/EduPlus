@@ -46,31 +46,40 @@
                             </div>
                             <div>
                                 <label for="file">File (pdf, doc, etc..) <span>No obligatorio</span></label>
-                                <a @if($work->file) href="{{$work->file}}" target="_blank" @endif >File: {{$work->file}}</a>
-                                <input type="file" name="file" id="file">
+                                @if ($work->file)
+                                    @foreach (json_decode($work->file, true) as $item)
+                                        <a @if($item) href="{{ $item }}" target="_blank" @endif>image: {{$item}}</a>
+                                    @endforeach
+                                @endif
+                                
+                                <input type="file" name="files[]" id="files" accept=".doc,.docx,.xls,.xlsx,.pdf,.ppt,.pptx" multiple required>
                             </div>
                             <div>
                                 <label for="image">Imagen <span>No obligatorio</span></label>
-                                <a @if($work->image) href="{{$work->image}}" target="_blank" @endif>image: {{$work->image}}</a>
-                                <input type="file" name="image" id="image" accept="image/*">
+                                @if ($work->image)
+                                    @foreach (json_decode($work->image, true) as $item)
+                                        <a @if($item) href="{{ $item }}" target="_blank" @endif>image: {{$item}}</a>
+                                    @endforeach
+                                @endif
+                                <input type="file" name="images[]" id="images" accept="image/*" multiple required>
                             </div>
                             <div>
                                 <label>Materia</label>
-                                <input type="text" id="subject" value="{{$work->subject}}"  disabled>
+                                <input type="text" id="subject" value="{{$work->teacher->subject}}" disabled>
                             </div>
                             <div>
                                 <label for="course">Curso o Año</label>
                                 <select name="course" id="course">
-                                    <option value="{{$work->course}}" selected>Seleccionado: Año {{$work->course}}</option>
+                                    <option value="{{ $work->course }}" selected>Seleccionado: Año {{ $work->course }}</option>
                                     @foreach ($course as $item => $x)
-                                        <option value="{{$x->course}}">Año {{$x->course}}</option>
+                                        <option value="{{ $x->course }}">Año {{ $x->course }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div>
                                 <label for="qualification">Metodo Calificativo</label>
                                 <select name="qualification" id="qualification">
-                                    <option value="{{$work->mtcf}}" selected>Seleccionado: {{$work->mtcf}}</option>
+                                    <option value="{{$work->workType->name}}" selected>Seleccionado: {{ $work->workType->name }}</option>
                                 </select>
                             </div>
                             <div class="flex gap-5" style="flex-direction: row"> 

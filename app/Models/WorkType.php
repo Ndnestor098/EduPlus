@@ -17,6 +17,12 @@ class WorkType extends Model
         return $this->hasMany(Percentages::class, 'work_type_id');
     }
 
+    // Definir la relación inversa con Work
+    public function works()
+    {
+        return $this->hasMany(Work::class, 'work_type_id');
+    }
+
     //Mutadores
     public function getNameAttribute($name)
     {

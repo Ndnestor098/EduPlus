@@ -29,7 +29,7 @@ class TeachersController extends Controller
         $teacher = Teacher::where('email', auth()->user()->email)->first();
 
         // Filtrar y obtener las tareas del profesor
-        $work = Work::where('teacher_id', $teacher->id)
+        $work = Work::with('workType')->where('teacher_id', $teacher->id)
             ->none($request->all())
             ->course($request->get('course'))
             ->get();
@@ -68,9 +68,8 @@ class TeachersController extends Controller
 
         //Filtrado de informacion de metodo calificativo
         return Percentages::with('workType')
-            ->where('subject', 'historia')
             ->where('teacher_id', $info->id)
-            ->where('course', 1)
+            ->where('course', $request->course)
             ->get();
     }
 
@@ -97,19 +96,19 @@ class TeachersController extends Controller
         $image = null;
         
         // Si se sube un archivo, procesarlo
-        if($request->hasFile('file'))
+        if($request->hasFile('files'))
         {
             $file = $requestWork->addFileWork($request);
 
-            if(!$file) return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
+            if(!$file) return redirect()->back()->with('errors', 'Error en la carga de los archivos.');
         }
 
         // Si se sube una imagen, procesarla
-        if($request->hasFile('image'))
+        if($request->hasFile('images'))
         {
             $image = $requestWork->addImageWork($request);
 
-            if(!$image) return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
+            if(!$image) return redirect()->back()->with('errors', 'Error en la carga de las imagenes.');
         }
 
         // Agregar la tarea con los datos proporcionados
@@ -150,19 +149,19 @@ class TeachersController extends Controller
         $image = null;
         
         // Si se sube un archivo, procesarlo
-        if($request->hasFile('file'))
+        if($request->hasFile('files'))
         {
             $file = $requestWork->addFileWork($request);
 
-            if(!$file) return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
+            if(!$file) return redirect()->back()->with('errors', 'Error en la carga de los archivos.');
         }
 
         // Si se sube una imagen, procesarla
-        if($request->hasFile('image'))
+        if($request->hasFile('images'))
         {
             $image = $requestWork->addImageWork($request);
-
-            if(!$image) return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
+            
+            if(!$image) return redirect()->back()->with('errors', 'Error en la carga de los imagenes.');
         }
 
         // Actualizar la tarea con los datos proporcionados
@@ -202,7 +201,7 @@ class TeachersController extends Controller
         $teacher = Teacher::where('email', auth()->user()->email)->first();
         $course = student::select('course')->distinct()->orderBy('course')->get();
 
-        $percentages = Percentages::with('workType')
+        $percentages = Percentages::with(['workType', 'teacher'])
             ->where('teacher_id', $teacher->id)
             ->course($request->get("course"))
             ->none($request->all())
@@ -214,6 +213,7 @@ class TeachersController extends Controller
             $valor += intval($key->percentage);
         }
 
+        // return $percentages[0]->teacher;
         // Retornar la vista con las calificaciones y cursos
         return view('teacher.qualification.qualification', ['all' => $percentages, 'course' => $course, 'valor'=>$valor]);
     }

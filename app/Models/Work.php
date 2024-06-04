@@ -12,14 +12,22 @@ class Work extends Model
 
     protected $guarded = [];
 
+    // Definir la relación con Teacher
     public function teacher()
     {
         return $this->belongsTo('App\Models\Teacher');
     }
 
+    // Definir la relación con WorkStudent
     public function students()
     {
         return $this->hasMany(WorkStudent::class);
+    }
+
+    // Definir la relación con WorkType
+    public function workType()
+    {
+        return $this->belongsTo(WorkType::class, 'work_type_id');
     }
 
     //Mutadores
@@ -38,7 +46,7 @@ class Work extends Model
     public function scopeNone($query, $none)
     {
         if(!$none)
-            return $query->where('course', 1);
+            return $query->orderBy('course');
     }
 
     public function scopeToday($query)
