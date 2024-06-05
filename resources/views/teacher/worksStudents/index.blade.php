@@ -37,9 +37,9 @@
                         </tr>
                         @foreach ($studentWorks->students as $item)
                             <tr>
-                                <td><a href="{{ route("teacher.correct", ['nameStudent'=>$item->slug]) }}">{{ $item->name }}</a></td>
-                                <td class="text-center"><a href="{{ route("teacher.correct", ['nameStudent' => $item->slug]) }}">{{ $item->course }}</a></td>
-                                <td class="text-center"><a href="{{ route("teacher.correct", ['nameStudent' => $item->slug]) }}">{{ $item->created_at }}</a></td>
+                                <td><a href="{{ route("teacher.correct", ['nameStudent'=>$item->slug, 'work_id'=>$studentWorks->id]) }}">{{ $item->name }}</a></td>
+                                <td class="text-center"><a href="{{ route("teacher.correct", ['nameStudent' => $item->slug, 'work_id'=>$studentWorks->id]) }}">{{ $item->course }}</a></td>
+                                <td class="text-center"><a href="{{ route("teacher.correct", ['nameStudent' => $item->slug, 'work_id'=>$studentWorks->id]) }}">{{ $item->created_at }}</a></td>
                                 
                                 @if (!$item->qualification)
                                     <td>

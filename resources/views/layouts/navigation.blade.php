@@ -21,22 +21,29 @@
                             <x-nav-link :href="route('teacher.admin')" :active="request()->routeIs('teacher.admin')">
                                 {{ __('Profesores') }}
                             </x-nav-link>
+
                             <x-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
                                 {{ __('Alumnos') }}
                             </x-nav-link>
+
                             <x-nav-link :href="route('administrador')" :active="request()->routeIs('administrador')">
                                 {{ __('Administradores') }}
                             </x-nav-link>
                         @endif
 
                         @if(auth()->user()->role[0]->name  == 'teacher')
-                            <!-- Menú para profesor -->
-                            {{-- <x-nav-link :href="route('teacher.works.students')" :active="request()->routeIs('teacher.works.students')">
-                                {{ __('Corregir Actividades') }}
-                            </x-nav-link> --}}
                             <x-nav-link :href="route('teacher.works')" :active="request()->routeIs('teacher.works')"> 
-                                {{ __('Tareas y Proyectos') }}
+                                {{ __('Tareas') }}
                             </x-nav-link>
+
+                            <x-nav-link :href="route('teacher.exam')" :active="request()->routeIs('teacher.exam')">
+                                {{ __('Examenes y Proyectos') }}
+                            </x-nav-link>
+                        
+                            <x-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
+                                {{ __('Participacion y Conducta') }}
+                            </x-nav-link>
+                            
                             <x-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
                                 {{ __('Metodo de Calificacion') }}
                             </x-nav-link>
@@ -45,9 +52,10 @@
                         @if(auth()->user()->role[0]->name  == 'student')
                             <!-- Menú para estudiante -->
                             <x-nav-link :href="route('student.works')" :active="request()->routeIs('student.works')">
-                                {{ __('Tareas y Proyectos') }}
+                                {{ __('Tareas') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
+
+                            <x-nav-link :href="route('student.qualification')" :active="request()->routeIs('student.qualification')">
                                 {{ __('Calificaciones') }}
                             </x-nav-link>
                         @endif
@@ -113,9 +121,11 @@
                 <x-responsive-nav-link :href="route('teacher.admin')" :active="request()->routeIs('teacher.admin')">
                     {{ __('Profesores') }}
                 </x-responsive-nav-link>
+
                 <x-responsive-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
                     {{ __('Alumnos') }}
                 </x-responsive-nav-link>
+
                 <x-responsive-nav-link :href="route('administrador')" :active="request()->routeIs('administrador')">
                     {{ __('Administradores') }}
                 </x-responsive-nav-link>
@@ -123,12 +133,18 @@
 
             @if(auth()->user()->role[0]->name  == 'teacher')
                 <!-- Menú para profesor -->
-                {{-- <x-responsive-nav-link :href="route('teacher.works.students')" :active="request()->routeIs('teacher.works.students')">
-                    {{ __('Corregir Actividades') }}
-                </x-responsive-nav-link> --}}
-                <x-responsive-nav-link :href="route('teacher.works')" :active="request()->routeIs('teacher.works')">
-                    {{ __('Asginar Tareas') }}
+                <x-responsive-nav-link :href="route('teacher.works')" :active="request()->routeIs('teacher.works')"> 
+                    {{ __('Tareas') }}
                 </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('teacher.exam')" :active="request()->routeIs('teacher.exam')">
+                    {{ __('Examenes y Proyectos') }}
+                </x-responsive-nav-link>
+            
+                <x-responsive-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
+                    {{ __('Participacion y Conducta') }}
+                </x-responsive-nav-link>
+                
                 <x-responsive-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
                     {{ __('Metodo de Calificacion') }}
                 </x-responsive-nav-link>
@@ -137,9 +153,10 @@
             @if(auth()->user()->role[0]->name  == 'student')
                 <!-- Menú para estudiante -->
                 <x-responsive-nav-link :href="route('student.works')" :active="request()->routeIs('student.works')">
-                    {{ __('Tareas y Proyectos') }}
+                    {{ __('Tareas') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
+
+                <x-responsive-nav-link :href="route('student.qualification')" :active="request()->routeIs('student.qualification')">
                     {{ __('Calificaciones') }}
                 </x-responsive-nav-link>
             @endif

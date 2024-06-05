@@ -35,7 +35,7 @@
                             </div>
                             <div>
                                 <label for="percentage">Porcentajes a Asignar</label>
-                                <input type="number" name="percentage" id="percentage" placeholder="Porcentaje *" step="0,01">
+                                <input type="number" name="percentage" id="percentage" placeholder="Porcentaje *" step="0,01" min="0" max="100">
                             </div>
                             <div>
                                 <label>Materia</label>

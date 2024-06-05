@@ -12,11 +12,6 @@ class Percentages extends Model
     protected $table = 'percentages';
     protected $guarded = [];
 
-    public function teacher()
-    {
-        return $this->belongsTo(Teacher::class);
-    }
-
     public function workType()
     {
         return $this->belongsTo(WorkType::class, 'work_type_id');

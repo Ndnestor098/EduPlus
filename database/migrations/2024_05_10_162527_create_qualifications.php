@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('qualifications', function (Blueprint $table) {
             $table->id();
-            $table->integer('matematicas')->nullable();
-            $table->integer('fisica')->nullable();
-            $table->integer('quimica')->nullable();
-            $table->integer('historia')->nullable();
-            $table->integer('informatica')->nullable();
-            $table->integer('arte')->nullable();
-            $table->integer('ciencia')->nullable();
-            $table->integer('edu_fisica')->nullable();
-            $table->integer('ingles')->nullable();
-            $table->integer('lenguaje')->nullable();
+            $table->decimal('matematicas')->nullable();
+            $table->decimal('fisica')->nullable();
+            $table->decimal('quimica')->nullable();
+            $table->decimal('historia')->nullable();
+            $table->decimal('computacion')->nullable();
+            $table->decimal('arte')->nullable();
+            $table->decimal('ciencia')->nullable();
+            $table->decimal('edu_fisica')->nullable();
+            $table->decimal('ingles')->nullable();
+            $table->decimal('literatura')->nullable();
 
             // One to One con la tabla Students
             $table->unsignedBigInteger('student_id')->unique();

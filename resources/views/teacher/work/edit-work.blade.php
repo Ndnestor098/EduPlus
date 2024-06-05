@@ -24,9 +24,13 @@
                             </a>
                             <span class="text-lg font-semibold" style="width: 245px">Actualiza o corrige la tarea</span>
                         </div>
-                        @if (isset($work->students[0]))
+                        @if (isset($work->students[0]) || $mt)
                             <div class="flex w-full justify-end items-center">
-                                <a class=" bg-marron p-1 text-[#f8fafc] font-bold rounded-md" style="box-shadow: 0px 13px 15px -13px rgba(153,153,153,1);" href="{{route("teacher.works.students", ['nameWork'=>$work->slug])}}">Corregir las tareas de los alumnos</a>
+                                <a class=" bg-marron p-1 text-[#f8fafc] font-bold rounded-md" 
+                                    style="box-shadow: 0px 13px 15px -13px rgba(153,153,153,1);" 
+                                    @if($mt) href="{{route("teacher.correct.exam", ['nameWork'=>$work->slug])}}"
+                                    @else href="{{route("teacher.works.students", ['nameWork'=>$work->slug])}}"
+                                    @endif>Corregir las tareas de los alumnos</a>
                             </div>
                         @endif
                     </div>
@@ -65,7 +69,7 @@
                             </div>
                             <div>
                                 <label>Materia</label>
-                                <input type="text" id="subject" value="{{$work->teacher->subject}}" disabled>
+                                <input type="text" id="subject" value="{{$work->subject}}" disabled>
                             </div>
                             <div>
                                 <label for="course">Curso o Año</label>

@@ -9,6 +9,7 @@ use App\Models\Teacher;
 use App\Models\Work;
 use App\Models\WorkStudent;
 use App\Models\WorkType;
+use App\Services\NoteServices;
 use App\Services\TeacherServices;
 use App\Services\WorkServices;
 use Illuminate\Http\Request;
@@ -29,7 +30,11 @@ class TeachersController extends Controller
         $teacher = Teacher::where('email', auth()->user()->email)->first();
 
         // Filtrar y obtener las tareas del profesor
-        $work = Work::with('workType')->where('teacher_id', $teacher->id)
+        $work = Work::with('workType')
+            ->where('subject', $teacher->subject)
+            ->whereHas('workType', function($query){
+                $query->where('name', 'Tarea');
+            })
             ->none($request->all())
             ->course($request->get('course'))
             ->get();
@@ -43,7 +48,7 @@ class TeachersController extends Controller
                 }
             }
         }
-
+        
         // Retornar la vista con las tareas y cursos
         return view('teacher.work.works', ['course' => $course, 'work' => $work, 'bool' => $bool]);
     }
@@ -68,7 +73,7 @@ class TeachersController extends Controller
 
         //Filtrado de informacion de metodo calificativo
         return Percentages::with('workType')
-            ->where('teacher_id', $info->id)
+            ->where('subject', $info->subject)
             ->where('course', $request->course)
             ->get();
     }
@@ -112,7 +117,25 @@ class TeachersController extends Controller
         }
 
         // Agregar la tarea con los datos proporcionados
-        $requestWork->addWork($request, $file, $image);
+        $work = $requestWork->addWork($request, $file, $image);
+
+        if($request->qualification == "Examen oral" || $request->qualification == "Examen escrito" || $request->qualification == "Proyecto" || $request->qualification == "Exposicion"){
+            $students = student::where('course', $request->course)->get();
+
+            foreach ($students as $value) {
+                WorkStudent::create([
+                    'name' => $value->name,
+                    'slug' => $value->name, // ¿Estás seguro de que el slug del trabajo debe ser el nombre del estudiante?
+                    'course' => $value->course,
+                    'file' => null,
+                    'image' => null,
+                    'student_id' => $value->id,
+                    'work_id' => $work->id,
+                ]);
+            }
+
+            return redirect()->route('teacher.exam');
+        }
 
         return redirect()->route('teacher.works');
     }
@@ -122,8 +145,9 @@ class TeachersController extends Controller
     {        
         $work = Work::find($request->id);
         $course = student::select('course')->orderBy('course')->distinct()->get();
+        $mt = $request->mt;
 
-        return view('teacher.work.edit-work', ['work' => $work, 'course' => $course]);
+        return view('teacher.work.edit-work', ['work' => $work, 'course' => $course, 'mt'=>$mt]);
     }
 
     // Actualizar una tarea existente
@@ -201,8 +225,8 @@ class TeachersController extends Controller
         $teacher = Teacher::where('email', auth()->user()->email)->first();
         $course = student::select('course')->distinct()->orderBy('course')->get();
 
-        $percentages = Percentages::with(['workType', 'teacher'])
-            ->where('teacher_id', $teacher->id)
+        $percentages = Percentages::with('workType')
+            ->where('subject', $teacher->subject)
             ->course($request->get("course"))
             ->none($request->all())
             ->get();
@@ -213,7 +237,6 @@ class TeachersController extends Controller
             $valor += intval($key->percentage);
         }
 
-        // return $percentages[0]->teacher;
         // Retornar la vista con las calificaciones y cursos
         return view('teacher.qualification.qualification', ['all' => $percentages, 'course' => $course, 'valor'=>$valor]);
     }
@@ -310,7 +333,6 @@ class TeachersController extends Controller
         return redirect()->route('teacher.qualification');
     }
 
-
     //========================================Corregir las Tareas========================================
     // Mostrar las tareas de los estudiantes
     public function showWorksStudents(Request $request, $nameWork)
@@ -327,9 +349,8 @@ class TeachersController extends Controller
                 }
             }])
             ->where('slug', $nameWork)
-            ->where('teacher_id', $teacher->id)
+            ->where('subject', $teacher->subject)
             ->first();
-
         // Retornar la vista con los detalles de la tarea y los estudiantes
         return view('teacher.worksStudents.index', ['studentWorks'=>$studentWorks]); 
     }
@@ -341,19 +362,21 @@ class TeachersController extends Controller
         $teacher = Teacher::where('email', auth()->user()->email)->first();
 
         // Obtener los detalles de la tarea del estudiante específico
-        $studentWork = WorkStudent::with(['work'=>
-            function($query) use ($teacher){
-                $query->where('teacher_id', $teacher->id);
-            }])
-            ->where('slug', $nameStudent)
-            ->first();
+        $studentWork = WorkStudent::with(['work' => function($query) use ($teacher, $request) {
+            $query->where('subject', $teacher->subject)
+                  ->where('id', $request->work_id); // Ajuste la condición aquí
+        }])
+        ->where('slug', $nameStudent)
+        ->where('work_id', $request->work_id) // Asegúrate de que el work_id coincide
+        ->first();
+
 
         // Retornar la vista con los detalles de la tarea del estudiante
         return view('teacher.worksStudents.correct', ['student'=>$studentWork]); 
     }
 
     // Corregir la tarea de un estudiante
-    public function correctWork(Request $request)
+    public function correctWork(Request $request, NoteServices $requestNote)
     {
         // Validar la nota proporcionada
         $validator = Validator::make($request->all(), [
@@ -369,6 +392,9 @@ class TeachersController extends Controller
         $work = WorkStudent::find($request->workStudent_id);
         $work->qualification = $request->note;
         $work->save();
+
+        $student = student::find($request->student_id);
+        $requestNote->updateQualification($student);
 
         // Redirigir de vuelta a la página de las tareas de los estudiantes
         return redirect()->route("teacher.works.students", ['nameWork'=>$request->slug]);
@@ -391,5 +417,118 @@ class TeachersController extends Controller
 
         // Redirigir de vuelta a la página de las tareas de los estudiantes
         return redirect()->route("teacher.works.students", ['nameWork'=>$request->slug]);
+    }
+
+    //========================================Proyectos y Examenes========================================
+    // Mostrar las tareas del profesor
+    public function showExamAndProject(Request $request)
+    {
+        // Obtener todos los cursos distintos ordenados
+        $course = student::select('course')->distinct()->orderBy('course')->get();
+
+        // Obtener el profesor actualmente autenticado
+        $teacher = Teacher::where('email', auth()->user()->email)->first();
+
+        // Filtrar y obtener las tareas del profesor
+        $projectWorks = Work::with('workType')
+            ->where('subject', $teacher->subject)
+            ->whereHas('workType', function ($query) {
+                $query->where("name", "Proyecto");
+            })
+            ->none($request->all())
+            ->course($request->get('course'))
+            ->get();
+
+        $exposicionWorks = Work::with('workType')
+            ->where('subject', $teacher->subject)
+            ->whereHas('workType', function ($query) {
+                $query->where("name", "Exposicion");
+            })
+            ->none($request->all())
+            ->course($request->get('course'))
+            ->get();
+
+        // Consulta para obtener los trabajos que son exámenes
+        $examWorks = Work::with('workType')
+            ->where('subject', $teacher->subject)
+            ->whereHas('workType', function ($query) {
+                $query->where("name", "like", "%Examen%");
+            })
+            ->none($request->all())
+            ->course($request->get('course'))
+            ->get();
+
+        // Combina los resultados en una sola colección
+        $work = $projectWorks->merge($exposicionWorks)->merge($examWorks);
+        
+        $bool = false;
+
+        foreach ($work as $value) {
+            foreach ($value->students as $item) {
+                if(!$item->qualification){
+                    $bool = true;
+                }
+            }
+        }
+
+        // Retornar la vista con las tareas y cursos
+        return view('teacher.exam_project.index', ['course' => $course, 'work' => $work, 'bool' => $bool]);
+    }
+
+    // Mostrar las tareas de los estudiantes
+    public function showExamAndProjectStudents(Request $request, $nameWork)
+    {
+        // Obtener el profesor actualmente autenticado
+        $teacher = Teacher::where('email', auth()->user()->email)->first();
+
+        // Obtener los detalles de la tarea y los estudiantes asociados
+        $work = Work::with(['students' => 
+            function ($query) use ($request) {
+                // Si se proporciona un nombre, filtrar los estudiantes por ese nombre
+                if (isset($request->name)) {
+                    $query->where('name', 'like', "%$request->name%");
+                }
+            }])
+            ->where('slug', $nameWork)
+            ->where('subject', $teacher->subject)
+            ->first();
+        
+        $students = WorkStudent::where('course', $work->course)
+            ->where('work_id', $work->id)
+            ->where('name', 'like', "%$request->name%")
+            ->get();
+
+        // Retornar la vista con los detalles de la tarea y los estudiantes
+        return view('teacher.exam_project.correct', ['work'=>$work, 'students'=>$students]); 
+    }
+
+    public function qualification(Request $request, NoteServices $noteRequest)
+    {
+        $request->validate([
+            'students' => 'required'
+        ]);
+
+        $work = json_decode($request->work, true)['id'];
+        
+        $student = Qualification::find(4);
+
+        foreach($request->students as $search){
+            if(floatval($search['note']) > 10 || floatval($search['note']) < 0){
+                return redirect()->back()->with('errors', 'Error en la nota, debe ser entre 1 a 10.');
+            }
+            $studentUpdate = WorkStudent::where('student_id', $search['id'])
+                ->where('work_id', $work)
+                ->first();
+            
+            $studentUpdate->qualification = floatval($search['note']);
+            
+            $studentUpdate->save();
+
+            $student = student::find($search['id']);
+
+            $noteRequest->updateQualification($student);
+        }
+
+        return redirect()->route('teacher.exam');
     }
 }

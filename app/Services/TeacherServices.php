@@ -15,7 +15,10 @@ class TeacherServices
         $teacher = Teacher::where('email', auth()->user()->email)->first();
 
         // Obtener los porcentajes de evaluación para el curso del profesor
-        $percentages = Percentages::with('workType')->where('teacher_id', $teacher->id)->where('course', $request->course)->get();
+        $percentages = Percentages::with('workType')
+            ->where('subject', $teacher->subject)
+            ->where('course', $request->course)
+            ->get();
 
         $totalPercentage = 0;
         foreach ($percentages as $key) {
@@ -48,7 +51,10 @@ class TeacherServices
         $teacher = Teacher::where('email', auth()->user()->email)->first();
 
         // Obtener los porcentajes de evaluación para el curso del profesor
-        $percentages = Percentages::with('workType')->where('teacher_id', $teacher->id)->where('course', $request->course)->get();
+        $percentages = Percentages::with('workType')
+                    ->where('subject', $teacher->subject)
+                    ->where('course', $request->course)
+                    ->get();
 
         // Verificar si el tipo de trabajo ya está asignado para el curso del profesor
         if(!$request->search){
@@ -86,7 +92,7 @@ class TeacherServices
         $percentage->percentage = $request->percentage;
         $percentage->course = $request->course;
         $percentage->work_type_id = WorkType::where('name', $request->workType)->first()->id;
-        $percentage->teacher_id = $teacher->id;
+        $percentage->subject = $teacher->subject;
 
         // Guardar el nuevo porcentaje de evaluación en la base de datos
         $percentage->save();

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->boolean('public')->default(0);
             $table->string('deliver');
-            $table->unsignedBigInteger('teacher_id')->nullable();
+            $table->string('subject');
             $table->unsignedBigInteger('work_type_id'); // Usar work_type_id
 
             $table->timestamps();
@@ -32,11 +32,6 @@ return new class extends Migration
                 ->references('id')
                 ->on('work_types')
                 ->onDelete('cascade');
-
-            $table->foreign('teacher_id')
-                ->references('id')
-                ->on('teachers')
-                ->onDelete('set null');
         });
     }
 

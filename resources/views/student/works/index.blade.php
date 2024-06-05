@@ -3,7 +3,9 @@
         Actividades
     </x-slot>
     
-    <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
+    <x-slot name='navigation'>
+        @include('layouts.navigation')
+    </x-slot>
 
     <x-slot name="header">
         <a href="{{route("student.works")}}" class="font-semibold text-xl text-gray-800 leading-tight">
@@ -42,7 +44,7 @@
                             <tr>
                                 <td><a href="{{route("student.work.show", ['name'=>$item->slug])}}">{{ Str::limit($item->title, 20) }}</a></td>
                                 <td><a href="{{route("student.work.show", ['name'=>$item->slug])}}">{{ Str::limit($item->description, 20) }}</a></td>
-                                <td class="text-center"><a href="{{route("student.work.show", ['name'=>$item->slug])}}">{{ ucfirst($item->teacher->subject) }}</a></td>
+                                <td class="text-center"><a href="{{route("student.work.show", ['name'=>$item->slug])}}">{{ ucfirst($item->subject) }}</a></td>
                                 <td class="text-center"><a href="{{route("student.work.show", ['name'=>$item->slug])}}">{{ $item->deliver }}</a></td>
                                 
                             </tr>

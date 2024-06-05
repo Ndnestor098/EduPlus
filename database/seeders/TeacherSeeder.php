@@ -32,7 +32,7 @@ class TeacherSeeder extends Seeder
                 'percentage' => 50,
                 'course' => 1, 
                 'work_type_id' => 5,
-                'teacher_id' => $teacher->id
+                'subject' => $teacher->subject
             ]);
 
             $name = $faker->sentence();
@@ -46,7 +46,7 @@ class TeacherSeeder extends Seeder
                 'file' => json_encode(["/storage/files/665f2cef81a0f.pdf","/storage/files/665f2cef849f8.pdf","/storage/files/665f2cef868fa.pdf"]),
                 'image' => json_encode(["/storage/image/665f2d0d8bd8c.webp","/storage/image/665f2d0d8d697.webp","/storage/image/665f2d0d8d81b.webp"]),
                 'deliver' => '2024-07-04',
-                'teacher_id' => $teacher->id,
+                'subject' => $teacher->subject,
                 'work_type_id' => 5,
                 'public' => 1
             ]);

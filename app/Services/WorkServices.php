@@ -80,11 +80,8 @@ class WorkServices
             ->with('workType')
             ->first();
 
-        // Obtener el profesor actualmente autenticado
-        $teacher = Teacher::where('email', auth()->user()->email)->first();
-
         // Crear un nuevo trabajo
-        Work::create([
+        $work = Work::create([
             'title' => $request->title,
             'slug' => $request->title,
             'description' => $request->description,
@@ -93,10 +90,12 @@ class WorkServices
             'file' =>  $file ? json_encode($file) : null,
             'image' => $image ? json_encode($image) : null,
             'deliver' => $request->deliver,
-            'teacher_id' => intval($teacher->id),
+            'subject' => $request->subject,
             'work_type_id' => WorkType::where('name', $request->qualification)->first()->id,
             'public' => $request->public
         ]);
+
+        return $work;
     }
 
     // Método para actualizar un trabajo

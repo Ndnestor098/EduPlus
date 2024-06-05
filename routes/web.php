@@ -99,6 +99,12 @@ Route::middleware(['auth', 'verified', TeacherMiddleware::class])->controller(Te
     // Eliminar Tareas
     Route::delete("/teacher/correct/", "deleteWorks")->name('delete.work');
     
+
+    //Vizualizar Proyectos y Examenes
+    Route::get("/teacher/exam", 'showExamAndProject')->name('teacher.exam');
+    Route::get("/teacher/exam/correct/{nameWork}", 'showExamAndProjectStudents')->name('teacher.correct.exam');
+    Route::post("/teacher/exam/qualification", 'qualification')->name('teacher.exam.qualification');
+
 });
 
 Route::middleware(['auth', 'verified', StudentMiddleware::class])->controller(StudentController::class)->group(function(){
@@ -108,6 +114,12 @@ Route::middleware(['auth', 'verified', StudentMiddleware::class])->controller(St
 
     // Subir Trabajos de Estudiantes
     Route::post('/student/up/work', 'upWork')->name('upWork');
+
+    // Vizualizar Calificaciones - GENERAL
+    Route::get('/student/qualificactions', 'qualification')->name('student.qualification');
+    
+    // Vizualizar Calificaciones - INDIVIDUAL
+    Route::get('/student/qualificaction/{subject}', 'showSubject')->name('student.qualification.alone');
 });
 
 Route::middleware('auth')->group(function () {

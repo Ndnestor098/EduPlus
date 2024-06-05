@@ -47,7 +47,7 @@
                             <tr>
                                 <td class="text-center"><a href="{{route("teacher.qualification.edit", ['search'=>$item->id])}}">{{ $item->workType->name }}</a></td>
                                 <td class="text-center"><a href="{{route("teacher.qualification.edit", ['search'=>$item->id])}}">{{ $item->percentage }}%</a></td>
-                                <td class="text-center"><a href="{{route("teacher.qualification.edit", ['search'=>$item->id])}}">{{ $item->teacher->subject }}</a></td>
+                                <td class="text-center"><a href="{{route("teacher.qualification.edit", ['search'=>$item->id])}}">{{ $item->subject }}</a></td>
                                 <td class="text-center"><a href="{{route("teacher.qualification.edit", ['search'=>$item->id])}}">{{ $item->course }}</a></td>
                             </tr>
                         @endforeach

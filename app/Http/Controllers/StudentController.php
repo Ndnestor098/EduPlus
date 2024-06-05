@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Percentages;
+use App\Models\Qualification;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Work;
 use App\Models\WorkStudent;
+use App\Models\WorkType;
+use App\Services\NoteServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,9 +25,12 @@ class StudentController extends Controller
         $excludedWorkIds = $student->works->pluck('work_id');
 
         // Obtener los trabajos disponibles para el estudiante
-        $works = Work::with('teacher')
-                    ->where('course', $student->course)
-                    ->whereNotIn('id', $excludedWorkIds)
+        $works = Work::with('workType')
+                    ->whereHas('workType', function($query){
+                        $query->where("name", 'Tarea'); // Filtrar por el nombre del tipo de trabajo
+                    })
+                    ->where('course', $student->course) // Buscar las tareas del curso del estudiante
+                    ->whereNotIn('id', $excludedWorkIds) // Filtrar por los id que no necesitamos
                     ->today() // Filtrar por trabajos asignados para hoy
                     ->public() // Filtrar por trabajos públicos
                     ->subject($request->get('subject')) // Filtrar por materia si se especifica
@@ -103,5 +110,46 @@ class StudentController extends Controller
         
         // Redirigir al estudiante de nuevo a sus trabajos
         return redirect()->route('student.works');
+    }
+
+    public function qualification(NoteServices $noteRequest)
+    {
+        $student = Student::where('email', auth()->user()->email)->first();
+
+        $noteRequest->updateQualification($student);
+
+        $note = Qualification::find($student->id);
+
+        return view('student.note.index', ['subjects'=>$note]);
+    }
+
+    public function showSubject($subject)
+    {
+        $student = Student::where('email', auth()->user()->email)->first();
+        $works = Work::where('subject', $subject)->get();
+
+        $searchID = [];
+        $searchWorks = [];
+        $workType = [];
+
+        foreach ($works as $work) {
+            $searchID[$work->id] = $work->id;
+        }
+
+        foreach ($searchID as $id) {
+            $work = WorkStudent::with('work')->where('student_id', $student->id)->where('work_id', intval($id))->get();
+
+            if(!$work->isEmpty())
+                $searchWorks[$id] = $work;
+        }
+
+        $worksType = WorkType::all();
+
+        foreach ($worksType as $value) {
+            $workType[$value->id] = $value->name;
+        }
+
+
+        return view('student.note.note', ['works'=>$searchWorks, 'subject'=>$subject, 'workType'=>$workType]);
     }
 }

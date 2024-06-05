@@ -51,12 +51,36 @@
                         </tr>
                         @foreach($work as $item)
                             <tr>
-                                <td><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ $item->title }}</a></td>
-                                <td><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ $item->workType->name }}</a></td>
-                                <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ ucfirst($item->subject) }}</a></td>
-                                <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ $item->course }}</a></td>
-                                <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">@if($item->public){{'Publicado'}}@else{{'No publicado'}}@endif</a></td>
-                                <td class="text-center"><a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ $item->deliver }}</a></td>
+                                <td>
+                                    <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id, 'mt'=>$item->workType->name])}}">
+                                    {{ $item->title }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id, 'mt'=>$item->workType->name])}}">
+                                    {{ $item->workType->name }}
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id, 'mt'=>$item->workType->name])}}">
+                                    {{ ucfirst($item->subject) }}
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id, 'mt'=>$item->workType->name])}}">
+                                    {{ $item->course }}
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id, 'mt'=>$item->workType->name])}}">
+                                    @if($item->public){{'Publicado'}}@else{{'No publicado'}}@endif
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id, 'mt'=>$item->workType->name])}}">
+                                    {{ $item->deliver }}
+                                    </a>
+                                </td>
 
                                 @if ($item->students->isEmpty())
                                     <td>
@@ -94,8 +118,6 @@
                                         </td>
                                     @endif
                                 @endif
-                                
-                                
                             </tr>
                         @endforeach
                     </table>

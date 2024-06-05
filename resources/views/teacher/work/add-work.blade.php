@@ -25,6 +25,7 @@
                         <form action="" method="POST" class="form" enctype="multipart/form-data" novalidate autocomplete="on">
                             @csrf
                             @method("put")
+                            <input type="hidden" name="subject" value="{{$info}}">
                             <div>
                                 <label for="title">Titulo</label>
                                 <input type="text" name="title" id="title" placeholder="Titulo *" required autofocus>

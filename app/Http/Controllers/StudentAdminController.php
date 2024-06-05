@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Services\NoteServices;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Services\StudentAdminServices;
@@ -37,10 +38,13 @@ class StudentAdminController extends Controller
     }
 
     // Vizualizar la página de notas del estudiante
-    public function showNote(Request $request)
+    public function showNote(Request $request, NoteServices $requestNote)
     {
         // Obtener la información del estudiante específico y sus calificaciones
         $student = Student::where('id', $request->id)->first();
+
+        $requestNote->updateQualification($student);
+
         $subjects = $student->qualification;
 
         // Retornar la vista para ver las notas del estudiante

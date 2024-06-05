@@ -12,12 +12,6 @@ class Work extends Model
 
     protected $guarded = [];
 
-    // Definir la relación con Teacher
-    public function teacher()
-    {
-        return $this->belongsTo('App\Models\Teacher');
-    }
-
     // Definir la relación con WorkStudent
     public function students()
     {
