@@ -55,10 +55,17 @@ Sigue estos pasos para instalar y configurar EduPlus en tu entorno local:
     composer require --dev laravel-lang/common
     ```
 
-5. Configura el archivo `.env`:
-    ```sh
-    cp .env.example .env
-    php artisan key:generate
+5. Configura la base de datos e idioma en el archivo `.env`:
+
+    ``` 
+    APP_LOCALE=es
+
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=nombre_de_tu_base_de_datos
+    DB_USERNAME=tu_usuario
+    DB_PASSWORD=tu_contraseña
     ```
 
 6. Configura la base de datos en el archivo `.env` y luego ejecuta las migraciones:
