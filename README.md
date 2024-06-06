@@ -1,66 +1,121 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><a href="https://github.com/Ndnestor098/ScarpetossLaravel" target="_blank"><img src="https://ndnestor098.github.io/WebCV/img/logoEduPlus.png" width="400" alt="EduPlus Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
+# EduPlus
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+EduPlus es una plataforma educativa diseñada para facilitar la gestión de calificaciones y tareas entre estudiantes y profesores. La aplicación permite a los profesores asignar trabajos y evaluar a los estudiantes de manera eficiente, y proporciona control administrativo para directores.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Características
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Gestión de usuarios:**
+  - Creación, edición y eliminación de estudiantes y profesores.
+  - Gestión de permisos y roles (estudiantes, profesores, directores).
+- **Asignación y calificación de tareas:**
+  - Los profesores pueden asignar y calificar tareas, proyectos, exámenes, exposiciones, etc.
+  - Los estudiantes pueden ver sus trabajos asignados y calificaciones.
+- **Visualización de calificaciones y reportes:**
+  - Los estudiantes pueden ver sus calificaciones detalladas por materia.
+  - Los profesores pueden generar reportes de calificaciones.
+  - Los directores pueden visualizar las calificaciones de todos los estudiantes.
+- **Control administrativo:**
+  - Los directores pueden modificar y gestionar los registros de estudiantes y profesores (nombre, email, contraseña, etc..).
+  - Acceso a reportes globales de calificaciones.
 
-## Learning Laravel
+## Tecnologías Utilizadas
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Backend:** Laravel 11.x
+- **Frontend:** Blade, Tailwind CSS
+- **Base de Datos:** MySQL
+- **Autenticación:** Laravel Breeze
+- **Versionado:** Git
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Instalación
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Sigue estos pasos para instalar y configurar EduPlus en tu entorno local:
 
-## Laravel Sponsors
+1. Clona el repositorio:
+    ```sh
+    git clone https://github.com/Ndnestor098/EduPlus.git
+    cd EduPlus
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2. Instala las dependencias de PHP:
+    ```sh
+    composer install
+    ```
 
-### Premium Partners
+3. Instala las dependencias de JavaScript:
+    ```sh
+    npm install
+    npm run dev
+    ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+4. Instala las dependencias de Idiomas de Laravel:
+    ```sh
+    composer require --dev laravel-lang/common
+    ```
 
-## Contributing
+5. Configura el archivo `.env`:
+    ```sh
+    cp .env.example .env
+    php artisan key:generate
+    ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+6. Configura la base de datos en el archivo `.env` y luego ejecuta las migraciones:
+    ```sh
+    php artisan migrate --seed
+    ```
 
-## Code of Conduct
+7. Inicia el servidor de desarrollo:
+    ```sh
+    php artisan serve
+    ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Uso
 
-## Security Vulnerabilities
+### Roles y Permisos
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **Profesor:** Puede asignar trabajos, calificar a los estudiantes y ver reportes de calificaciones.
+- **Estudiante:** Puede ver los trabajos asignados, sus calificaciones y subir sus tareas.
+- **Director:** Tiene acceso administrativo para visualizar las calificaciones de los estudiantes y gestionar usuarios (estudiantes y profesores).
 
-## License
+### Funcionalidades Principales
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. **Asignación de Trabajos:**
+    - Los profesores pueden asignar diferentes tipos de trabajos (tareas, proyectos, exámenes, exposiciones, etc.).
+    - Los trabajos pueden ser filtrados por curso y materia.
+
+2. **Calificación de Estudiantes:**
+    - Los profesores pueden calificar los trabajos de los estudiantes y subir calificaciones.
+    - Las calificaciones pueden ser vistas por los estudiantes en su panel de usuario.
+
+3. **Visualización de Calificaciones:**
+    - Los estudiantes pueden ver sus calificaciones detalladas en cada materia.
+    - Los profesores pueden generar reportes de calificaciones.
+    - Los directores pueden visualizar las calificaciones de todos los estudiantes.
+
+4. **Control Administrativo:**
+    - Los directores pueden modificar y gestionar los registros de estudiantes y profesores.
+    - Acceso a reportes globales de calificaciones.
+
+## Contribución
+
+Si deseas contribuir a EduPlus, por favor sigue estos pasos:
+
+1. Haz un fork del repositorio.
+2. Crea una rama para tu nueva funcionalidad (`git checkout -b feature/nueva-funcionalidad`).
+3. Realiza tus cambios y haz commit (`git commit -am 'Añadir nueva funcionalidad'`).
+4. Empuja tu rama (`git push origin feature/nueva-funcionalidad`).
+5. Crea un Pull Request.
+
+## Licencia
+
+Este proyecto está licenciado bajo la Apache License 2.0. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+## Contacto
+
+Si tienes alguna pregunta o sugerencia, por favor contacta a [tu_nombre](mailto:trabajo.nestor.098@gmail.com).
+
+---
+
+¡Gracias por usar EduPlus!
