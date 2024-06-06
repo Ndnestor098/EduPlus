@@ -114,7 +114,7 @@ Este proyecto está licenciado bajo la Apache License 2.0. Consulta el archivo [
 
 ## Contacto
 
-Si tienes alguna pregunta o sugerencia, por favor contacta a [tu_nombre](mailto:trabajo.nestor.098@gmail.com).
+Si tienes alguna pregunta o sugerencia, por favor contacta a [Nestor Daniel](mailto:trabajo.nestor.098@gmail.com).
 
 ---
 
