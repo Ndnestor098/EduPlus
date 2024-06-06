@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Administer;
+use App\Models\Qualification;
+use App\Models\Student;
+use App\Models\Teacher;
 use App\Services\AdministerServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -102,5 +105,29 @@ class AdminController extends Controller
 
         // Redirigir a la página principal de administradores después de eliminar exitosamente
         return redirect(route("administrador"));
+    }
+
+    public function showMarks(Request $request)
+    {
+        // Obtener todos los cursos distintos ordenados
+        $course = Student::select('course')->distinct()->orderBy('course')->get();
+
+        // Obtener todos los estudiantes en orden
+        $students = Qualification::with('student')
+            ->whereHas('student', function($query) use ($request){
+                if($request->name){
+                    $query->where('name', 'LIKE', "%$request->name%");
+                }
+                if($request->course){
+                    $query->where('course', $request->course);
+                }
+            })
+            ->orderBy("student_id")
+            ->paginate(10);
+
+        // Mantener los valores de las variables en la URL
+        $students->appends($request->query());
+        
+        return view("administrator.marks", ['course' => $course, 'students'=>$students]);
     }
 }

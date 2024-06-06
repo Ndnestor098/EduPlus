@@ -63,7 +63,11 @@
                         <form action="" method="POST" class="form mt-5" enctype="application/x-www-form-urlencoded" novalidate autocomplete="on">
                             @csrf
                             @method("delete")
-                            <button type="submit" class="button-delete">Eleminar</button>
+                            <div>
+                                <span class="text-rojo text-center text-sm">Toda tarea e informacion sera eliminada.</span>
+                                <button type="submit" class="button-delete">Eleminar</button>
+                            </div>
+                            
                         </form>
                     </div>
                 </div>

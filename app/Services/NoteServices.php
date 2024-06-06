@@ -58,6 +58,7 @@ class NoteServices
                         // Obtiene el porcentaje del trabajo
                         $percentageRecord = Percentages::where('work_type_id', $workType->id)
                             ->where('subject', $subject)
+                            ->where('course', $value->course)
                             ->first();
 
                         // Establece el porcentaje total
@@ -88,7 +89,7 @@ class NoteServices
     {
         // Array para combinar las calificaciones por materia
         $combinedGrades = [];
-    
+        
         // Inicializar las materias con 0
         if (!empty($finalGrades)) {
             $subjects = array_keys(reset($finalGrades));
@@ -118,7 +119,7 @@ class NoteServices
     public function updateQualification($student)
     {
         $method = [
-            'Tarea', 'Proyecto', 'Exposicion', 'Participacion', 'Conducta', 'Examen oral', 'Examen escrito'
+            'Tarea', 'Participacion', 'Proyecto', 'Exposicion', 'Conducta', 'Examen oral', 'Examen escrito'
         ];
 
         foreach($method as $value){
@@ -126,7 +127,7 @@ class NoteServices
         }
 
         $notes = $this->calculateQualification($finalGrades);
-
+        
         foreach ($notes as $subject => $note) {
             Qualification::updateOrCreate(
                 ['student_id' => $student->id],

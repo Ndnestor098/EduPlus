@@ -29,6 +29,10 @@
                             <x-nav-link :href="route('administrador')" :active="request()->routeIs('administrador')">
                                 {{ __('Administradores') }}
                             </x-nav-link>
+
+                            <x-nav-link :href="route('admin.calification')" :active="request()->routeIs('admin.calification')">
+                                {{ __('Calificaciones') }}
+                            </x-nav-link>
                         @endif
 
                         @if(auth()->user()->role[0]->name  == 'teacher')
@@ -40,12 +44,16 @@
                                 {{ __('Examenes y Proyectos') }}
                             </x-nav-link>
                         
-                            <x-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
+                            <x-nav-link :href="route('teacher.participation')" :active="request()->routeIs('teacher.participation')">
                                 {{ __('Participacion y Conducta') }}
                             </x-nav-link>
                             
                             <x-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
                                 {{ __('Metodo de Calificacion') }}
+                            </x-nav-link>
+
+                            <x-nav-link :href="route('teacher.marks')" :active="request()->routeIs('teacher.marks')">
+                                {{ __('Calificaciones') }}
                             </x-nav-link>
                         @endif
 
@@ -141,12 +149,16 @@
                     {{ __('Examenes y Proyectos') }}
                 </x-responsive-nav-link>
             
-                <x-responsive-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
+                <x-responsive-nav-link :href="route('teacher.participation')" :active="request()->routeIs('teacher.participation')">
                     {{ __('Participacion y Conducta') }}
                 </x-responsive-nav-link>
                 
                 <x-responsive-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
                     {{ __('Metodo de Calificacion') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('teacher.marks')" :active="request()->routeIs('teacher.marks')">
+                    {{ __('Calificaciones') }}
                 </x-responsive-nav-link>
             @endif
 

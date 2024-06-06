@@ -18,7 +18,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 container mx-auto">
                     <div class="flex gap-5 mb-8">
-                        <a href="{{route("teacher.works")}}"><img src="/assets/img/back.png" alt="back" style="height: 25px"></a><span class="text-lg font-semibold">Crea una nueva tarea</span>
+                        <a href="{{route("teacher.works")}}"><img src="/assets/img/back.png" alt="back" style="height: 25px"></a><span class="text-lg font-semibold">Crea una nueva actividad</span>
                     </div>
 
                     <div class="flex items-center justify-center flex-col">

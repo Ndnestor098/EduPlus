@@ -16,10 +16,10 @@ return new class extends Migration
             $table->decimal('percentage');
             $table->integer('course');
             $table->string('subject');
-            $table->unsignedBigInteger('work_type_id')->nullable();
+            $table->unsignedBigInteger('work_type_id');
             $table->timestamps();
 
-            $table->foreign('work_type_id')->references('id')->on('work_types')->onDelete('set null');
+            $table->foreign('work_type_id')->references('id')->on('work_types')->onDelete('cascade');
         });
     }
 

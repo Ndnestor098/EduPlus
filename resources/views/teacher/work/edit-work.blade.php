@@ -22,7 +22,7 @@
                             <a href="{{route("teacher.works")}}">
                                 <img src="/assets/img/back.png" alt="back" style="height: 25px">
                             </a>
-                            <span class="text-lg font-semibold" style="width: 245px">Actualiza o corrige la tarea</span>
+                            <span class="text-lg font-semibold" style="width: 245px">Actualiza o corrige la actividad</span>
                         </div>
                         @if (isset($work->students[0]) || $mt)
                             <div class="flex w-full justify-end items-center">

@@ -48,9 +48,22 @@ class TeachersController extends Controller
                 }
             }
         }
+
+        // Obtener informacion de los metodos calificativos
+        $showMethod = Percentages::with('workType')->where('subject', $teacher->subject)->get();
+
+        foreach ($showMethod as $method)
+        {
+            if($method->workType->name == "Tarea"){
+                $boolIf = true;
+                break;
+            }else{
+                $boolIf = false;
+            }
+        }
         
         // Retornar la vista con las tareas y cursos
-        return view('teacher.work.works', ['course' => $course, 'work' => $work, 'bool' => $bool]);
+        return view('teacher.work.works', ['course' => $course, 'work' => $work, 'bool' => $bool, 'boolIf'=>$boolIf]);
     }
 
     // Mostrar formulario para agregar una nueva tarea
@@ -238,7 +251,7 @@ class TeachersController extends Controller
         }
 
         // Retornar la vista con las calificaciones y cursos
-        return view('teacher.qualification.qualification', ['all' => $percentages, 'course' => $course, 'valor'=>$valor]);
+        return view('teacher.method.qualification', ['all' => $percentages, 'course' => $course, 'valor'=>$valor]);
     }
 
     // Mostrar el formulario para agregar una nueva calificación
@@ -248,7 +261,7 @@ class TeachersController extends Controller
         $course = student::select('course')->orderBy('course')->distinct()->get();
         $subject = Teacher::where('email', auth()->user()->email)->first()->subject;
 
-        return view('teacher.qualification.add-qualification', ['method' => $metodos, 'subject' => $subject, 'course' => $course]);
+        return view('teacher.method.add-qualification', ['method' => $metodos, 'subject' => $subject, 'course' => $course]);
     }
 
     // Agregar una nueva calificación
@@ -290,7 +303,7 @@ class TeachersController extends Controller
         $subject = Teacher::where('email', auth()->user()->email)->first()->subject;
         $search = Percentages::with('WorkType')->find($request->search);
 
-        return view('teacher.qualification.edit-qualification', ['method' => $metodos, 'subject' => $subject, 'course' => $course, 'search' => $search]);
+        return view('teacher.method.edit-qualification', ['method' => $metodos, 'subject' => $subject, 'course' => $course, 'search' => $search]);
     }
 
     // Actualizar una calificación existente
@@ -328,7 +341,11 @@ class TeachersController extends Controller
     // Eliminar una calificación
     public function deleteQualification(Request $request)
     {
-        Percentages::find($request->search)->delete();
+        $searchPercentage = Percentages::find($request->search);
+    
+        Work::where('work_type_id', $searchPercentage->workType->id)->delete();
+
+        $searchPercentage->delete();
 
         return redirect()->route('teacher.qualification');
     }
@@ -351,6 +368,7 @@ class TeachersController extends Controller
             ->where('slug', $nameWork)
             ->where('subject', $teacher->subject)
             ->first();
+
         // Retornar la vista con los detalles de la tarea y los estudiantes
         return view('teacher.worksStudents.index', ['studentWorks'=>$studentWorks]); 
     }
@@ -390,6 +408,7 @@ class TeachersController extends Controller
 
         // Actualizar la calificación de la tarea del estudiante
         $work = WorkStudent::find($request->workStudent_id);
+
         $work->qualification = $request->note;
         $work->save();
 
@@ -471,8 +490,23 @@ class TeachersController extends Controller
             }
         }
 
+        // Obtener informacion de los metodos calificativos
+        $showMethod = Percentages::with('workType')->where('subject', $teacher->subject)->get();
+
+        foreach ($showMethod as $method)
+        {
+            if($method->workType->name == "Examen oral" || $method->workType->name == "Proyecto" || $method->workType->name == "Examen escrito"){
+                $boolIf = true;
+                break;
+            }else{
+                $boolIf = false;
+            }
+        }
+        if($showMethod->isEmpty()) 
+                $bool = false;
+
         // Retornar la vista con las tareas y cursos
-        return view('teacher.exam_project.index', ['course' => $course, 'work' => $work, 'bool' => $bool]);
+        return view('teacher.exam_project.index', ['course' => $course, 'work' => $work, 'bool' => $bool, 'boolIf' => $boolIf]);
     }
 
     // Mostrar las tareas de los estudiantes
@@ -509,8 +543,6 @@ class TeachersController extends Controller
         ]);
 
         $work = json_decode($request->work, true)['id'];
-        
-        $student = Qualification::find(4);
 
         foreach($request->students as $search){
             if(floatval($search['note']) > 10 || floatval($search['note']) < 0){
@@ -519,7 +551,7 @@ class TeachersController extends Controller
             $studentUpdate = WorkStudent::where('student_id', $search['id'])
                 ->where('work_id', $work)
                 ->first();
-            
+
             $studentUpdate->qualification = floatval($search['note']);
             
             $studentUpdate->save();
@@ -531,4 +563,171 @@ class TeachersController extends Controller
 
         return redirect()->route('teacher.exam');
     }
+
+    //========================================Participacion y Conducta========================================
+    public function showParticipation(Request $request)
+    {
+        // Obtener todos los cursos distintos ordenados
+        $course = student::select('course')->distinct()->orderBy('course')->get();
+
+        // Obtener el profesor actualmente autenticado
+        $teacher = Teacher::where('email', auth()->user()->email)->first();
+
+        // Obtener informacion de los metodos calificativos
+        $conductaMethods = Percentages::with('workType')
+            ->whereHas("workType", function($query){
+                $query->where("name", "Conducta");
+            })
+            ->course($request->course)
+            ->where('subject', $teacher->subject)
+            ->get();
+
+        $participacionMethods = Percentages::with('workType')
+            ->whereHas("workType", function($query){
+                $query->where("name", "Participacion");
+            })
+            ->course($request->course)
+            ->where('subject', $teacher->subject)
+            ->get();
+
+        $showMethod = $conductaMethods->merge($participacionMethods);
+
+        foreach ($showMethod as $method)
+        {
+            if($method->workType->name == "Participacion" || $method->workType->name == "Conducta"){
+                $bool = true;
+                break;
+            }else{
+                $bool = false;
+            }
+        }
+        
+        if ($request->course) {
+            $bool = true;
+        }else{
+            if($showMethod->isEmpty()) 
+                $bool = false;
+        }
+
+        return view("teacher.participation.index", ['course' => $course, 'bool' => $bool, 'showMethod' => $showMethod]);
+    }
+
+    public function showParticipationCorrect(Request $request)
+    {
+        $method = Percentages::find($request->id);
+
+        // Obtener el profesor actualmente autenticado
+        $teacher = Teacher::where('email', auth()->user()->email)->first();
+
+        $students = Student::where('course', $method->course)->get();
+
+        $work = Work::where('course', $students[0]->course)
+            ->where('subject', $teacher->subject)
+            ->where('work_type_id', $method->workType->id)
+            ->first();
+
+        if(!$work){
+            $work = Work::create([
+                'title' => 'Conducta',
+                'slug' => 'Conducta',
+                'description' => 'Se toma la conducta y modales del alumno dentro del aula.',
+                'scored' => floatval($method->percentage),
+                'public' => 1,
+                'course' => $students[0]->course,
+                'deliver' => date("Y-m-d"),
+                'subject' => $teacher->subject,
+                'work_type_id' => $method->workType->id
+            ]);
+
+            foreach($students as $student){
+                WorkStudent::create([
+                    'name' => $student->name,
+                    'slug' => $student->name,
+                    'course' => $student->course,
+                    'student_id' => $student->id,
+                    'work_id' => $work->id
+                ]);
+            }
+
+            $students = Student::with(['works' => function($query) use ($work){
+                $query->where('work_id', $work->id);
+            }])
+            ->whereHas('works', function($query) use ($work) {
+                $query->where('work_id', $work->id);
+            })
+            ->where('course', $method->course)
+            ->get();
+
+        }else{
+            $students = Student::with(['works' => function($query) use ($work){
+                $query->where('work_id', $work->id);
+            }])
+            ->whereHas('works', function($query) use ($work) {
+                $query->where('work_id', $work->id);
+            })
+            ->where('course', $method->course)
+            ->get();
+            
+        }
+        
+        return view('teacher.participation.correct', ['method'=>$method, 'students'=>$students, 'work'=>$work]);
+    }
+
+    public function updateParticipation(Request $request, NoteServices $noteRequest)
+    {
+        $request->validate([
+            'students' => 'required'
+        ]);
+
+        foreach($request->students as $search){
+            if(floatval($search['note']) > 10 || floatval($search['note']) < 0){
+                return redirect()->back()->with('errors', 'Error en la nota, debe ser entre 1 a 10.');
+            }
+            $student = student::find($search['id']);
+
+            $studentUpdate = WorkStudent::where('student_id', $search['id'])
+                ->where('work_id', $request->work)
+                ->where('course', $student->course)
+                ->first();
+            
+            $studentUpdate->qualification = floatval($search['note']);
+            
+            $studentUpdate->save();
+
+
+            $noteRequest->updateQualification($student);
+        }
+
+        return redirect()->route("teacher.participation");
+    }
+
+    //========================================Participacion y Conducta========================================
+    public function showMarks(Request $request)
+    {
+        // Obtener todos los cursos distintos ordenados
+        $course = student::select('course')->distinct()->orderBy('course')->get();
+
+        // Obtener el profesor actualmente autenticado
+        $teacher = Teacher::where('email', auth()->user()->email)->first();
+
+        // Obtener todos los estudiantes en orden
+        $students = Qualification::with('student')
+            ->selectRaw("id, student_id, {$teacher->subject} AS subject") // Asegúrate de que $teacher->subject es un campo válido en la tabla qualifications
+            ->whereHas('student', function($query) use ($request){
+                if($request->name){
+                    $query->where('name', 'LIKE', "%$request->name%");
+                }
+                if($request->course){
+                    $query->where('course', $request->course);
+                }
+            })
+            ->orderBy("student_id")
+            ->paginate(10);
+
+        // Mantener los valores de las variables en la URL
+        $students->appends($request->query());
+        
+        return view("teacher.calification.index", ['course' => $course, 'students'=>$students, 'subject'=>$teacher->subject]);
+    }
 }
+

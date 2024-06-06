@@ -58,6 +58,8 @@ Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(Admi
     Route::post("/administrator/edit", 'update');
     Route::delete("/administrator/edit", 'destroy');
 
+    //Vizualizar Calificaciones
+    Route::get("/marks/admin/", 'showMarks')->name("admin.calification");
 });
 
 Route::middleware(['auth', 'verified', TeacherMiddleware::class])->controller(TeachersController::class)->group(function(){
@@ -99,11 +101,18 @@ Route::middleware(['auth', 'verified', TeacherMiddleware::class])->controller(Te
     // Eliminar Tareas
     Route::delete("/teacher/correct/", "deleteWorks")->name('delete.work');
     
-
     //Vizualizar Proyectos y Examenes
     Route::get("/teacher/exam", 'showExamAndProject')->name('teacher.exam');
     Route::get("/teacher/exam/correct/{nameWork}", 'showExamAndProjectStudents')->name('teacher.correct.exam');
     Route::post("/teacher/exam/qualification", 'qualification')->name('teacher.exam.qualification');
+
+    //Vizualizar Conduca y Participaciones
+    Route::get("/teacher/participation/", 'showParticipation')->name("teacher.participation");
+    Route::get("/teacher/participation/correct", 'showParticipationCorrect')->name("teacher.participation.correct");
+    Route::post("/teacher/participation/correct", 'updateParticipation');
+
+    //Vizualizar Calificacion
+    Route::get("/teacher/marks/", 'showMarks')->name("teacher.marks");
 
 });
 

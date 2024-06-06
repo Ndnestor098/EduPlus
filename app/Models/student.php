@@ -11,7 +11,7 @@ class Student extends Model
     
     public function qualification()
     {
-        return $this->hasOne('App\Models\Qualification');
+        return $this->hasOne(Qualification::class);
     }
 
     public function works()

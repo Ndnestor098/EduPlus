@@ -119,7 +119,7 @@ class StudentController extends Controller
         $noteRequest->updateQualification($student);
 
         $note = Qualification::find($student->id);
-
+        
         return view('student.note.index', ['subjects'=>$note]);
     }
 
@@ -148,7 +148,6 @@ class StudentController extends Controller
         foreach ($worksType as $value) {
             $workType[$value->id] = $value->name;
         }
-
 
         return view('student.note.note', ['works'=>$searchWorks, 'subject'=>$subject, 'workType'=>$workType]);
     }
