@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StudentAdminController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TeacherAdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
@@ -13,6 +14,11 @@ use App\Http\Middleware\TeacherMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->middleware(['auth', 'verified'])->name('home');
+
+Route::middleware(['auth', 'verified'])->controller(NotificationController::class)->group(function(){
+    Route::get("/notifications/show", 'ShowNotifications')->name("notification");
+    Route::get("/notifications/read", 'readNotifications')->name("read.notification");
+});
 
 Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(TeacherAdminController::class)->group(function(){
     // Visualizar Profesores
@@ -113,7 +119,6 @@ Route::middleware(['auth', 'verified', TeacherMiddleware::class])->controller(Te
 
     //Vizualizar Calificacion
     Route::get("/teacher/marks/", 'showMarks')->name("teacher.marks");
-
 });
 
 Route::middleware(['auth', 'verified', StudentMiddleware::class])->controller(StudentController::class)->group(function(){
@@ -129,6 +134,7 @@ Route::middleware(['auth', 'verified', StudentMiddleware::class])->controller(St
     
     // Vizualizar Calificaciones - INDIVIDUAL
     Route::get('/student/qualificaction/{subject}', 'showSubject')->name('student.qualification.alone');
+
 });
 
 Route::middleware('auth')->group(function () {

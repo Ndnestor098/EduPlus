@@ -2,7 +2,7 @@
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-            <div class="flex">
+            <div class="flex w-full">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}">
@@ -16,57 +16,57 @@
                         {{ __('Inicio') }} 
                     </x-nav-link>
 
-                        @if(auth()->user()->role[0]->name  == 'admin')
-                            <!-- Menú para director -->
-                            <x-nav-link :href="route('teacher.admin')" :active="request()->routeIs('teacher.admin')">
-                                {{ __('Profesores') }}
-                            </x-nav-link>
+                    @if(auth()->user()->role[0]->name  == 'admin')
+                        <!-- Menú para director -->
+                        <x-nav-link :href="route('teacher.admin')" :active="request()->routeIs('teacher.admin')">
+                            {{ __('Profesores') }}
+                        </x-nav-link>
 
-                            <x-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
-                                {{ __('Alumnos') }}
-                            </x-nav-link>
+                        <x-nav-link :href="route('student.admin')" :active="request()->routeIs('student.admin')">
+                            {{ __('Alumnos') }}
+                        </x-nav-link>
 
-                            <x-nav-link :href="route('administrador')" :active="request()->routeIs('administrador')">
-                                {{ __('Administradores') }}
-                            </x-nav-link>
+                        <x-nav-link :href="route('administrador')" :active="request()->routeIs('administrador')">
+                            {{ __('Administradores') }}
+                        </x-nav-link>
 
-                            <x-nav-link :href="route('admin.calification')" :active="request()->routeIs('admin.calification')">
-                                {{ __('Calificaciones') }}
-                            </x-nav-link>
-                        @endif
+                        <x-nav-link :href="route('admin.calification')" :active="request()->routeIs('admin.calification')">
+                            {{ __('Calificaciones') }}
+                        </x-nav-link>
+                    @endif
 
-                        @if(auth()->user()->role[0]->name  == 'teacher')
-                            <x-nav-link :href="route('teacher.works')" :active="request()->routeIs('teacher.works')"> 
-                                {{ __('Tareas') }}
-                            </x-nav-link>
+                    @if(auth()->user()->role[0]->name  == 'teacher')
+                        <x-nav-link :href="route('teacher.works')" :active="request()->routeIs('teacher.works')"> 
+                            {{ __('Tareas') }}
+                        </x-nav-link>
 
-                            <x-nav-link :href="route('teacher.exam')" :active="request()->routeIs('teacher.exam')">
-                                {{ __('Examenes y Proyectos') }}
-                            </x-nav-link>
+                        <x-nav-link :href="route('teacher.exam')" :active="request()->routeIs('teacher.exam')">
+                            {{ __('Examenes y Proyectos') }}
+                        </x-nav-link>
+                    
+                        <x-nav-link :href="route('teacher.participation')" :active="request()->routeIs('teacher.participation')">
+                            {{ __('Participacion y Conducta') }}
+                        </x-nav-link>
                         
-                            <x-nav-link :href="route('teacher.participation')" :active="request()->routeIs('teacher.participation')">
-                                {{ __('Participacion y Conducta') }}
-                            </x-nav-link>
-                            
-                            <x-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
-                                {{ __('Metodo de Calificacion') }}
-                            </x-nav-link>
+                        <x-nav-link :href="route('teacher.qualification')" :active="request()->routeIs('teacher.qualification')">
+                            {{ __('Metodo de Calificacion') }}
+                        </x-nav-link>
 
-                            <x-nav-link :href="route('teacher.marks')" :active="request()->routeIs('teacher.marks')">
-                                {{ __('Calificaciones') }}
-                            </x-nav-link>
-                        @endif
+                        <x-nav-link :href="route('teacher.marks')" :active="request()->routeIs('teacher.marks')">
+                            {{ __('Calificaciones') }}
+                        </x-nav-link>
+                    @endif
 
-                        @if(auth()->user()->role[0]->name  == 'student')
-                            <!-- Menú para estudiante -->
-                            <x-nav-link :href="route('student.works')" :active="request()->routeIs('student.works')">
-                                {{ __('Tareas') }}
-                            </x-nav-link>
+                    @if(auth()->user()->role[0]->name  == 'student')
+                        <!-- Menú para estudiante -->
+                        <x-nav-link :href="route('student.works')" :active="request()->routeIs('student.works')">
+                            {{ __('Tareas') }}
+                        </x-nav-link>
 
-                            <x-nav-link :href="route('student.qualification')" :active="request()->routeIs('student.qualification')">
-                                {{ __('Calificaciones') }}
-                            </x-nav-link>
-                        @endif
+                        <x-nav-link :href="route('student.qualification')" :active="request()->routeIs('student.qualification')">
+                            {{ __('Calificaciones') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -114,6 +114,16 @@
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
+            </div>
+
+            <div id="content-notify" class="h-full ml-3" x-data="{ isOpen: false }">
+                <div @mouseover="isOpen = true" @mouseleave="isOpen = false" class="flex h-full w-full justify-end items-center relative">
+                    <i id="bell" class="fa-solid fa-bell text-rojo"></i>
+                    <span id="count" class="absolute left-2 bottom-3 bg-red-500 w-4 h-4 text-xs flex items-center justify-center"></span>
+                
+                    <div id="areaNotification" x-show="isOpen" style="top: 55px; background-color: #ffffff; width:250px;" class="absolute border border-gray-300 mt-1 rounded shadow-md flex flex-col gap-3 p-2">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -201,3 +211,7 @@
         </div>
     </div>
 </nav>
+
+
+<script src="/assets/js/notify.js"></script>
+<link rel="stylesheet" href="/assets/css/style.css">

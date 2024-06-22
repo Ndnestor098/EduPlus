@@ -9,8 +9,10 @@ use App\Models\Teacher;
 use App\Models\Work;
 use App\Models\WorkStudent;
 use App\Models\WorkType;
+use App\Notifications\StudentUpAssignment;
 use App\Services\NoteServices;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
@@ -51,6 +53,16 @@ class StudentController extends Controller
     {
         // Obtener los detalles de un trabajo específico para mostrarlos al estudiante
         $work = Work::where('slug', $nameWork)->first();
+
+        $user = auth()->user();
+
+        $student = Student::where('email', $user->email)->first();
+
+        $notification = $student->notifications()->where('id', $request->notificationId)->first();
+
+        if ($notification) {
+            $notification->markAsRead();
+        }
 
         // Retornar la vista con los detalles del trabajo
         return view('student.works.show', compact('work'));
@@ -95,9 +107,10 @@ class StudentController extends Controller
         if($fileBool || $imageBool){
             // Obtener la información del estudiante actual
             $student = Student::where('email', auth()->user()->email)->first();
+            $teacher = Teacher::where('subject', $request->subject)->first();
 
             // Crear un nuevo registro de trabajo realizado por el estudiante
-            WorkStudent::create([
+            $work = WorkStudent::create([
                 'name' => $student->name,
                 'slug' => $student->name, // ¿Estás seguro de que el slug del trabajo debe ser el nombre del estudiante?
                 'course' => $student->course,
@@ -106,8 +119,11 @@ class StudentController extends Controller
                 'student_id' => $student->id,
                 'work_id' => $request->input('work_id'),
             ]);
+
+            // Enviar notificación a al profesor
+            Notification::send($teacher, new StudentUpAssignment($work));
         }
-        
+
         // Redirigir al estudiante de nuevo a sus trabajos
         return redirect()->route('student.works');
     }

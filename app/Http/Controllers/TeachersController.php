@@ -9,10 +9,12 @@ use App\Models\Teacher;
 use App\Models\Work;
 use App\Models\WorkStudent;
 use App\Models\WorkType;
+use App\Notifications\TeacherUpAssignment;
 use App\Services\NoteServices;
 use App\Services\TeacherServices;
 use App\Services\WorkServices;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -132,13 +134,20 @@ class TeachersController extends Controller
         // Agregar la tarea con los datos proporcionados
         $work = $requestWork->addWork($request, $file, $image);
 
+
+        // Obtener los alumnos correspondientes
+        $students = Student::where('course', $work->course)->get();
+
+        // Enviar notificación a los alumnos
+        Notification::send($students, new TeacherUpAssignment($work));
+
         if($request->qualification == "Examen oral" || $request->qualification == "Examen escrito" || $request->qualification == "Proyecto" || $request->qualification == "Exposicion"){
             $students = student::where('course', $request->course)->get();
 
             foreach ($students as $value) {
                 WorkStudent::create([
                     'name' => $value->name,
-                    'slug' => $value->name, // ¿Estás seguro de que el slug del trabajo debe ser el nombre del estudiante?
+                    'slug' => $value->name, 
                     'course' => $value->course,
                     'file' => null,
                     'image' => null,
@@ -388,7 +397,12 @@ class TeachersController extends Controller
         ->where('work_id', $request->work_id) // Asegúrate de que el work_id coincide
         ->first();
 
+        $notification = $teacher->notifications()->where('id', $request->notificationId)->first();
 
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        
         // Retornar la vista con los detalles de la tarea del estudiante
         return view('teacher.worksStudents.correct', ['student'=>$studentWork]); 
     }
