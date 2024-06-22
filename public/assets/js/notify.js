@@ -1,3 +1,4 @@
+// Función para limitar el texto a un cierto número de caracteres
 function limitarTexto(texto, limite) {
     if (texto.length <= limite) {
         return texto; // Retorna el texto completo si es menor o igual al límite
@@ -37,9 +38,9 @@ async function fetchData() {
         if (data.length != 0) {
             // Procesa los datos obtenidos
             data.some(element => {
-                
-                if(element.type.includes('StudentUpAssignment')) // Vista de Teacher
-                {
+                // Verifica el tipo de notificación
+                if (element.type.includes('StudentUpAssignment')) {
+                    // Vista de Teacher
                     // Crear el elemento <div> con las clases y estilos
                     const divElement = document.createElement('div');
                     divElement.classList.add('custom-box');
@@ -70,7 +71,8 @@ async function fetchData() {
 
                     // Agregar el <div> al contenedor
                     container.appendChild(divElement);
-                }else{
+                } else {
+                    // Vista de Student
                     // Crear el elemento <div> con las clases y estilos
                     const divElement = document.createElement('div');
                     divElement.classList.add('custom-box');
@@ -101,9 +103,13 @@ async function fetchData() {
                     container.appendChild(divElement);
                 }
                 
+                // Contadores de bucle y notificaciones
                 countBucle += 1;
                 countNotify += 1;
                 document.getElementById('count').textContent = countNotify;
+                
+                // Modificar el color de la campanita
+                let bell = document.getElementById('bell').classList.replace('text-verde', 'text-rojo');
 
                 // Si countBucle alcanza 4, detener la iteración
                 if (countBucle === 4) {
@@ -111,8 +117,7 @@ async function fetchData() {
                 }
             });
         } else {
-            let element = document.getElementById('bell').classList.replace('text-rojo', 'text-verde');
-
+            // No hay notificaciones, mostrar mensaje
             // Crear el elemento <div> con las clases y estilos
             const divElement = document.createElement('div');
             divElement.classList.add('w-full');
@@ -132,6 +137,7 @@ async function fetchData() {
             container.appendChild(divElement);
         }
 
+        // Crear el elemento <div> para ver más notificaciones
         const divElement = document.createElement('div');
         divElement.classList.add('w-full');
         divElement.classList.add('text-center');
@@ -150,10 +156,10 @@ async function fetchData() {
         container.appendChild(divElement);
         
     } catch (error) {
-        // Maneja cualquier error que pueda ocurrir durante la solicitud
+        // Manejar cualquier error que pueda ocurrir durante la solicitud
         console.error('Error al realizar la solicitud:', error);
     }
 }
 
-// Llama a la función fetchData() cuando sea necesario
+// Llamar a la función fetchData() para iniciar la solicitud de datos
 fetchData();

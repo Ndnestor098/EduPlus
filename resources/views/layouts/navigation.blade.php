@@ -66,6 +66,10 @@
                         <x-nav-link :href="route('student.qualification')" :active="request()->routeIs('student.qualification')">
                             {{ __('Calificaciones') }}
                         </x-nav-link>
+
+                        <x-nav-link :href="route('student.qualification')" :active="request()->routeIs('student.qualification')">
+                            {{ __('Calendario') }}
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -116,9 +120,10 @@
                 </button>
             </div>
 
+            <!-- Notification -->
             <div id="content-notify" class="h-full ml-3" x-data="{ isOpen: false }">
                 <div @mouseover="isOpen = true" @mouseleave="isOpen = false" class="flex h-full w-full justify-end items-center relative">
-                    <i id="bell" class="fa-solid fa-bell text-rojo"></i>
+                    <i id="bell" class="fa-solid fa-bell text-verde"></i>
                     <span id="count" class="absolute left-2 bottom-3 bg-red-500 w-4 h-4 text-xs flex items-center justify-center"></span>
                 
                     <div id="areaNotification" x-show="isOpen" style="top: 55px; background-color: #ffffff; width:250px;" class="absolute border border-gray-300 mt-1 rounded shadow-md flex flex-col gap-3 p-2">
