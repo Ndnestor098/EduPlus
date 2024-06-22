@@ -1,4 +1,4 @@
-<p align="center"><a href="https://github.com/Ndnestor098/ScarpetossLaravel" target="_blank"><img src="https://ndnestor098.github.io/WebCV/img/logoEduPlus.png" width="400" alt="EduPlus Logo"></a></p>
+<p align="center"><a href="https://github.com/Ndnestor098/ScarpetossLaravel" target="_blank"><img src="https://ndnestor098.github.io/WebCV/assets/img/logoEduPlus.png" width="400" alt="EduPlus Logo"></a></p>
 
 
 # EduPlus
