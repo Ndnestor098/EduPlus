@@ -18,6 +18,8 @@ Route::get('/', HomeController::class)->middleware(['auth', 'verified'])->name('
 Route::middleware(['auth', 'verified'])->controller(NotificationController::class)->group(function(){
     Route::get("/notifications/show", 'ShowNotifications')->name("notification");
     Route::get("/notifications/read", 'readNotifications')->name("read.notification");
+    Route::get('/calendar', 'showCalendar')->name('calendar');
+    Route::get('/calendar/read', 'readCalendar');
 });
 
 Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(TeacherAdminController::class)->group(function(){

@@ -26,7 +26,7 @@
                                 @endphp
 
                                 @if ($item->notifiable_type == 'App\\Models\\Student')
-                                    <div class="flex w-full justify-between p-2 items-center">
+                                    <div class="flex w-full justify-between p-2 items-center" style="box-shadow: 0px 13px 15px -13px rgba(153,153,153,1)">
                                         <a class="flex w-full justify-between items-center" 
                                             href="/student/work/{{ $item->data['work']['slug'] }}?notificationId={{ $item->id }}">
                                             <div>
@@ -55,7 +55,7 @@
                                 @endphp
 
                                 @if ($item->notifiable_type == 'App\\Models\\Teacher')
-                                    <div class="flex w-full justify-between p-2 items-center">
+                                    <div class="flex w-full justify-between p-2 items-center" style="box-shadow: 0px 13px 15px -13px rgba(153,153,153,1)">
                                         <a class="flex w-full justify-between items-center" href="/teacher/correct/student/{{ $item->data['work']['slug'] }}?work_id={{ $item->data['work']['work_id'] }}&notificationId={{ $item->id}}">
                                             <div>
                                                 <p><span class="font-bold">Nombre del Alumno:</span> {{ $item->data['work']['name'] }}</p>
