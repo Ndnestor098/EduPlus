@@ -14,6 +14,7 @@ use App\Services\NoteServices;
 use App\Services\TeacherServices;
 use App\Services\WorkServices;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -134,6 +135,7 @@ class TeachersController extends Controller
         // Agregar la tarea con los datos proporcionados
         $work = $requestWork->addWork($request, $file, $image);
 
+        Cache::flush();
 
         // Obtener los alumnos correspondientes
         $students = Student::where('course', $work->course)->get();
@@ -213,6 +215,8 @@ class TeachersController extends Controller
         // Actualizar la tarea con los datos proporcionados
         $requestWork->updateWork($request, $file, $image);
 
+        Cache::flush();
+
         return redirect()->route('teacher.works');
     }
 
@@ -220,21 +224,24 @@ class TeachersController extends Controller
     public function deleteWork(Request $request)
     {
         $work = Work::find($request->id);
+        $user = auth()->user();
 
         // Si la tarea tiene un archivo asociado, eliminarlo del almacenamiento
         if (isset($work->file)) {
-            $relativePath = str_replace('/storage/', '', $work->pdf);
+            $relativePath = str_replace('storage', 'public', $work->pdf);
             Storage::delete($relativePath);
         }
     
         // Si la tarea tiene una imagen asociada, eliminarla del almacenamiento
         if (isset($work->image)) {
-            $relativePath = str_replace('/storage/', '', $work->img);
+            $relativePath = str_replace('storage', 'public', $work->img);
             Storage::delete($relativePath);
         }
 
         // Eliminar la tarea de la base de datos
         $work->delete();
+
+        Cache::flush();
 
         return redirect()->route('teacher.works');
     }
@@ -429,6 +436,8 @@ class TeachersController extends Controller
         $student = student::find($request->student_id);
         $requestNote->updateQualification($student);
 
+        Cache::flush();
+
         // Redirigir de vuelta a la página de las tareas de los estudiantes
         return redirect()->route("teacher.works.students", ['nameWork'=>$request->slug]);
     }
@@ -439,11 +448,31 @@ class TeachersController extends Controller
         // Obtener la tarea del estudiante
         $work = WorkStudent::find($request->workStudent_id);
 
+        if (!$work) {
+            return redirect()->route("teacher.works.students", ['nameWork' => $request->slug])
+                            ->with('error', 'Trabajo no encontrado');
+        }
+
         // Eliminar las imágenes asociadas a la tarea
         foreach(json_decode($work->image, true) as $item){
-            $relativePath = str_replace('/storage/', '', $item);
+            $relativePath = str_replace('storage', 'public', $item);
             Storage::delete($relativePath);
         }
+
+        // Obtener el usuario actual
+        $user = auth()->user();
+        $teacher = Teacher::where('email', $user->email)->first();
+
+        // Filtrar y eliminar las notificaciones asociadas a este trabajo
+        $teacher->notifications->filter(function ($notification) use ($work) {
+            return isset($notification->data['work']['id']) &&
+                $notification->data['work']['id'] == $work->id &&
+                isset($notification->data['work']['student_id']) &&
+                $notification->data['work']['student_id'] == $work->student_id;
+        })->each->delete();
+
+        Cache::flush();
+        
 
         // Eliminar la tarea del estudiante
         $work->delete();

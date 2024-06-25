@@ -77,7 +77,7 @@
                         @endforeach
                         
                     </table>
-                    <div>
+                    <div class=" pt-2">
                         {{$students->links()}}
                     </div>
                 </div>

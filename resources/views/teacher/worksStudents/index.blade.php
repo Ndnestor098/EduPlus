@@ -43,13 +43,13 @@
                                 
                                 @if (!$item->qualification)
                                     <td>
-                                        <a href="{{ route("teacher.correct", ['nameStudent' => $item->slug]) }}">
+                                        <a href="{{ route("teacher.correct", ['nameStudent' => $item->slug, 'work_id'=>$studentWorks->id]) }}">
                                             <img class="m-auto" src="/assets/img/bad.png" alt="Tareas a revisar: Pendiente" width="30px">
                                         </a>
                                     </td>
                                 @else
                                     <td>
-                                        <a href="{{ route("teacher.correct", ['nameStudent' => $item->slug]) }}">
+                                        <a href="{{ route("teacher.correct", ['nameStudent' => $item->slug, 'work_id'=>$studentWorks->id]) }}">
                                             <img class="m-auto" src="/assets/img/check.png" alt="Tareas a revisadas: OK" width="30px">
                                         </a>
                                     </td>

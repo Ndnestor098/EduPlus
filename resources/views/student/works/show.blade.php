@@ -50,25 +50,27 @@
                             </div>
                         @endif
                         
-                        <div class="mt-10 border border-solid border-naranja rounded-md p-2" style="box-shadow: 0px 13px 15px -15px rgba(153,153,153,1);">
-                            <form action="{{route("upWork")}}" method="POST" class="form" enctype="multipart/form-data" novalidate autocomplete="on">
-                                @csrf
-                                <input type="hidden" name="subject" value="{{$work->subject}}">
-                                <input type="hidden" name="work_id" value="{{$work->id}}">
-                                <span class="text-xl text-center">Subir Tarea</span>
-                                <div>
-                                    <label for="files">Archivos (pdf, doc, etc..) <span>Lo que corresponda.</span></label>
-                                    <input type="file" name="files[]" id="files" accept=".doc,.docx,.xls,.xlsx,.pdf,.ppt,.pptx" multiple required>
-                                </div>
-                                <div>
-                                    <label for="images">Imágenes <span>Lo que corresponda.</span></label>
-                                    <input type="file" name="images[]" id="images" accept="image/*" multiple required>
-                                </div>
-                                <div>
-                                    <button type="submit" class="button-update">Subir tarea</button>
-                                </div>
-                            </form>
-                        </div>
+                        @if ($work->deliver > $date)
+                            <div class="mt-10 border border-solid border-naranja rounded-md p-2" style="box-shadow: 0px 13px 15px -15px rgba(153,153,153,1);">
+                                <form action="{{route("upWork")}}" method="POST" class="form" enctype="multipart/form-data" novalidate autocomplete="on">
+                                    @csrf
+                                    <input type="hidden" name="subject" value="{{$work->subject}}">
+                                    <input type="hidden" name="work_id" value="{{$work->id}}">
+                                    <span class="text-xl text-center">Subir Tarea</span>
+                                    <div>
+                                        <label for="files">Archivos (pdf, doc, etc..) <span>Lo que corresponda.</span></label>
+                                        <input type="file" name="files[]" id="files" accept=".doc,.docx,.xls,.xlsx,.pdf,.ppt,.pptx" multiple required>
+                                    </div>
+                                    <div>
+                                        <label for="images">Imágenes <span>Lo que corresponda.</span></label>
+                                        <input type="file" name="images[]" id="images" accept="image/*" multiple required>
+                                    </div>
+                                    <div>
+                                        <button type="submit" class="button-update">Subir tarea</button>
+                                    </div>
+                                </form>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

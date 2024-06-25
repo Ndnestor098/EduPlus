@@ -6,6 +6,7 @@ use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Work;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class NotificationController extends Controller
 {
@@ -30,7 +31,6 @@ class NotificationController extends Controller
 
         return view('notify', ['notify' => $notify, 'subject' => $subject]);
     }
-
 
     public function readNotifications()
     {
@@ -57,39 +57,54 @@ class NotificationController extends Controller
     public function readCalendar(Request $request)
     {   
         if ($request->role == 'student') {
-            // Obtener la información del estudiante actual y sus trabajos asociados
-            $student = Student::with('works')->where('email', auth()->user()->email)->first();
-
-            if (!$student) {
-                return response()->json(['error' => 'Estudiante no encontrado'], 404);
+            // Eliminar la caché si se solicita explícitamente
+            if ($request->has('clear_cache') && $request->clear_cache == true) {
+                Cache::forget('calendar');
             }
 
-            // Obtener los IDs de los trabajos excluidos (ya realizados) por el estudiante
-            $excludedWorkIds = $student->works->pluck('work_id');
+            // Leer los trabajos de la caché si están disponibles
+            if (Cache::has('calendar')) {
+                $works = Cache::get('calendar');
+            } else {
+                // Obtener los trabajos disponibles para el estudiante
+                $student = Student::with('works')->where('email', auth()->user()->email)->first();
+                $excludedWorkIds = $student->works->pluck('work_id');
 
-            // Obtener los trabajos disponibles para el estudiante
-            $works = Work::where('deliver', $request->date)
-                ->whereNotIn('work_type_id', [7, 6])
-                ->where('course', $student->course) // Buscar las tareas del curso del estudiante
-                ->whereNotIn('id', $excludedWorkIds) // Filtrar por los id que no necesitamos
-                ->public() // Filtrar por trabajos públicos
-                ->limit(4)
-                ->get();
-            
-            return response()->json([$works, 'date' => $request->date]);
+                $works = work::whereNotIn('work_type_id', [7, 6])
+                    ->where('course', $student->course)
+                    ->whereNotIn('id', $excludedWorkIds) // Filtrar por los id que no necesitamos
+                    ->public()
+                    ->get();
+
+                // Guardar los trabajos en la caché por 24 horas (1440 minutos)
+                Cache::put('calendar', $works, now()->addMinutes(1440));
+            }
+
+            return response()->json(['works' => $works]);
         }
 
         if($request->role == 'teacher'){
-            $teacher = Teacher::where('email', auth()->user()->email)->first();
+            // Eliminar la caché si se solicita explícitamente
+            if ($request->has('clear_cache') && $request->clear_cache == true) {
+                Cache::forget('calendar');
+            }
 
-            $works = Work::where('subject', $teacher->subject)
-                ->whereNotIn('work_type_id', [7, 6])
-                ->public() // Filtrar por trabajos públicos
-                ->where('deliver', $request->date)
-                ->limit(4)
-                ->get();
+            // Leer los trabajos de la caché si están disponibles
+            if(Cache::has('calendar')){
+                $works = Cache::get('calendar');
+            } else {
+                // Obtener los trabajos disponibles para el profesores
+                $teacher = Teacher::where('email', auth()->user()->email)->first();
+                
+                $works = Work::where('subject', $teacher->subject)
+                    ->whereNotIn('work_type_id', [7, 6])
+                    ->public() // Filtrar por trabajos públicos
+                    ->get();
 
-            return response()->json([$works, 'date' => $request->date]);
+                Cache::put('calendar', $works);
+            }
+            
+            return response()->json(['works' => $works]);
         }
         
         return response()->json(['error' => 'Acceso no autorizado'], 403);

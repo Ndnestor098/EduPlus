@@ -35,32 +35,34 @@ function generateCalendar(year, month) {
     // Create boxes for each day of the month
     for (let day = 1; day <= daysInMonth; day++) {
         const dayElement = document.createElement('a');
-        dayElement.className = 'text-center py-2 border cursor-pointer day';
+        dayElement.className = 'text-center py-2 border cursor-pointer';
         dayElement.innerText = day;
         dayElement.style.cursor = "pointer";
+
+        const formattedMonth = String(month + 1).padStart(2, '0');
+        const formattedDay = String(day).padStart(2, '0');
+
+        const data = `${year}-${formattedMonth}-${formattedDay}`;
+
+        dayElement.id = data;
 
         // Check if this date is the current date
         const currentDate = new Date();
         if (year === currentDate.getFullYear() && month === currentDate.getMonth() && day === currentDate.getDate()) {
-            dayElement.style.color = "#687575";
+            dayElement.className += ' text-rojo';
         }
 
         calendarElement.appendChild(dayElement);
 
-        // Fetch data asynchronously
-        fetchDataForDay(year, month, day, dayElement);
     }
+    
+    frontButton();
 
     activeButtons()
 }
 
-function fetchDataForDay(year, month, day, dayElement, modal = false) {
-    // Format the month and day with leading zeros if necessary
-    const formattedMonth = String(month + 1).padStart(2, '0');
-    const formattedDay = String(day).padStart(2, '0');
+function frontButton(id = null, dayElement= null, modal = false) {
     const role = document.getElementById('role').dataset.value;
-
-    const data = `${year}-${formattedMonth}-${formattedDay}`;
 
     const config = {
         method: 'GET',
@@ -68,96 +70,129 @@ function fetchDataForDay(year, month, day, dayElement, modal = false) {
         cache: 'no-cache',
     };
 
-    const url = `/calendar/read?date=${data}&role=${role}`;
-
+    const url = `/calendar/read?role=${role}`;
+    
     fetch(url, config)
         .then(res => res.json())
         .then(result =>{
-            if (result[0].length !== 0 && modal == false) {
-                const currentDate = new Date();
-                let currentYear = String(currentDate.getFullYear()).padStart(2, '0');
-                let currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
-                let currentDay = String(currentDate.getDate()).padStart(2, '0');
+            const currentDate = new Date();
+            let currentYear = String(currentDate.getFullYear()).padStart(2, '0');
+            let currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
+            let currentDay = String(currentDate.getDate()).padStart(2, '0');
 
-                const actualDate = new Date(`${currentYear}-${currentMonth}-${currentDay}`);
-                const date = new Date(result.date);
+            const actualDate = new Date(`${currentYear}-${currentMonth}-${currentDay}`);
 
-                if(date < actualDate){
-                    dayElement.style.backgroundColor = "#fc9141"; // Update the day element with additional data
-                }else{
-                    dayElement.style.backgroundColor = "#ffffa2"; // Update the day element with additional data
-                }
+            if(modal == false){
+                printFrontDate(result, actualDate);
             }
             
-            if(result.length !== 0 && modal == true){
-                const role = document.getElementById('role').dataset.value;
-                
-                result[0].forEach((element)=>{
-                    let role = document.getElementById('role').dataset.value;
-
-                    // Code to update modal content with result data
-                    const workElement = document.createElement('a');
-                    workElement.style.boxShadow = "0px 13px 15px -13px rgba(153,153,153,1)";
-
-                    if(role == 'teacher'){
-                        // Aquí va la URL deseada
-                        if(element.work_type_id in [1,2,3,4]){
-                            workElement.setAttribute('href', `/teacher/work/edit?name=${element.slug}&id=${element.id}&mt=${element.slug}`);
-                        }else{
-                            workElement.setAttribute('href', `/teacher/work/edit?name=${element.slug}&id=${element.id}`);
-                        }
-                    }
-
-                    if(role == 'student'){
-                        // Aquí va la URL deseada
-                        if(element.work_type_id == 5){
-                            workElement.setAttribute('href', `/student/work/${element.slug}`);
-                        }
-                    }
-
-                    const parrafo1 = document.createElement('p');
-                    parrafo1.innerText = "Actividad: " + element.title;
-                    parrafo1.style.paddingBottom = '3px';
-                    workElement.appendChild(parrafo1);
-
-                    const parrafo2 = document.createElement('p');
-                    parrafo2.innerText = "Materia: " + element.subject;
-                    parrafo2.style.paddingBottom = '3px';
-                    workElement.appendChild(parrafo2);
-
-                    const parrafo3 = document.createElement('p');
-                    parrafo3.innerText = "Curso o Año: " + element.course;
-                    parrafo3.style.paddingBottom = '3px';
-                    workElement.appendChild(parrafo3);
-
-                    const parrafo4 = document.createElement('p');
-                    parrafo4.innerText = "Fecha de Entrega: " + element.deliver;
-                    parrafo4.style.paddingBottom = '3px';
-                    workElement.appendChild(parrafo4);
-
-                    dayElement.appendChild(workElement);
-                });
-
-                // Crear el contenido del <div> (enlaces y textos)
-                const link = document.createElement('a');
-                link.textContent = 'Ver Mas';
-                link.className = 'text-verde font-bold text-center';
-
-                if(role == 'student'){
-                    link.setAttribute('href', '/student/works'); // Aquí va la URL deseada
-                }
-
-                if(role == 'teacher'){
-                    link.setAttribute('href', '/teacher/works'); // Aquí va la URL deseada
-                }
-
-                dayElement.appendChild(link);
+            if(modal == true){
+                showInfoDate(result, dayElement);
             }
         })
         .catch(error => {
             throw(error)
         });
 
+}
+
+function printFrontDate(result, actualDate){
+    result.works.forEach((element)=>{
+        try {
+            dayElement = document.getElementById(`${element.deliver}`);
+
+            const date = new Date(element.deliver);
+
+            if(date < actualDate){
+                dayElement.style.backgroundColor = "#fc9141"; // Update the day element with additional data
+            }else{
+                dayElement.style.backgroundColor = "#ffffa2"; // Update the day element with additional data
+            }
+        } catch (error) {
+            // ignorar error
+        }
+    });
+}
+
+function showInfoDate(result, dayElement){
+    const role = document.getElementById('role').dataset.value;
+
+    for (let index = 0; index < result.works.length; index++) {
+        const element = result.works[index];
+    
+        if (element.deliver == id && result.works.length > 0) {
+            // Code to update modal content with result data
+            const workElement = document.createElement('a');
+            workElement.style.boxShadow = "0px 13px 15px -13px rgba(153,153,153,1)";
+    
+            if (role == 'teacher') {
+                // Aquí va la URL deseada
+                if ([1, 2, 3, 4].includes(element.work_type_id)) {
+                    workElement.setAttribute('href', `/teacher/work/edit?name=${element.slug}&id=${element.id}&mt=${element.slug}`);
+                } else {
+                    workElement.setAttribute('href', `/teacher/work/edit?name=${element.slug}&id=${element.id}`);
+                }
+            }
+    
+            if (role == 'student') {
+                // Aquí va la URL deseada
+                if (element.work_type_id == 5) {
+                    workElement.setAttribute('href', `/student/work/${element.slug}`);
+                }
+            }
+    
+            const parrafo1 = document.createElement('p');
+            parrafo1.innerText = "Actividad: " + limitarTexto(element.title, 35);
+            parrafo1.style.paddingBottom = '3px';
+            workElement.appendChild(parrafo1);
+    
+            const parrafo2 = document.createElement('p');
+            parrafo2.innerText = "Materia: " + element.subject;
+            parrafo2.style.paddingBottom = '3px';
+            workElement.appendChild(parrafo2);
+    
+            const parrafo3 = document.createElement('p');
+            parrafo3.innerText = "Curso o Año: " + element.course;
+            parrafo3.style.paddingBottom = '3px';
+            workElement.appendChild(parrafo3);
+    
+            const parrafo4 = document.createElement('p');
+            parrafo4.innerText = "Fecha de Entrega: " + element.deliver;
+            parrafo4.style.paddingBottom = '3px';
+            workElement.appendChild(parrafo4);
+    
+            dayElement.appendChild(workElement);
+    
+            if ((index + 1) == 4) {
+                break;
+            }
+        }
+    }
+    
+    // Crear el contenido del <div> (enlaces y textos)
+    const link = document.createElement('a');
+    link.textContent = 'Ver Mas';
+    link.className = 'text-verde font-bold text-center';
+
+    if(role == 'student'){
+        link.setAttribute('href', '/student/works'); // Aquí va la URL deseada
+    }
+
+    if(role == 'teacher'){
+        link.setAttribute('href', '/teacher/works'); // Aquí va la URL deseada
+    }
+
+    dayElement.appendChild(link);
+}
+
+
+// Función para limitar el texto a un cierto número de caracteres
+function limitarTexto(texto, limite) {
+    if (texto.length <= limite) {
+        return texto; // Retorna el texto completo si es menor o igual al límite
+    } else {
+        return texto.slice(0, limite) + '...'; // Retorna el texto recortado con puntos suspensivos al final
+    }
 }
 
 // Initialize the calendar with the current month and year
@@ -188,11 +223,11 @@ document.getElementById('nextMonth').addEventListener('click', () => {
 });
 
 // Function to show the modal with the selected date
-function showModal(selectedDate, date) {
+function showModal(id) {
     const modal = document.getElementById('myModal');
     const modalDateElement = document.getElementById('modalDate');
 
-    fetchDataForDay(date.year, date.month, date.day, modalDateElement, true);
+    frontButton(id, modalDateElement, true);
     
     modal.classList.remove('hidden');
 }
@@ -214,18 +249,8 @@ function activeButtons(){
 
     dayElements.forEach(dayElement => {
         dayElement.addEventListener('click', () => {
-            const day = parseInt(dayElement.innerText);
-            const selectedDate = new Date(currentYear, currentMonth, day);
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const formattedDate = selectedDate.toLocaleDateString(undefined, options);
-
-            const date = {
-                'day' : day,
-                'month': currentMonth,
-                'year' : currentYear,
-            }
-
-            showModal(formattedDate, date);
+            id = dayElement.id;
+            showModal(id);
         });
     });
 }

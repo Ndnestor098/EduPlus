@@ -11,7 +11,9 @@ use App\Models\WorkStudent;
 use App\Models\WorkType;
 use App\Notifications\StudentUpAssignment;
 use App\Services\NoteServices;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,24 +22,36 @@ class StudentController extends Controller
     //Motras los trabajos al estudiante
     public function showWorks(Request $request)
     {
-        // Obtener la información del estudiante actual y sus trabajos asociados
-        $student = Student::with('works')->where('email', auth()->user()->email)->first();
+        if($request->get('subject')){
+            $key = 'student-'.$request->get('subject');
+        } else {
+            $key = 'student';
+        }
 
-        // Obtener los IDs de los trabajos excluidos (ya realizados) por el estudiante
-        $excludedWorkIds = $student->works->pluck('work_id');
+        if(!Cache::has($key)){
+            // Obtener la información del estudiante actual y sus trabajos asociados
+            $student = Student::with('works')->where('email', auth()->user()->email)->first();
 
-        // Obtener los trabajos disponibles para el estudiante
-        $works = Work::with('workType')
-                    ->whereHas('workType', function($query){
-                        $query->where("name", 'Tarea'); // Filtrar por el nombre del tipo de trabajo
-                    })
-                    ->where('course', $student->course) // Buscar las tareas del curso del estudiante
-                    ->whereNotIn('id', $excludedWorkIds) // Filtrar por los id que no necesitamos
-                    ->today() // Filtrar por trabajos asignados para hoy
-                    ->public() // Filtrar por trabajos públicos
-                    ->subject($request->get('subject')) // Filtrar por materia si se especifica
-                    ->get();
+            // Obtener los IDs de los trabajos excluidos (ya realizados) por el estudiante
+            $excludedWorkIds = $student->works->pluck('work_id');
 
+            // Obtener los trabajos disponibles para el estudiante
+            $works = Work::with('workType')
+                        ->whereHas('workType', function($query){
+                            $query->where("name", 'Tarea'); // Filtrar por el nombre del tipo de trabajo
+                        })
+                        ->where('course', $student->course) // Buscar las tareas del curso del estudiante
+                        ->whereNotIn('id', $excludedWorkIds) // Filtrar por los id que no necesitamos
+                        ->today() // Filtrar por trabajos asignados para hoy
+                        ->public() // Filtrar por trabajos públicos
+                        ->subject($request->get('subject')) // Filtrar por materia si se especifica
+                        ->get();
+
+            
+            Cache::get($key, $works);
+        } else {
+            $works = Cache::put($key);
+        }
         // Obtener las materias disponibles para mostrarlas en la interfaz
         $subjects = Teacher::select('subject')
                             ->orderBy('subject')
@@ -64,8 +78,10 @@ class StudentController extends Controller
             $notification->markAsRead();
         }
 
+        $date = Carbon::today();
+
         // Retornar la vista con los detalles del trabajo
-        return view('student.works.show', compact('work'));
+        return view('student.works.show', ['work' => $work, 'date' => $date]);
     }
 
     //Subir los trabajos
@@ -103,6 +119,8 @@ class StudentController extends Controller
                 }
             }
         }
+
+        Cache::flush();
 
         if($fileBool || $imageBool){
             // Obtener la información del estudiante actual
