@@ -1,63 +1,66 @@
 <p align="center"><a href="https://github.com/Ndnestor098/ScarpetossLaravel" target="_blank"><img src="https://ndnestor098.github.io/WebCV/assets/img/logoEduPlus.png" width="400" alt="EduPlus Logo"></a></p>
 
-
 # EduPlus
 
 EduPlus es una plataforma educativa diseñada para facilitar la gestión de calificaciones y tareas entre estudiantes y profesores. La aplicación permite a los profesores asignar trabajos y evaluar a los estudiantes de manera eficiente, y proporciona control administrativo para directores.
 
 ## Características
 
-- **Gestión de usuarios:**
-  - Creación, edición y eliminación de estudiantes y profesores.
-  - Gestión de permisos y roles (estudiantes, profesores, directores).
-- **Asignación y calificación de tareas:**
-  - Los profesores pueden asignar y calificar tareas, proyectos, exámenes, exposiciones, etc.
-  - Los estudiantes pueden ver sus trabajos asignados y calificaciones.
-- **Visualización de calificaciones y reportes:**
-  - Los estudiantes pueden ver sus calificaciones detalladas por materia.
-  - Los profesores pueden generar reportes de calificaciones.
-  - Los directores pueden visualizar las calificaciones de todos los estudiantes.
-- **Control administrativo:**
-  - Los directores pueden modificar y gestionar los registros de estudiantes y profesores (nombre, email, contraseña, etc..).
-  - Acceso a reportes globales de calificaciones.
+-   **Gestión de usuarios:**
+    -   Creación, edición y eliminación de estudiantes y profesores.
+    -   Gestión de permisos y roles (estudiantes, profesores, directores).
+-   **Asignación y calificación de tareas:**
+    -   Los profesores pueden asignar y calificar tareas, proyectos, exámenes, exposiciones, etc.
+    -   Los estudiantes pueden ver sus trabajos asignados y calificaciones.
+-   **Visualización de calificaciones y reportes:**
+    -   Los estudiantes pueden ver sus calificaciones detalladas por materia.
+    -   Los profesores pueden generar reportes de calificaciones.
+    -   Los directores pueden visualizar las calificaciones de todos los estudiantes.
+-   **Control administrativo:**
+    -   Los directores pueden modificar y gestionar los registros de estudiantes y profesores (nombre, email, contraseña, etc..).
+    -   Acceso a reportes globales de calificaciones.
 
 ## Tecnologías Utilizadas
 
-- **Backend:** Laravel 11.x
-- **Frontend:** Blade, Tailwind CSS
-- **Base de Datos:** MySQL
-- **Autenticación:** Laravel Breeze
-- **Versionado:** Git
+-   **Backend:** Laravel 11.x
+-   **Frontend:** Blade, Tailwind CSS
+-   **Base de Datos:** MySQL
+-   **Autenticación:** Laravel Breeze
+-   **Versionado:** Git
 
 ## Instalación
 
 Sigue estos pasos para instalar y configurar EduPlus en tu entorno local:
 
 1. Clona el repositorio:
+
     ```sh
     git clone https://github.com/Ndnestor098/EduPlus.git
     cd EduPlus
     ```
 
 2. Instala las dependencias de PHP:
+
     ```sh
     composer install
     ```
 
 3. Instala las dependencias de JavaScript:
+
     ```sh
     npm install
     npm run dev
     ```
 
 4. Instala las dependencias de Idiomas de Laravel:
+
     ```sh
     composer require --dev laravel-lang/common
     ```
 
 5. Configura la base de datos e idioma en el archivo `.env`:
 
-    ``` 
+    ```
     APP_LOCALE=es
 
     DB_CONNECTION=mysql
@@ -69,6 +72,7 @@ Sigue estos pasos para instalar y configurar EduPlus en tu entorno local:
     ```
 
 6. Configura la base de datos en el archivo `.env` y luego ejecuta las migraciones:
+
     ```sh
     php artisan migrate --seed
     ```
@@ -82,21 +86,24 @@ Sigue estos pasos para instalar y configurar EduPlus en tu entorno local:
 
 ### Roles y Permisos
 
-- **Profesor:** Puede asignar trabajos, calificar a los estudiantes y ver reportes de calificaciones.
-- **Estudiante:** Puede ver los trabajos asignados, sus calificaciones y subir sus tareas.
-- **Director:** Tiene acceso administrativo para visualizar las calificaciones de los estudiantes y gestionar usuarios (estudiantes y profesores).
+-   **Profesor:** Puede asignar trabajos, calificar a los estudiantes y ver reportes de calificaciones.
+-   **Estudiante:** Puede ver los trabajos asignados, sus calificaciones y subir sus tareas.
+-   **Director:** Tiene acceso administrativo para visualizar las calificaciones de los estudiantes y gestionar usuarios (estudiantes y profesores).
 
 ### Funcionalidades Principales
 
 1. **Asignación de Trabajos:**
+
     - Los profesores pueden asignar diferentes tipos de trabajos (tareas, proyectos, exámenes, exposiciones, etc.).
     - Los trabajos pueden ser filtrados por curso y materia.
 
 2. **Calificación de Estudiantes:**
+
     - Los profesores pueden calificar los trabajos de los estudiantes y subir calificaciones.
     - Las calificaciones pueden ser vistas por los estudiantes en su panel de usuario.
 
 3. **Visualización de Calificaciones:**
+
     - Los estudiantes pueden ver sus calificaciones detalladas en cada materia.
     - Los profesores pueden generar reportes de calificaciones.
     - Los directores pueden visualizar las calificaciones de todos los estudiantes.
