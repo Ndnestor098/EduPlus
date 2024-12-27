@@ -157,4 +157,32 @@ class participationController extends Controller
 
         return redirect()->route("teacher.participation");
     }
+
+    public function showMarks(Request $request)
+    {
+        // Obtener todos los cursos distintos ordenados
+        $course = student::select('course')->distinct()->orderBy('course')->get();
+
+        // Obtener el profesor actualmente autenticado
+        $teacher = Teacher::where('email', auth()->user()->email)->first();
+
+        // Obtener todos los estudiantes en orden
+        $students = Qualification::with('student')
+            ->selectRaw("id, student_id, {$teacher->subject} AS subject") // Asegúrate de que $teacher->subject es un campo válido en la tabla qualifications
+            ->whereHas('student', function($query) use ($request){
+                if($request->name){
+                    $query->where('name', 'LIKE', "%$request->name%");
+                }
+                if($request->course){
+                    $query->where('course', $request->course);
+                }
+            })
+            ->orderBy("student_id")
+            ->paginate(10);
+
+        // Mantener los valores de las variables en la URL
+        $students->appends($request->query());
+        
+        return view("teacher.calification.index", ['course' => $course, 'students'=>$students, 'subject'=>$teacher->subject]);
+    }
 }
