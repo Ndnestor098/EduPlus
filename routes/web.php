@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Teacher\CorrectAssignmentController;
-use App\Http\Controllers\StudentAdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Teacher\ParticipationController;
@@ -30,16 +29,18 @@ Route::middleware(['auth', 'verified'])->controller(NotificationController::clas
 
 // ============================================== Admin Routes ==============================================
 Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(AdminController::class)->group(function(){
-    // Visualizar Administradores
+    // ==================================== Admin show ====================================
     Route::get("/administrator", 'index')->name('administrador');
 
-    // Agregar Administradores
-    Route::get("/administrator/add", 'showAdd')->name('administrador.add');
-    Route::put("/administrator/add", 'create');
+    // ==================================== Admin add ====================================
+    Route::get("/administrator/add", 'create')->name('administrador.add');
+    Route::put("/administrator/add", 'store');
 
-    // Editar Administradores
-    Route::get("/administrator/edit", 'showEdit')->name('administrador.edit');
+    // ==================================== Admin edit ====================================
+    Route::get("/administrator/edit", 'edit')->name('administrador.edit');
     Route::post("/administrator/edit", 'update');
+
+    // ==================================== Admin destroy ====================================
     Route::delete("/administrator/edit", 'destroy');
 
     //Vizualizar Calificaciones
@@ -47,34 +48,36 @@ Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(Admi
 });
 
 Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(TeachersController::class)->group(function(){
-    // Visualizar Profesores
+    // ==================================== Teachers show ====================================
     Route::get("/teachers/admin", 'index')->name('teacher.admin');
 
-    // Agregar Profesores
-    Route::get("/teacher/admin/add", 'showAdd')->name('teacher.admin.add');
-    Route::put("/teacher/admin/add", 'create');
+    // ==================================== Teachers add ====================================
+    Route::get("/teacher/admin/add", 'create')->name('teacher.admin.add');
+    Route::put("/teacher/admin/add", 'store');
 
-    // Editar Profesores
+    // ==================================== Teachers edit ====================================
+    Route::get("/teacher/admin/edit", 'edit')->name('teacher.admin.edit');
     Route::post("/teacher/admin/edit", 'update');
-    Route::get("/teacher/admin/edit", 'showEdit')->name('teacher.admin.edit');
-    Route::delete("/teacher/admin/edit", 'destroy');
 
+    // ==================================== Teachers destroy ====================================
+    Route::delete("/teacher/admin/edit", 'destroy');
 });
 
-Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(StudentAdminController::class)->group(function(){
-    // Visualizar Alumnos
+Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(StudentController::class)->group(function(){
+    // ==================================== Students show ====================================
     Route::get("/students/admin", 'index')->name('student.admin');
-    Route::get("/students/admin/nota", 'showNote')->name('student.admin.notas');
+    Route::get("/students/admin/nota", 'show')->name('student.admin.notas');
 
-    // Agregar Alumnos
-    Route::get("/students/admin/add", 'showAdd')->name('student.admin.add');
-    Route::put("/students/admin/add", 'create');
+        // ==================================== Students add ====================================
+    Route::get("/students/admin/add", 'create')->name('student.admin.add');
+    Route::put("/students/admin/add", 'store');
 
-    // Editar Alumnos
-    Route::get("/students/admin/edit", 'showEdit')->name('student.admin.edit');
+    // ==================================== Students edit ====================================
+    Route::get("/students/admin/edit", 'edit')->name('student.admin.edit');
     Route::post("/students/admin/edit", 'update');
-    Route::delete("/students/admin/edit", 'destroy');
 
+    // ==================================== Students destroy ====================================
+    Route::delete("/students/admin/edit", 'destroy');
 });
 
 // ============================================== Teacher Routes ==============================================

@@ -28,24 +28,14 @@ class TeachersController extends Controller
     }
 
     //Vizualizar la area de agregar profesores (Admin)
-    public function showAdd()
+    public function create()
     {
         // Retornar la vista para agregar un nuevo profesor
         return view('teacherAdmin.add');
     }
 
-    //Vizualizar la area de editar profesores (Admin)
-    public function showEdit(Request $request)
-    {
-        // Obtener los detalles del usuario/profesor para editar
-        $user = Teacher::where("name", $request->name)->where("id", $request->id)->first();
-
-        // Retornar la vista para editar el profesor con los detalles obtenidos
-        return view('teacherAdmin.edit', ['user'=>$user]);
-    }
-
     //Crear profesores (Admin)
-    public function create(Request $request, TeacherAdminServices $requestTeacher)
+    public function store(Request $request, TeacherAdminServices $requestTeacher)
     {
         // Validar las entradas del formulario de creación de profesor
         $validator = Validator::make($request->all(), [
@@ -73,6 +63,16 @@ class TeachersController extends Controller
         return redirect(route("teacher.admin"));
     }
 
+    //Vizualizar la area de editar profesores (Admin)
+    public function edit(Request $request)
+    {
+        // Obtener los detalles del usuario/profesor para editar
+        $user = Teacher::where("name", $request->name)->where("id", $request->id)->first();
+
+        // Retornar la vista para editar el profesor con los detalles obtenidos
+        return view('teacherAdmin.edit', ['user'=>$user]);
+    }
+    
     //Actualizar profesores (Admin)
     public function update(Request $request, TeacherAdminServices $requestTeacher)
     {

@@ -35,24 +35,14 @@ class AdminController extends Controller
     }
 
     // Vizualizar la página de agregar administrador
-    public function showAdd()
+    public function create()
     {
         // Retornar la vista para crear un nuevo administrador
         return view('administrator.create');
     }
 
-    // Vizualizar la página de editar administrador
-    public function showEdit(Request $request)
-    {
-        // Obtener la información del administrador específico a editar
-        $admin = Administer::where("name", $request->name)->where("id", $request->id)->first();
-
-        // Retornar la vista para editar el administrador
-        return view('administrator.edit', ['user'=>$admin]);
-    }
-
     // Crear un nuevo administrador
-    public function create(Request $request, AdministerServices $requestAdmin)
+    public function store(Request $request, AdministerServices $requestAdmin)
     {
         // Validar las entradas proporcionadas para crear un administrador
         $validator = Validator::make($request->all(), [
@@ -72,6 +62,16 @@ class AdminController extends Controller
 
         // Redirigir a la página principal de administradores después de crear exitosamente
         return redirect(route("administrador"));
+    }
+    
+    // Vizualizar la página de editar administrador
+    public function edit(Request $request)
+    {
+        // Obtener la información del administrador específico a editar
+        $admin = Administer::where("name", $request->name)->where("id", $request->id)->first();
+
+        // Retornar la vista para editar el administrador
+        return view('administrator.edit', ['user'=>$admin]);
     }
 
     // Actualizar los detalles de un administrador existente

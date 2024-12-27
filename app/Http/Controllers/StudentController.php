@@ -2,187 +2,115 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Percentages;
-use App\Models\Qualification;
 use App\Models\Student;
-use App\Models\Teacher;
-use App\Models\Work;
-use App\Models\WorkStudent;
-use App\Models\WorkType;
-use App\Notifications\StudentUpAssignment;
 use App\Services\NoteServices;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
+use App\Services\StudentAdminServices;
 
 class StudentController extends Controller
 {
-    //Motras los trabajos al estudiante
-    public function showWorks(Request $request)
+    // Vizualizar la página principal de estudiantes
+    public function index(Request $request)
     {
-        if($request->get('subject')){
-            $key = 'student-'.$request->get('subject');
-        } else {
-            $key = 'student';
-        }
+        // Obtener la lista de estudiantes ordenados por curso y aplicar filtros si se proporcionan
+        $students = Student::orderBy('course', 'ASC')
+            ->none($request->all())
+            ->course($request->get('course'))
+            ->name($request->get('name'))
+            ->get();
 
-        if(!Cache::has($key)){
-            // Obtener la información del estudiante actual y sus trabajos asociados
-            $student = Student::with('works')->where('email', auth()->user()->email)->first();
+        // Obtener la lista de cursos disponibles para mostrar en los filtros
+        $course = Student::select('course')->distinct()->orderBy('course')->get();
 
-            // Obtener los IDs de los trabajos excluidos (ya realizados) por el estudiante
-            $excludedWorkIds = $student->works->pluck('work_id');
-
-            // Obtener los trabajos disponibles para el estudiante
-            $works = Work::with('workType')
-                        ->whereHas('workType', function($query){
-                            $query->where("name", 'Tarea'); // Filtrar por el nombre del tipo de trabajo
-                        })
-                        ->where('course', $student->course) // Buscar las tareas del curso del estudiante
-                        ->whereNotIn('id', $excludedWorkIds) // Filtrar por los id que no necesitamos
-                        ->today() // Filtrar por trabajos asignados para hoy
-                        ->public() // Filtrar por trabajos públicos
-                        ->subject($request->get('subject')) // Filtrar por materia si se especifica
-                        ->get();
-
-            
-            Cache::get($key, $works);
-        } else {
-            $works = Cache::put($key);
-        }
-        // Obtener las materias disponibles para mostrarlas en la interfaz
-        $subjects = Teacher::select('subject')
-                            ->orderBy('subject')
-                            ->distinct()
-                            ->get();
-
-        // Retornar la vista con la lista de trabajos disponibles y las materias
-        return view('student.works.index', ['works'=>$works, 'subjects'=>$subjects]);
+        // Retornar la vista con la lista de estudiantes y los cursos disponibles
+        return view('studentAdmin.index', ['students'=>$students, 'course' => $course]);
     }
 
-    //Lectura individual de los trabajos
-    public function readWork(Request $request, $nameWork)
+    // Vizualizar la página de notas del estudiante
+    public function show(Request $request, NoteServices $requestNote)
     {
-        // Obtener los detalles de un trabajo específico para mostrarlos al estudiante
-        $work = Work::where('slug', $nameWork)->first();
+        // Obtener la información del estudiante específico y sus calificaciones
+        $student = Student::where('id', $request->id)->first();
 
-        $user = auth()->user();
+        $requestNote->updateQualification($student);
 
-        $student = Student::where('email', $user->email)->first();
+        $subjects = $student->qualification;
 
-        $notification = $student->notifications()->where('id', $request->notificationId)->first();
-
-        if ($notification) {
-            $notification->markAsRead();
-        }
-
-        $date = Carbon::today();
-
-        // Retornar la vista con los detalles del trabajo
-        return view('student.works.show', ['work' => $work, 'date' => $date]);
+        // Retornar la vista para ver las notas del estudiante
+        return view("studentAdmin.note", ['subjects'=>$subjects, 'student'=>$student]);
     }
 
-    //Subir los trabajos
-    public function upWork(Request $request)
+    // Vizualizar la página de agregar estudiante
+    public function create()
     {
-        // Validar los archivos enviados por el estudiante
-        $request->validate([
-            'files.*' => 'required|file|mimes:pdf,doc,docx,xlsx|max:15420', // permite archivos PDF y documentos de Word de hasta 2MB
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:15420', // permite imágenes de hasta 2MB
+        // Retornar la vista para agregar un nuevo estudiante
+        return view("studentAdmin.add");
+    }
+
+    // Creación de estudiante con método PUT
+    public function store(Request $request, StudentAdminServices $requestStudent)
+    {
+        // Validar las entradas proporcionadas para crear un estudiante
+        $validator = Validator::make($request->all(), [
+            // Agregar reglas de validación para cada campo
         ]);
 
-        // Guardar rutas de archivos y de imágenes
-        $filePaths = [];
-        $fileBool = false;
-        if ($request->hasFile('files')) {
-            foreach ($request->file('files') as $files) {
-                if ($files->isValid()) {
-                    $fileName = uniqid() . '.' . $files->getClientOriginalExtension();
-                    $filePath = $files->storeAs('public/files', $fileName);
-                    $filePaths[] = Storage::url($filePath);
-                    $fileBool = true;
-                }
-            }
+        // Verificar si la validación falla y redirigir con un mensaje de error si es así
+        if ($validator->fails()) {
+            return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
 
-        $imagePaths = [];
-        $imageBool =false;
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                if ($image->isValid()) {
-                    $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
-                    $imagePath = $image->storeAs('public/image', $imageName);
-                    $imagePaths[] = Storage::url($imagePath);
-                    $imageBool = true;
-                }
-            }
-        }
+        // Comprobar si el correo electrónico ingresado pertenece a otro usuario
+        $requestStudent->checkEmailNew($request);
 
-        Cache::flush();
+        // Crear el nuevo estudiante con los datos proporcionados
+        $requestStudent->createStudent($request);
 
-        if($fileBool || $imageBool){
-            // Obtener la información del estudiante actual
-            $student = Student::where('email', auth()->user()->email)->first();
-            $teacher = Teacher::where('subject', $request->subject)->first();
-
-            // Crear un nuevo registro de trabajo realizado por el estudiante
-            $work = WorkStudent::create([
-                'name' => $student->name,
-                'slug' => $student->name, // ¿Estás seguro de que el slug del trabajo debe ser el nombre del estudiante?
-                'course' => $student->course,
-                'file' => $filePaths ? json_encode($filePaths) : null,
-                'image' => $imagePaths ? json_encode($imagePaths) : null,
-                'student_id' => $student->id,
-                'work_id' => $request->input('work_id'),
-            ]);
-
-            // Enviar notificación a al profesor
-            Notification::send($teacher, new StudentUpAssignment($work));
-        }
-
-        // Redirigir al estudiante de nuevo a sus trabajos
-        return redirect()->route('student.works');
+        // Redirigir a la página principal de estudiantes después de crear exitosamente
+        return redirect(route("student.admin"));
     }
 
-    public function qualification(NoteServices $noteRequest)
+    // Vizualizar la página de editar estudiante
+    public function edit(Request $request)
     {
-        $student = Student::where('email', auth()->user()->email)->first();
+        // Obtener la información del estudiante específico a editar
+        $student = Student::where("name", $request->name)->where("id", $request->id)->first();
 
-        $noteRequest->updateQualification($student);
-
-        $note = Qualification::find($student->id);
-        
-        return view('student.note.index', ['subjects'=>$note]);
+        // Retornar la vista para editar el estudiante
+        return view("studentAdmin.edit", ['user'=>$student]);
     }
 
-    public function showSubject($subject)
+    // Actualización de estudiante con método POST
+    public function update(Request $request, StudentAdminServices $requestStudent)
     {
-        $student = Student::where('email', auth()->user()->email)->first();
-        $works = Work::where('subject', $subject)->get();
+        // Validar las entradas proporcionadas para actualizar un estudiante
+        $validator = Validator::make($request->all(), [
+            // Agregar reglas de validación para cada campo
+        ]);
 
-        $searchID = [];
-        $searchWorks = [];
-        $workType = [];
-
-        foreach ($works as $work) {
-            $searchID[$work->id] = $work->id;
+        // Verificar si la validación falla y redirigir con un mensaje de error si es así
+        if ($validator->fails()) {
+            return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
 
-        foreach ($searchID as $id) {
-            $work = WorkStudent::with('work')->where('student_id', $student->id)->where('work_id', intval($id))->get();
+        // Comprobar si el correo electrónico ingresado pertenece a otro usuario
+        $requestStudent->checkEmailNew($request);
 
-            if(!$work->isEmpty())
-                $searchWorks[$id] = $work;
-        }
+        // Actualizar los detalles del estudiante con los datos proporcionados
+        $requestStudent->updateStudent($request);
 
-        $worksType = WorkType::all();
+        // Redirigir a la página principal de estudiantes después de actualizar exitosamente
+        return redirect(route("student.admin"));
+    }
 
-        foreach ($worksType as $value) {
-            $workType[$value->id] = $value->name;
-        }
+    // Eliminación de estudiante con método DELETE
+    public function destroy(Request $request, StudentAdminServices $requestStudent)
+    {
+        // Eliminar el estudiante con el ID proporcionado
+        $requestStudent->deleteStudent($request);
 
-        return view('student.note.note', ['works'=>$searchWorks, 'subject'=>$subject, 'workType'=>$workType]);
+        // Redirigir a la página principal de estudiantes después de eliminar exitosamente
+        return redirect(route("student.admin"));
     }
 }
