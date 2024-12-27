@@ -7,6 +7,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Teacher\ParticipationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Student\QualificationsController;
+use App\Http\Controllers\Student\WorksStudentController;
 use App\Http\Controllers\Teacher\ProjectsExamsController;
 use App\Http\Controllers\Teacher\QualifyingMethodController;
 use App\Http\Controllers\StudentController;
@@ -24,6 +26,24 @@ Route::middleware(['auth', 'verified'])->controller(NotificationController::clas
     Route::get("/notifications/read", 'readNotifications')->name("read.notification");
     Route::get('/calendar', 'showCalendar')->name('calendar');
     Route::get('/calendar/read', 'readCalendar');
+});
+
+// ============================================== Admin Routes ==============================================
+Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(AdminController::class)->group(function(){
+    // Visualizar Administradores
+    Route::get("/administrator", 'index')->name('administrador');
+
+    // Agregar Administradores
+    Route::get("/administrator/add", 'showAdd')->name('administrador.add');
+    Route::put("/administrator/add", 'create');
+
+    // Editar Administradores
+    Route::get("/administrator/edit", 'showEdit')->name('administrador.edit');
+    Route::post("/administrator/edit", 'update');
+    Route::delete("/administrator/edit", 'destroy');
+
+    //Vizualizar Calificaciones
+    Route::get("/marks/admin/", 'showMarks')->name("admin.calification");
 });
 
 Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(TeachersController::class)->group(function(){
@@ -56,24 +76,6 @@ Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(Stud
     Route::delete("/students/admin/edit", 'destroy');
 
 });
-
-Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(AdminController::class)->group(function(){
-    // Visualizar Administradores
-    Route::get("/administrator", 'index')->name('administrador');
-
-    // Agregar Administradores
-    Route::get("/administrator/add", 'showAdd')->name('administrador.add');
-    Route::put("/administrator/add", 'create');
-
-    // Editar Administradores
-    Route::get("/administrator/edit", 'showEdit')->name('administrador.edit');
-    Route::post("/administrator/edit", 'update');
-    Route::delete("/administrator/edit", 'destroy');
-
-    //Vizualizar Calificaciones
-    Route::get("/marks/admin/", 'showMarks')->name("admin.calification");
-});
-
 
 // ============================================== Teacher Routes ==============================================
 Route::middleware(['auth', 'verified', TeacherMiddleware::class])->group(function () {
@@ -114,19 +116,15 @@ Route::middleware(['auth', 'verified', TeacherMiddleware::class])->group(functio
 });
 
 // ============================================== Student Routes ==============================================
-Route::middleware(['auth', 'verified', StudentMiddleware::class])->controller(StudentController::class)->group(function(){
-    // Visualizar Trabajos de Estudiantes
-    Route::get('/student/works', 'showWorks')->name('student.works');
-    Route::get('/student/work/{name}', 'readWork')->name('student.work.show');
+Route::middleware(['auth', 'verified', StudentMiddleware::class])->group(function(){
+    // ==================================== Works ====================================
+    Route::get('/student/works', [WorksStudentController::class, 'index'])->name('student.works');
+    Route::get('/student/work/{name}', [WorksStudentController::class, 'show'])->name('student.work.show');
+    Route::post('/student/add/work', [WorksStudentController::class, 'store'])->name('upWork');
 
-    // Subir Trabajos de Estudiantes
-    Route::post('/student/up/work', 'upWork')->name('upWork');
-
-    // Vizualizar Calificaciones - GENERAL
-    Route::get('/student/qualificactions', 'qualification')->name('student.qualification');
-    
-    // Vizualizar Calificaciones - INDIVIDUAL
-    Route::get('/student/qualificaction/{subject}', 'showSubject')->name('student.qualification.alone');
+    // ==================================== Qualifications ====================================
+    Route::get('/student/qualifications', [QualificationsController::class, 'index'])->name('student.qualification');
+    Route::get('/student/qualifications/{subject}', [QualificationsController::class, 'show'])->name('student.qualification.alone');
 
 });
 

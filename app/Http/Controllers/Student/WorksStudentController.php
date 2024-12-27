@@ -18,7 +18,7 @@ class WorksStudentController extends Controller
 {
     //========================================Mostrar las Tareas========================================
     //Motras los trabajos al estudiante
-    public function showWorks(Request $request)
+    public function index(Request $request)
     {
         if($request->get('subject')){
             $key = 'student-'.$request->get('subject');
@@ -61,7 +61,7 @@ class WorksStudentController extends Controller
     }
 
     //Lectura individual de los trabajos
-    public function readWork(Request $request, $nameWork)
+    public function show(Request $request, $nameWork)
     {
         // Obtener los detalles de un trabajo específico para mostrarlos al estudiante
         $work = Work::where('slug', $nameWork)->first();
@@ -83,7 +83,7 @@ class WorksStudentController extends Controller
     }
 
     //Subir los trabajos
-    public function upWork(Request $request)
+    public function store(Request $request)
     {
         // Validar los archivos enviados por el estudiante
         $request->validate([
