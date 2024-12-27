@@ -41,8 +41,8 @@
                             <div class="flex justify-center gap-5 items-center w-full">
                                 @foreach (json_decode($student->file, true) as $item)
                                     <a class="flex flex-col items-center gap-2" href="{{ $item }}" target="_blank">
-                                        <img class="w-14" src="/assets/img/pdf.png" alt="logo pdf">
-                                        <span>Archivo de apoyo de la tarea.</span>
+                                        <img class="w-14" src="/assets/img/file.png" alt="logo pdf">
+                                        <span>Archivo de la tarea.</span>
                                     </a>
                                 @endforeach
                             </div>

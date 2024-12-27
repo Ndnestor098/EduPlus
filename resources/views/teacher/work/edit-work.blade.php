@@ -51,9 +51,13 @@
                             <div>
                                 <label for="file">File (pdf, doc, etc..) <span>No obligatorio</span></label>
                                 @if ($work->file)
-                                    @foreach (json_decode($work->file, true) as $item)
-                                        <a @if($item) href="{{ $item }}" target="_blank" @endif>image: {{$item}}</a>
-                                    @endforeach
+                                    <div class="flex gap-5 my-3" style="flex-direction: row">
+                                        @foreach (json_decode($work->file, true) as $item)
+                                            <a @if($item) href="{{ $item }}" target="_blank" @endif>
+                                                <img src="/assets/img/file.png" alt="file-upload" class="w-[100px] h-[100px]">
+                                            </a>
+                                        @endforeach
+                                    </div>
                                 @endif
                                 
                                 <input type="file" name="files[]" id="files" accept=".doc,.docx,.xls,.xlsx,.pdf,.ppt,.pptx" multiple required>
@@ -61,9 +65,13 @@
                             <div>
                                 <label for="image">Imagen <span>No obligatorio</span></label>
                                 @if ($work->image)
-                                    @foreach (json_decode($work->image, true) as $item)
-                                        <a @if($item) href="{{ $item }}" target="_blank" @endif>image: {{$item}}</a>
-                                    @endforeach
+                                    <div class="flex gap-5 my-3" style="flex-direction: row">
+                                        @foreach (json_decode($work->image, true) as $item)
+                                            <a @if($item) href="{{ $item }}" target="_blank" class="w-[100px] h-[100px]" @endif>
+                                                <img src="{{ $item }}" alt="image-upload" class="w-[100px] h-[100px]">
+                                            </a>
+                                        @endforeach
+                                    </div>
                                 @endif
                                 <input type="file" name="images[]" id="images" accept="image/*" multiple required>
                             </div>
