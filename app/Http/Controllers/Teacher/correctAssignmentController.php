@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 
-class correctAssignmentController extends Controller
+class CorrectAssignmentController extends Controller
 {
     //========================================Corregir las Tareas========================================
     // Mostrar las tareas de los estudiantes

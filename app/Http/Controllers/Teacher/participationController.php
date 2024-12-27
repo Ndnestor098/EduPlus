@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\Controller;
 
-class participationController extends Controller
+class ParticipationController extends Controller
 {
     //========================================Participacion y Conducta========================================
     public function index(Request $request)

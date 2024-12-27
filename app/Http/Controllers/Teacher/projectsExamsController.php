@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 
-class projectsExamsController extends Controller
+class ProjectsExamsController extends Controller
 {
     //========================================Proyectos y Examenes========================================
     // Mostrar las tareas del profesor

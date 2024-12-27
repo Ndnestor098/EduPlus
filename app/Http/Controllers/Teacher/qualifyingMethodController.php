@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 
-class qualifyingMethodController extends Controller
+class QualifyingMethodController extends Controller
 {
     //========================================Método de Calificaciones========================================
 

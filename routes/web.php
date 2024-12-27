@@ -1,17 +1,17 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Teacher\correctAssignmentController;
+use App\Http\Controllers\Teacher\CorrectAssignmentController;
 use App\Http\Controllers\StudentAdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\Teacher\participationController;
+use App\Http\Controllers\Teacher\ParticipationController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Teacher\projectsExamsController;
-use App\Http\Controllers\Teacher\qualifyingMethodController;
+use App\Http\Controllers\Teacher\ProjectsExamsController;
+use App\Http\Controllers\Teacher\QualifyingMethodController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeachersController;
-use App\Http\Controllers\Teacher\worksController;
+use App\Http\Controllers\Teacher\WorksTeacherController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\StudentMiddleware;
 use App\Http\Middleware\TeacherMiddleware;
@@ -78,13 +78,13 @@ Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(Admi
 // ============================================== Teacher Routes ==============================================
 Route::middleware(['auth', 'verified', TeacherMiddleware::class])->group(function () {
     // ==================================== Works ====================================
-    Route::get('/teacher/works', [worksController::class, 'index'])->name('teacher.works');
-    Route::get("/teacher/work/add", [worksController::class, 'create'])->name('teacher.work.add');
-    Route::post("/teacher/work/add", [worksController::class, 'orderQualification']);
-    Route::put("/teacher/work/add", [worksController::class, 'store']);
-    Route::get("/teacher/work/edit", [worksController::class, 'edit'])->name('teacher.work.edit');
-    Route::put("/teacher/work/edit", [worksController::class, 'update']);
-    Route::delete("/teacher/work/edit", [worksController::class, 'destroy']);
+    Route::get('/teacher/works', [WorksTeacherController::class, 'index'])->name('teacher.works');
+    Route::get("/teacher/work/add", [WorksTeacherController::class, 'create'])->name('teacher.work.add');
+    Route::post("/teacher/work/add", [WorksTeacherController::class, 'orderQualification']);
+    Route::put("/teacher/work/add", [WorksTeacherController::class, 'store']);
+    Route::get("/teacher/work/edit", [WorksTeacherController::class, 'edit'])->name('teacher.work.edit');
+    Route::put("/teacher/work/edit", [WorksTeacherController::class, 'update']);
+    Route::delete("/teacher/work/edit", [WorksTeacherController::class, 'destroy']);
 
     // ==================================== Qualifications Method ====================================
     // Método de Calificación
