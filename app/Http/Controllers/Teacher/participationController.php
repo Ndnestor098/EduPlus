@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Validator;
 class participationController extends Controller
 {
     //========================================Participacion y Conducta========================================
-    public function showParticipation(Request $request)
+    public function index(Request $request)
     {
         // Obtener todos los cursos distintos ordenados
         $course = student::select('course')->distinct()->orderBy('course')->get();
@@ -69,7 +69,7 @@ class participationController extends Controller
         return view("teacher.participation.index", ['course' => $course, 'bool' => $bool, 'showMethod' => $showMethod]);
     }
 
-    public function showParticipationCorrect(Request $request)
+    public function edit(Request $request)
     {
         $method = Percentages::find($request->id);
 
@@ -130,7 +130,7 @@ class participationController extends Controller
         return view('teacher.participation.correct', ['method'=>$method, 'students'=>$students, 'work'=>$work]);
     }
 
-    public function updateParticipation(Request $request, NoteServices $noteRequest)
+    public function update(Request $request, NoteServices $noteRequest)
     {
         $request->validate([
             'students' => 'required'
@@ -158,7 +158,7 @@ class participationController extends Controller
         return redirect()->route("teacher.participation");
     }
 
-    public function showMarks(Request $request)
+    public function show(Request $request)
     {
         // Obtener todos los cursos distintos ordenados
         $course = student::select('course')->distinct()->orderBy('course')->get();

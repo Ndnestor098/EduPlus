@@ -5,7 +5,9 @@ use App\Http\Controllers\correctAssignmentController;
 use App\Http\Controllers\StudentAdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\participationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\projectsExamsController;
 use App\Http\Controllers\qualifyingMethodController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeachersController;
@@ -99,24 +101,16 @@ Route::middleware(['auth', 'verified', TeacherMiddleware::class])->group(functio
     Route::post("/teacher/correct/", [correctAssignmentController::class, 'update'])->name('correct.work');
     Route::delete("/teacher/correct/", [correctAssignmentController::class, 'destroy'])->name('delete.work');
 
-});
-Route::middleware(['auth', 'verified', TeacherMiddleware::class])->controller(TeachersController::class)->group(function(){
-    
+    // ==================================== Projects and Exams ====================================
+    Route::get("/teacher/exam", [projectsExamsController::class, 'index'])->name('teacher.exam');
+    Route::get("/teacher/exam/correct/{nameWork}", [projectsExamsController::class, 'show'])->name('teacher.correct.exam');
+    Route::post("/teacher/exam/qualification", [projectsExamsController::class, 'store'])->name('teacher.exam.qualification');
 
-    
-    
-    //Vizualizar Proyectos y Examenes
-    Route::get("/teacher/exam", 'showExamAndProject')->name('teacher.exam');
-    Route::get("/teacher/exam/correct/{nameWork}", 'showExamAndProjectStudents')->name('teacher.correct.exam');
-    Route::post("/teacher/exam/qualification", 'qualification')->name('teacher.exam.qualification');
-
-    //Vizualizar Conduca y Participaciones
-    Route::get("/teacher/participation/", 'showParticipation')->name("teacher.participation");
-    Route::get("/teacher/participation/correct", 'showParticipationCorrect')->name("teacher.participation.correct");
-    Route::post("/teacher/participation/correct", 'updateParticipation');
-
-    //Vizualizar Calificacion
-    Route::get("/teacher/marks/", 'showMarks')->name("teacher.marks");
+    // ==================================== Participation ====================================
+    Route::get("/teacher/participation/", [participationController::class, 'index'])->name("teacher.participation");
+    Route::get("/teacher/participation/correct", [participationController::class, 'edit'])->name("teacher.participation.correct");
+    Route::post("/teacher/participation/correct", [participationController::class, 'update']);
+    Route::get("/teacher/marks/", [participationController::class, 'show'])->name("teacher.marks");
 });
 
 Route::middleware(['auth', 'verified', StudentMiddleware::class])->controller(StudentController::class)->group(function(){

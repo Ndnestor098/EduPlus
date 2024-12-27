@@ -23,7 +23,7 @@ class projectsExamsController extends Controller
 {
     //========================================Proyectos y Examenes========================================
     // Mostrar las tareas del profesor
-    public function showExamAndProject(Request $request)
+    public function index(Request $request)
     {
         // Obtener todos los cursos distintos ordenados
         $course = student::select('course')->distinct()->orderBy('course')->get();
@@ -93,7 +93,7 @@ class projectsExamsController extends Controller
     }
 
     // Mostrar las tareas de los estudiantes
-    public function showExamAndProjectStudents(Request $request, $nameWork)
+    public function show(Request $request, $nameWork)
     {
         // Obtener el profesor actualmente autenticado
         $teacher = Teacher::where('email', auth()->user()->email)->first();
@@ -119,7 +119,7 @@ class projectsExamsController extends Controller
         return view('teacher.exam_project.correct', ['work'=>$work, 'students'=>$students]); 
     }
 
-    public function qualification(Request $request, NoteServices $noteRequest)
+    public function store(Request $request, NoteServices $noteRequest)
     {
         $request->validate([
             'students' => 'required'
