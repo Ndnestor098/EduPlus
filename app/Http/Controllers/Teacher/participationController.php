@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Teacher;
 
 use App\Models\Percentages;
 use App\Models\Qualification;
@@ -8,16 +8,11 @@ use App\Models\student;
 use App\Models\Teacher;
 use App\Models\Work;
 use App\Models\WorkStudent;
-use App\Models\WorkType;
-use App\Notifications\TeacherUpAssignment;
 use App\Services\NoteServices;
-use App\Services\TeacherServices;
-use App\Services\WorkServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
 
 class participationController extends Controller
 {

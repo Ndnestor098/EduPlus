@@ -1,17 +1,17 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\correctAssignmentController;
+use App\Http\Controllers\Teacher\correctAssignmentController;
 use App\Http\Controllers\StudentAdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\participationController;
+use App\Http\Controllers\Teacher\participationController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\projectsExamsController;
-use App\Http\Controllers\qualifyingMethodController;
+use App\Http\Controllers\Teacher\projectsExamsController;
+use App\Http\Controllers\Teacher\qualifyingMethodController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeachersController;
-use App\Http\Controllers\worksController;
+use App\Http\Controllers\Teacher\worksController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\StudentMiddleware;
 use App\Http\Middleware\TeacherMiddleware;
@@ -113,6 +113,7 @@ Route::middleware(['auth', 'verified', TeacherMiddleware::class])->group(functio
     Route::get("/teacher/marks/", [participationController::class, 'show'])->name("teacher.marks");
 });
 
+// ============================================== Student Routes ==============================================
 Route::middleware(['auth', 'verified', StudentMiddleware::class])->controller(StudentController::class)->group(function(){
     // Visualizar Trabajos de Estudiantes
     Route::get('/student/works', 'showWorks')->name('student.works');
