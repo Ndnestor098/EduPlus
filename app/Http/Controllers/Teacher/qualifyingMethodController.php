@@ -24,7 +24,7 @@ class qualifyingMethodController extends Controller
     //========================================Método de Calificaciones========================================
 
     // Mostrar las calificaciones
-    public function showQualification(Request $request)
+    public function index(Request $request)
     {
         $teacher = Teacher::where('email', auth()->user()->email)->first();
         $course = student::select('course')->distinct()->orderBy('course')->get();
@@ -46,7 +46,7 @@ class qualifyingMethodController extends Controller
     }
 
     // Mostrar el formulario para agregar una nueva calificación
-    public function ShowAddQualification()
+    public function create()
     {
         $metodos = WorkType::all();
         $course = student::select('course')->orderBy('course')->distinct()->get();
@@ -56,7 +56,7 @@ class qualifyingMethodController extends Controller
     }
 
     // Agregar una nueva calificación
-    public function AddQualification(Request $request, TeacherServices $requestTeacher)
+    public function store(Request $request, TeacherServices $requestTeacher)
     {
         // Validar los datos recibidos del formulario
         $validator = Validator::make($request->all(), [
@@ -87,7 +87,7 @@ class qualifyingMethodController extends Controller
     }
 
     // Mostrar el formulario para editar una calificación
-    public function showEditQualification(Request $request)
+    public function edit(Request $request)
     {
         $metodos = WorkType::all();
         $course = student::select('course')->orderBy('course')->distinct()->get();
@@ -98,7 +98,7 @@ class qualifyingMethodController extends Controller
     }
 
     // Actualizar una calificación existente
-    public function updateQualification(Request $request, TeacherServices $requestTeacher)
+    public function update(Request $request, TeacherServices $requestTeacher)
     {
         // Validar los datos recibidos del formulario
         $validator = Validator::make($request->all(), [
@@ -130,7 +130,7 @@ class qualifyingMethodController extends Controller
     }
 
     // Eliminar una calificación
-    public function deleteQualification(Request $request)
+    public function destroy(Request $request)
     {
         $searchPercentage = Percentages::find($request->search);
     

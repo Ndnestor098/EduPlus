@@ -23,7 +23,7 @@ class correctAssignmentController extends Controller
 {
     //========================================Corregir las Tareas========================================
     // Mostrar las tareas de los estudiantes
-    public function showWorksStudents(Request $request, $nameWork)
+    public function index(Request $request, $nameWork)
     {
         // Obtener el profesor actualmente autenticado
         $teacher = Teacher::where('email', auth()->user()->email)->first();
@@ -45,7 +45,7 @@ class correctAssignmentController extends Controller
     }
 
     // Mostrar la tarea de un estudiante específico para su corrección
-    public function showCorrectWorkStudent(Request $request, $nameStudent)
+    public function show(Request $request, $nameStudent)
     {
         // Obtener el profesor actualmente autenticado
         $teacher = Teacher::where('email', auth()->user()->email)->first();
@@ -70,7 +70,7 @@ class correctAssignmentController extends Controller
     }
 
     // Corregir la tarea de un estudiante
-    public function correctWork(Request $request, NoteServices $requestNote)
+    public function update(Request $request, NoteServices $requestNote)
     {
         // Validar la nota proporcionada
         $validator = Validator::make($request->all(), [
@@ -98,7 +98,7 @@ class correctAssignmentController extends Controller
     }
 
     // Eliminar una tarea de un estudiante
-    public function deleteWorks(Request $request)
+    public function destroy(Request $request)
     {
         // Obtener la tarea del estudiante
         $work = WorkStudent::find($request->workStudent_id);

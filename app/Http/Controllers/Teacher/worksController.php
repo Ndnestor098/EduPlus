@@ -24,7 +24,7 @@ class worksController extends Controller
     //========================================Tareas========================================
 
     // Mostrar las tareas del profesor
-    public function showWorks(Request $request)
+    public function index(Request $request)
     {
         // Obtener todos los cursos distintos ordenados
         $course = student::select('course')->distinct()->orderBy('course')->get();
@@ -70,7 +70,7 @@ class worksController extends Controller
     }
 
     // Mostrar formulario para agregar una nueva tarea
-    public function showAddWork()
+    public function create()
     {
         //Buscar los valores del teacher para el filtrado
         $info = Teacher::where('email', auth()->user()->email)->first()->subject;
@@ -95,7 +95,7 @@ class worksController extends Controller
     }
 
     // Agregar una nueva tarea
-    public function addWork(Request $request, WorkServices $requestWork)
+    public function store(Request $request, WorkServices $requestWork)
     {
         // Validar los datos recibidos del formulario
         $validator = Validator::make($request->all(),[
@@ -165,7 +165,7 @@ class worksController extends Controller
     }
 
     // Mostrar el formulario para editar una tarea
-    public function showEditWork(Request $request)
+    public function edit(Request $request)
     {        
         $work = Work::find($request->id);
         $course = student::select('course')->orderBy('course')->distinct()->get();
@@ -175,7 +175,7 @@ class worksController extends Controller
     }
 
     // Actualizar una tarea existente
-    public function updateWork(Request $request, WorkServices $requestWork)
+    public function update(Request $request, WorkServices $requestWork)
     {
         // Validar los datos recibidos del formulario
         $validator = Validator::make($request->all(),[
@@ -221,7 +221,7 @@ class worksController extends Controller
     }
 
     // Eliminar una tarea
-    public function deleteWork(Request $request)
+    public function destroy(Request $request)
     {
         $work = Work::find($request->id);
         $user = auth()->user();

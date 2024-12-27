@@ -1,13 +1,15 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\correctAssignmentController;
 use App\Http\Controllers\StudentAdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\TeacherAdminController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\qualifyingMethodController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeachersController;
+use App\Http\Controllers\worksController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\StudentMiddleware;
 use App\Http\Middleware\TeacherMiddleware;
@@ -22,7 +24,7 @@ Route::middleware(['auth', 'verified'])->controller(NotificationController::clas
     Route::get('/calendar/read', 'readCalendar');
 });
 
-Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(TeacherAdminController::class)->group(function(){
+Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(TeachersController::class)->group(function(){
     // Visualizar Profesores
     Route::get("/teachers/admin", 'index')->name('teacher.admin');
 
@@ -70,44 +72,38 @@ Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(Admi
     Route::get("/marks/admin/", 'showMarks')->name("admin.calification");
 });
 
-Route::middleware(['auth', 'verified', TeacherMiddleware::class])->controller(TeachersController::class)->group(function(){
-    // Tareas
-    Route::get("/teacher/works", 'showWorks')->name('teacher.works');
 
-    // Agregar Tareas
-    Route::get("/teacher/work/add", 'showAddWork')->name('teacher.work.add');
-    Route::post("/teacher/work/add", 'orderQualification');
-    Route::put("/teacher/work/add", 'addWork');
+// ============================================== Teacher Routes ==============================================
+Route::middleware(['auth', 'verified', TeacherMiddleware::class])->group(function () {
+    // ==================================== Works ====================================
+    Route::get('/teacher/works', [worksController::class, 'index'])->name('teacher.works');
+    Route::get("/teacher/work/add", [worksController::class, 'create'])->name('teacher.work.add');
+    Route::post("/teacher/work/add", [worksController::class, 'orderQualification']);
+    Route::put("/teacher/work/add", [worksController::class, 'store']);
+    Route::get("/teacher/work/edit", [worksController::class, 'edit'])->name('teacher.work.edit');
+    Route::put("/teacher/work/edit", [worksController::class, 'update']);
+    Route::delete("/teacher/work/edit", [worksController::class, 'destroy']);
 
-    // Editar Tareas
-    Route::get("/teacher/work/edit", 'showEditWork')->name('teacher.work.edit');
-    Route::put("/teacher/work/edit", 'updateWork');
-
-    // Eliminar Tareas
-    Route::delete("/teacher/work/edit", 'deleteWork');
-
+    // ==================================== Qualifications Method ====================================
     // Método de Calificación
-    Route::get("/teacher/qualification", 'showQualification')->name('teacher.qualification');
-    // Agregar Calificación
-    Route::get("/teacher/qualification/add", 'ShowAddQualification')->name('teacher.qualification.add');
-    Route::post("/teacher/qualification/add", 'AddQualification');
+    Route::get("/teacher/qualification", [qualifyingMethodController::class, 'index'])->name('teacher.qualification');
+    Route::get("/teacher/qualification/add", [qualifyingMethodController::class, 'create'])->name('teacher.qualification.add');
+    Route::post("/teacher/qualification/add", [qualifyingMethodController::class, 'store']);
+    Route::get("/teacher/qualification/edit", [qualifyingMethodController::class, 'edit'])->name('teacher.qualification.edit');
+    Route::post("/teacher/qualification/edit", [qualifyingMethodController::class, 'update']);
+    Route::delete("/teacher/qualification/edit", [qualifyingMethodController::class, 'destroy']);
 
-    // Editar Calificación
-    Route::get("/teacher/qualification/edit", 'showEditQualification')->name('teacher.qualification.edit');
-    Route::post("/teacher/qualification/edit", 'updateQualification');
+    // ==================================== Correct Assignments ====================================
+    Route::get("/teacher/works/students/{nameWork}", [correctAssignmentController::class, 'index'])->name('teacher.works.students');
+    Route::get("/teacher/correct/student/{nameStudent}", [correctAssignmentController::class, 'show'])->name('teacher.correct');
+    Route::post("/teacher/correct/", [correctAssignmentController::class, 'update'])->name('correct.work');
+    Route::delete("/teacher/correct/", [correctAssignmentController::class, 'destroy'])->name('delete.work');
 
-    // Eliminar Calificación
-    Route::delete("/teacher/qualification/edit", 'deleteQualification');
+});
+Route::middleware(['auth', 'verified', TeacherMiddleware::class])->controller(TeachersController::class)->group(function(){
+    
 
-    // Corregir Actividades
-    Route::get("/teacher/works/students/{nameWork}", "showWorksStudents")->name('teacher.works.students');
-    Route::get("/teacher/correct/student/{nameStudent}", "showCorrectWorkStudent")->name('teacher.correct');
-
-    // Corregir Tareas
-    Route::post("/teacher/correct/", "correctWork")->name('correct.work');
-
-    // Eliminar Tareas
-    Route::delete("/teacher/correct/", "deleteWorks")->name('delete.work');
+    
     
     //Vizualizar Proyectos y Examenes
     Route::get("/teacher/exam", 'showExamAndProject')->name('teacher.exam');
