@@ -6,11 +6,10 @@ use App\Models\Administer;
 use App\Models\Qualification;
 use App\Models\RolesUser;
 use App\Models\Student;
-use App\Models\Teacher;
 use App\Models\User;
 use App\Services\AdministerServices;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 
 class AdminController extends Controller
@@ -18,19 +17,25 @@ class AdminController extends Controller
     // Vizualizar la página principal de administradores
     public function index(Request $request)
     {
-        // Si se proporciona un parámetro de orden, ordenar por ese campo y paginar
-        if($request->orden){
-            $search =  explode("/", $request->orden);
-            $admin = Administer::orderBy($search[0], $search[1])->paginate(25);
-        }else{
-            // De lo contrario, ordenar por nombre de forma ascendente y paginar
-            $admin = Administer::orderBy('name', 'ASC')->paginate(25);
-        }
+        if(Cache::has('admin')){
+            $admin = Cache::get('admin');
+        } else {
+            // Si se proporciona un parámetro de orden, ordenar por ese campo y paginar
+            if($request->orden){
+                $search =  explode("/", $request->orden);
+                $admin = Administer::orderBy($search[0], $search[1])->paginate(25);
+            }else{
+                // De lo contrario, ordenar por nombre de forma ascendente y paginar
+                $admin = Administer::orderBy('name', 'ASC')->paginate(25);
+            }
 
-        // Asegurarse de que los parámetros de orden se conserven en los enlaces de paginación
-        $admin->appends([
-            'orden' => $request->orden
-        ]);
+            // Asegurarse de que los parámetros de orden se conserven en los enlaces de paginación
+            $admin->appends([
+                'orden' => $request->orden
+            ]);
+
+            Cache::put('admin', $admin, 600);
+        }
 
         // Retornar la vista con la lista paginada de administradores
         return view('administrator.index', ['admin'=>$admin]);
@@ -59,6 +64,8 @@ class AdminController extends Controller
         // Crear el nuevo administrador con los datos proporcionados
         $requestAdmin->createAdminister($request);
 
+        Cache::forget('admin');
+
         // Redirigir a la página principal de administradores después de crear exitosamente
         return redirect(route("administrador"));
     }
@@ -77,7 +84,7 @@ class AdminController extends Controller
     public function update(Request $request, AdministerServices $requestAdmin)
     {
         // Validar las entradas proporcionadas para actualizar un administrador
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email|unique:administer,email',
             'salary' => 'required|numeric',
@@ -86,13 +93,10 @@ class AdminController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        // Verificar si la validación falla y redirigir con un mensaje de error si es así
-        if ($validator->fails()) {
-            return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
-        }
-
         // Actualizar los detalles del administrador con los datos proporcionados
         $requestAdmin->updateAdminister($request);
+
+        Cache::forget('admin');
 
         // Redirigir a la página principal de administradores después de actualizar exitosamente
         return redirect(route("administrador"));
@@ -117,6 +121,8 @@ class AdminController extends Controller
 
         // Eliminar al administrador de la base de datos usando su ID
         Administer::find($request->id)->delete();
+
+        Cache::forget('admin');
 
         // Redirigir a la página principal de administradores después de eliminar exitosamente
         return redirect(route("administrador"));

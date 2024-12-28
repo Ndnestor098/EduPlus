@@ -6,22 +6,30 @@ use App\Models\Teacher;
 use App\Services\TeacherAdminServices;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class TeachersController extends Controller
 {
     //Vizualizar la area de los profesores (Admin)
     public function index(Request $request)
     {
-        // Verificar si se proporciona un parámetro de ordenamiento
-        if($request->orden){
-            $search =  explode("/", $request->orden);
-
-            // Ordenar los profesores según el parámetro especificado
-            $teachers = Teacher::orderBy($search[0], $search[1])->get();
+        if(Cache::has('teacher')){
+            $teachers = Cache::get('teacher');
         } else {
-            // Si no se proporciona ningún parámetro, ordenar por nombre de manera ascendente por defecto
-            $teachers = Teacher::orderBy("name", "asc")->get();
+            // Verificar si se proporciona un parámetro de ordenamiento
+            if($request->orden){
+                $search =  explode("/", $request->orden);
+
+                // Ordenar los profesores según el parámetro especificado
+                $teachers = Teacher::orderBy($search[0], $search[1])->get();
+            } else {
+                // Si no se proporciona ningún parámetro, ordenar por nombre de manera ascendente por defecto
+                $teachers = Teacher::orderBy("name", "asc")->get();
+            }
+
+            Cache::put('teacher', $teachers, 600);
         }
+        
 
         // Retornar la vista con la lista de profesores
         return view('teacherAdmin.index', ['teachers' => $teachers]);
@@ -47,17 +55,14 @@ class TeachersController extends Controller
             'started' => 'required',
             'password' => 'required|string|min:8|confirmed',
         ]);
-
-        // Verificar si las validaciones fallan
-        if ($validator->fails()) {
-            return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
-        }
         
         // Verificar si el email ya existe en la base de datos
         $requestTeacher->checkEmailNew($request);
 
         // Crear un nuevo profesor con los datos proporcionados
         $requestTeacher->createTeacher($request);
+
+        Cache::forget('teacher');
 
         // Redirigir a la página de administración de profesores
         return redirect(route("teacher.admin"));
@@ -77,25 +82,19 @@ class TeachersController extends Controller
     public function update(Request $request, TeacherAdminServices $requestTeacher)
     {
         // Validar las entradas del formulario de edición de profesor
-        $validator = Validator::make($request->all(), [
+        $request->validate( [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email|unique:teachers,email',
             'cellphone' => 'required', 
             'subject' => 'required|string|max:255',
             'salary' => 'required',
             'started' => 'required',
         ]);
 
-        // Verificar si las validaciones fallan
-        if ($validator->fails()) {
-            return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
-        }
-
-        // Verificar si el email ya existe en la base de datos
-        $requestTeacher->checkEmailNew($request);
-
         // Actualizar los datos del profesor
         $requestTeacher->updateTeacher($request);
+
+        Cache::forget('teacher');
 
         // Redirigir a la página de administración de profesores
         return redirect(route("teacher.admin"));
