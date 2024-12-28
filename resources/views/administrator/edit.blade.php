@@ -62,16 +62,16 @@
                             </div>
 
                             <div>
-                                <label for="password">Password</label>
-                                <input type="password" name="password" id="password" placeholder="Password *" required autofocus>
+                                <label for="password">Password  <span>no obligatorio</span></label>
+                                <input type="password" name="password" id="password" placeholder="Password" required autofocus>
                                 @error('password')
                                     <p class="text-center font-semibold text-rojo">{{ $message }}</p>
                                 @enderror
                             </div>
 
                             <div>
-                                <label for="password_confirmation">Confirmar Password</label>
-                                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmar Password *" required autofocus>
+                                <label for="password_confirmation">Confirmar Password  <span>no obligatorio</span></label>
+                                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmar Password" required autofocus>
                                 @error('password_confirmation')
                                     <p class="text-center font-semibold text-rojo">{{ $message }}</p>
                                 @enderror

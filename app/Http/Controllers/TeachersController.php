@@ -41,7 +41,7 @@ class TeachersController extends Controller
     public function create()
     {
         // Retornar la vista para agregar un nuevo profesor
-        return view('teacherAdmin.add');
+        return view('teacherAdmin.create');
     }
 
     //Crear profesores (Admin)
@@ -116,15 +116,15 @@ class TeachersController extends Controller
     public function destroy(Request $request)
     {
         $request->validate( [
-            'id_teacher' => 'required',
+            'id' => 'required',
             'email' => 'required|string|email|exists:users,email',
         ]);
 
         // Eliminar el usuario asociado al correo electrónico del profesor
-        User::where("email", $request->email)->delete();
+        User::where("email", $request->email)->first()->delete();
 
         // Eliminar al profesor de la base de datos usando su ID
-        Teacher::find($request->id_teacher)->delete();
+        Teacher::find($request->id)->delete();
 
         // Redirigir a la página de administración de profesores
         return redirect(route("teacher.admin"));

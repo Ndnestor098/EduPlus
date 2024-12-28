@@ -85,16 +85,16 @@
                             </div>
                             
                             <div>
-                                <label for="password">Password</label>
-                                <input type="password" name="password" id="password" placeholder="Password *" value="{{ old('password') }}" required>
+                                <label for="password">Password <span>no obligatorio</span></label>
+                                <input type="password" name="password" id="password" placeholder="Password" value="{{ old('password') }}">
                                 @error('password')
                                     <p class="text-center font-semibold text-rojo">{{ $message }}</p>
                                 @enderror
                             </div>
 
                             <div>
-                                <label for="password_confirmation">Confirmar Password</label>
-                                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmar Password *" required>
+                                <label for="password_confirmation">Confirmar Password <span>no obligatorio</span></label>
+                                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmar Password">
                                 @error('password_confirmation')
                                     <p class="text-center font-semibold text-rojo">{{ $message }}</p>
                                 @enderror
@@ -107,9 +107,8 @@
                         <form action="" method="POST" class="form mt-5" enctype="application/x-www-form-urlencoded" novalidate autocomplete="on">
                             @csrf
                             @method("delete")
-                            <input type="hidden" name="id"  value="{{auth()->user()->id}}">
-                            <input type="hidden" name="email"  value="{{$user->email}}">
-                            <input type="hidden" name="id_teacher" value="{{$user->id}}">
+                            <input type="hidden" name="id" value="{{ $user->id }}">
+                            <input type="hidden" name="email" value="{{$user->email}}">
                             <button type="submit" class="button-delete">Eleminar</button>
                         </form>
                     </div>
