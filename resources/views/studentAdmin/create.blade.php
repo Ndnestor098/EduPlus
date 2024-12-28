@@ -69,7 +69,7 @@
 
                             <div>
                                 <label for="password_confirmation">Confirmar Password</label>
-                                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmar Password *">
+                                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmar Password *" required>
                                 @error('password_comfirmation')
                                     <p class="text-center font-semibold text-rojo">{{ $message }}</p>
                                 @enderror

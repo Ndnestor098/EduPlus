@@ -115,7 +115,7 @@ class TeachersController extends Controller
     public function destroy(Request $request)
     {
         $request->validate( [
-            'id' => 'required',
+            'id' => 'required|exists:teachers,id',
             'email' => 'required|string|email|exists:users,email',
         ]);
 

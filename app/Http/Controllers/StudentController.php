@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Models\User;
 use App\Services\NoteServices;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Services\StudentAdminServices;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\Rule;
 
 class StudentController extends Controller
 {
@@ -65,9 +67,9 @@ class StudentController extends Controller
         $request->validate([
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users,email|unique:students,email',
-            'course' => 'required|max:255',
-            'cellphone' => 'required|max:255',
-            'password' => 'required|min:8',
+            'course' => 'required|numeric|max:255',
+            'cellphone' => 'required|string|max:255',
+            'password' => 'required|string|min:8',
             'password_confirmation' => 'required|max:255|same:password'
         ]);
 
@@ -94,9 +96,22 @@ class StudentController extends Controller
     // Actualización de estudiante con método POST
     public function update(Request $request, StudentAdminServices $requestStudent)
     {
-        // Validar las entradas proporcionadas para actualizar un estudiante
-        $validator = Validator::make($request->all(), [
-            // Agregar reglas de validación para cada campo
+        $student = Student::find($request->id);
+        $user = User::where("email", $student->email)->first();
+
+        $request->validate([
+            'name' => 'required|max:255',
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($user->id),
+                Rule::unique('students', 'email')->ignore($student->id)
+            ],	
+            'course' => 'required|numeric|max:255',
+            'cellphone' => 'required|string|max:255',
+            'password' => 'nullable|string|min:8',
+            'password_confirmation' => 'nullable|same:password'
         ]);
 
         // Actualizar los detalles del estudiante con los datos proporcionados
@@ -110,10 +125,18 @@ class StudentController extends Controller
     }
 
     // Eliminación de estudiante con método DELETE
-    public function destroy(Request $request, StudentAdminServices $requestStudent)
+    public function destroy(Request $request)
     {
-        // Eliminar el estudiante con el ID proporcionado
-        $requestStudent->deleteStudent($request);
+        $request->validate([
+            'id_student' => 'required|integer|exists:students,id',
+            'email' => 'required|email|exists:users,email'
+        ]);
+
+        // Eliminar el usuario asociado al email del estudiante
+        User::where("email", $request->email)->first()->delete();
+
+        // Eliminar el estudiante por su ID
+        student::find($request->id_student)->delete();
 
         Cache::forget('student');
         Cache::forget('course');

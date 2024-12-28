@@ -5,14 +5,11 @@
 
     <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
 
-
     <x-slot name="header">
-        <a href="{{route("student.admin")}}" class="font-semibold text-xl text-gray-800 leading-tight">
+        <a href="{{route("student.admin")}}" class="font-semibold text-xl text-gray-800 leading-tight p-3">
             {{ __('Alumnos') }}
         </a>
     </x-slot>
-    
-    
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -26,34 +23,62 @@
                         <form action="" method="POST" class="form" enctype="application/x-www-form-urlencoded" novalidate autocomplete="off">
                             @csrf
                             <input type="hidden" name="id" value="{{$user->id}}">
+
                             <div>
                                 <label for="name">Nombre</label>
                                 <input type="text" name="name" id="name" required value="{{$user->name}}">
+                                @error('name')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
+
                             <div>
                                 <label for="email">Email</label>
                                 <input type="email" name="email" id="email" required value="{{$user->email}}">
+                                @error('email')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
+
                             <div>
                                 <label for="cellphone">Telefono</label>
                                 <input type="text" name="cellphone" id="cellphone" placeholder="Telefono *" value="{{$user->cellphone}}" required>
+                                @error('cellphone')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
+
                             <div>
                                 <label for="course">Año</label>
                                 <input type="number" name="course" id="course" required value="{{$user->course}}">
+                                @error('course')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
-                            <p class="error text-center font-semibold" style="color: rgb(161, 44, 44)">
-                                @if (gettype($errors) != gettype((object)array('1'=>1)))
-                                    {{ $errors }}
-                                @endif
-                            </p>
+                            
+                            <div>
+                                <label for="password">Password <span>no obligatorio</span></label>
+                                <input type="password" name="password" id="password" placeholder="Password">
+                                @error('password')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="password_confirmation">Confirmar Password <span>no obligatorio</span></label>
+                                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmar Password">
+                                @error('password_comfirmation')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <div>
                                 <button type="submit" class="button-update">Actualizar</button>
                             </div>
                         </form>
 
                         <form action="" method="POST" class="form mt-5" enctype="application/x-www-form-urlencoded" novalidate autocomplete="on">
-                            <a href="{{route('student.admin.notas', ["id"=>$user->id])}}" class="button-update text-center">Ver Notas del Estudiante</a>
+                            <a href="{{route('student.admin.notas', ["id" => $user->id])}}" class="button-update text-center">Ver Notas del Estudiante</a>
                         </form>
 
                         <form action="" method="POST" class="form mt-5" enctype="application/x-www-form-urlencoded" novalidate autocomplete="on">

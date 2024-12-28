@@ -40,42 +40,28 @@ class StudentAdminServices
     // Función para actualizar los datos de un estudiante
     public function updateStudent(Request $request)
     {
-        // Buscar el estudiante por su ID
+        // Buscar el estudiante por su ID y email
         $student = student::find($request->id);
+        $user = User::where("email", $student->email)->first();
 
-        // Si el email ha cambiado
         if($student->email != $request->email){
-
-            // Actualizar los datos del usuario
-            $user = User::where("email", $student->email)->first();
-            $user->name = $request->name;
             $user->email = $request->email;
-            $user->save();
-            $user->role()->sync(3);
-
-            // Actualizar los datos del estudiante
-            $student->name = $request->name;
             $student->email = $request->email;
-            $student->cellphone = $request->cellphone;
-            $student->course = $request->course;
-            $student->save();
+        } 
 
-        } else {
-            // Si el email no ha cambiado, solo actualizar otros datos del estudiante
-            $student->name = $request->name;
-            $student->course = $request->course;
-            $student->cellphone = $request->cellphone;
-            $student->save();
+        if(!empty($request->password && !Hash::check($request->password, $user->password))){
+            $user->password = Hash::make($request->password);
         }
-    }
 
-    // Función para eliminar un estudiante
-    public function deleteStudent(Request $request)
-    {
-        // Eliminar el usuario asociado al email del estudiante
-        User::where("email", $request->email)->delete();
+        // update users table
+        $user->name = $request->name;
+        $user->save();
 
-        // Eliminar el estudiante por su ID
-        student::find($request->id_student)->delete();
+        // update students table
+        $student->name = $request->name;
+        $student->course = $request->course;
+        $student->cellphone = $request->cellphone;
+        $student->save();
+        
     }
 }

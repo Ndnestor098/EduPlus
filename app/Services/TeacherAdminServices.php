@@ -53,11 +53,11 @@ class TeacherAdminServices
             $user->password = Hash::make($request->password);
         }
 
-        // update users
+        // update users table
         $user->name = $request->name;
         $user->save();
 
-        // update teacher
+        // update teacher table
         $teacher->name = $request->name;
         $teacher->subject = $request->subject;
         $teacher->salary = $request->salary;

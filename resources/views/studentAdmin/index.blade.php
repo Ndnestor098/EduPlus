@@ -5,9 +5,8 @@
     
     <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
 
-
     <x-slot name="header">
-        <a href="{{route("student.admin")}}" class="font-semibold text-xl text-gray-800 leading-tight">
+        <a href="{{route("student.admin")}}" class="font-semibold text-xl text-gray-800 leading-tight p-3">
             {{ __('Alumnos') }}
         </a>
     </x-slot>
@@ -30,14 +29,17 @@
                                     @endforeach
                                 </select>
                             </div>
+
                             <div class="ml-5 w-full">
                                 <input type="text" name="name" id="name" placeholder="Buscar Estudiante">
                             </div>
+                            
                             <div class="flex items-center justify-center w-full md:justify-end">
                                 <button class="button-search mr-5">Buscar</button>
                             </div>
                         </form>
                     </div>
+
                     <table class="table">
                         <tr>
                             <th>Nombre</th>
@@ -48,16 +50,24 @@
                         </tr>
                         @foreach ($students as $item)
                             <tr>
-                                <td><a href="{{route("student.admin.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->name }}</a></td>
-                                <td><a href="{{route("student.admin.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ Str::limit($item->email,20) }}</a></td>
-                                <td><a href="{{route("student.admin.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->cellphone }}</a></td>
-                                <td class="text-center"><a href="{{route("student.admin.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->course }}</a></td>
-                                <td class="hidden md:table-cell" style="background-color: #fafafa; font-weight: 600;" ><a href="{{route('student.admin.notas', ["id"=>$item->id])}}">Notas</a></td>
+                                <td>
+                                    <a href="{{route("student.admin.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->name }}</a>
+                                </td>
+                                <td>
+                                    <a href="{{route("student.admin.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ Str::limit($item->email,20) }}</a>
+                                </td>
+                                <td>
+                                    <a href="{{route("student.admin.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->cellphone }}</a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{route("student.admin.edit", ['name'=>$item->name, 'id'=>$item->id])}}">{{ $item->course }}</a>
+                                </td>
+                                <td class="hidden md:table-cell" style="background-color: #fafafa; font-weight: 600;" >
+                                    <a href="{{route('student.admin.notas', ["id"=>$item->id])}}">Notas</a>
+                                </td>
                             </tr>
                         @endforeach
                     </table>
-                    {{-- {{$students->links()}} --}}
-
                 </div>
                 
                 <div class="flex justify-center" style="width: 100%; height: 100%; padding: 10px 0px;">
