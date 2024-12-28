@@ -46,9 +46,9 @@ class AdministerServices
 
         // Crear y guardar el usuario para que el administrador pueda iniciar sesión
         $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
+        $user->name = $admin->name;
+        $user->email = $admin->email;
+        $user->password = Hash::make($admin->password);
         $user->save();
 
         // Asignar el rol de administrador al usuario

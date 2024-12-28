@@ -45,18 +45,15 @@ class AdminController extends Controller
     public function store(Request $request, AdministerServices $requestAdmin)
     {
         // Validar las entradas proporcionadas para crear un administrador
-        $validator = Validator::make($request->all(), [
-            // Agregar reglas de validación para cada campo
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email|unique:administer,email',
+            'salary' => 'required|numeric',
+            'cellphone' => 'required|string|min:8',
+            'started' => 'required|date',
+            'password' => 'required|string|min:8',
         ]);
 
-        // Verificar si la validación falla y redirigir con un mensaje de error si es así
-        if ($validator->fails()) {
-            return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
-        }
-
-        // Verificar si el correo electrónico ingresado pertenece a otro usuario
-        $requestAdmin->checkEmailNew($request);
-        
         // Crear el nuevo administrador con los datos proporcionados
         $requestAdmin->createAdminister($request);
 
@@ -79,16 +76,18 @@ class AdminController extends Controller
     {
         // Validar las entradas proporcionadas para actualizar un administrador
         $validator = Validator::make($request->all(), [
-            // Agregar reglas de validación para cada campo
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email|unique:administer,email',
+            'salary' => 'required|numeric',
+            'cellphone' => 'required|string|min:8',
+            'started' => 'required|date',
+            'password' => 'required|string|min:8',
         ]);
 
         // Verificar si la validación falla y redirigir con un mensaje de error si es así
         if ($validator->fails()) {
             return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
         }
-
-        // Verificar si el correo electrónico ingresado pertenece a otro usuario
-        $requestAdmin->checkEmailNew($request);
 
         // Actualizar los detalles del administrador con los datos proporcionados
         $requestAdmin->updateAdminister($request);
