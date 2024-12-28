@@ -74,7 +74,7 @@ function frontButton(id = null, dayElement= null, modal = false) {
     
     fetch(url, config)
         .then(res => res.json())
-        .then(result =>{
+        .then(res => {
             const currentDate = new Date();
             let currentYear = String(currentDate.getFullYear()).padStart(2, '0');
             let currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
@@ -83,11 +83,11 @@ function frontButton(id = null, dayElement= null, modal = false) {
             const actualDate = new Date(`${currentYear}-${currentMonth}-${currentDay}`);
 
             if(modal == false){
-                printFrontDate(result, actualDate);
+                printFrontDate(res, actualDate);
             }
             
             if(modal == true){
-                showInfoDate(result, dayElement);
+                showInfoDate(res, dayElement);
             }
         })
         .catch(error => {
@@ -142,7 +142,7 @@ function showInfoDate(result, dayElement){
             }
     
             const parrafo1 = document.createElement('p');
-            parrafo1.innerText = "Actividad: " + limitarTexto(element.title, 35);
+            parrafo1.innerText = "Actividad: " + limitText(element.title, 35);
             parrafo1.style.paddingBottom = '3px';
             workElement.appendChild(parrafo1);
     
@@ -187,11 +187,11 @@ function showInfoDate(result, dayElement){
 
 
 // Función para limitar el texto a un cierto número de caracteres
-function limitarTexto(texto, limite) {
-    if (texto.length <= limite) {
-        return texto; // Retorna el texto completo si es menor o igual al límite
+function limitText(text, limit) {
+    if (text.length <= limit) {
+        return text; // Retorna el texto completo si es menor o igual al límite
     } else {
-        return texto.slice(0, limite) + '...'; // Retorna el texto recortado con puntos suspensivos al final
+        return text.slice(0, limit) + '...'; // Retorna el texto recortado con puntos suspensivos al final
     }
 }
 

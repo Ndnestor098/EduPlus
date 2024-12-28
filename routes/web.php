@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\Teacher\CorrectAssignmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
@@ -23,8 +24,12 @@ Route::get('/', HomeController::class)->middleware(['auth', 'verified'])->name('
 Route::middleware(['auth', 'verified'])->controller(NotificationController::class)->group(function(){
     Route::get("/notifications/show", 'ShowNotifications')->name("notification");
     Route::get("/notifications/read", 'readNotifications')->name("read.notification");
-    Route::get('/calendar', 'showCalendar')->name('calendar');
-    Route::get('/calendar/read', 'readCalendar');
+});
+
+Route::middleware(['auth', 'verified'])->controller(CalendarController::class)->group(function(){
+    Route::get('/calendar', 'index')->name('calendar');
+    Route::get('/calendar/read', 'show')->name('calendar.read');
+    Route::post('/calendar/clear_cache', 'clearCache')->name('calendar.clear_cache');
 });
 
 // ============================================== Admin Routes ==============================================
