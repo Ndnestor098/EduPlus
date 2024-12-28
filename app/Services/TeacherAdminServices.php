@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
+use function PHPUnit\Framework\isEmpty;
+
 class TeacherAdminServices
 {
     // Función para crear un nuevo profesor
@@ -47,7 +49,7 @@ class TeacherAdminServices
             $teacher->email = $request->email;
         }
 
-        if(Hash::make($request->password) != $user->password){
+        if(!empty($request->input("password")) && !Hash::check($request->password, $user->password)){
             $user->password = Hash::make($request->password);
         }
 

@@ -102,6 +102,7 @@ class AdminController extends Controller
             'cellphone' => 'required|string|min:8',
             'started' => 'required|date',
             'password' => 'required|string|min:8',
+            'password_confirmation' => 'required|same:password',
         ]);
 
         // Actualizar los detalles del administrador con los datos proporcionados

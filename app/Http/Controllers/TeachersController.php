@@ -47,20 +47,10 @@ class TeachersController extends Controller
     //Crear profesores (Admin)
     public function store(Request $request, TeacherAdminServices $requestTeacher)
     {
-        $teachers = Teacher::find($request->id);
-        $user = User::where("email", $teachers->email)->first();
-
         // Validar las entradas del formulario de creacion de profesor
         $request->validate( [
             'name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email')->ignore($user->id),
-                Rule::unique('teachers', 'email')->ignore($teachers->id),
-            ],
+            'email' => 'required|string|email|max:255|unique:user,email|unique:teachers,email',
             'cellphone' => 'required', 
             'subject' => 'required|string|max:255',
             'salary' => 'required',
@@ -91,14 +81,26 @@ class TeachersController extends Controller
     //Actualizar profesores (Admin)
     public function update(Request $request, TeacherAdminServices $requestTeacher)
     {
-        // Validar las entradas del formulario de edición de profesor
+        $teachers = Teacher::find($request->id);
+        $user = User::where("email", $teachers->email)->first();
+
+        // Validar las entradas del formulario de creacion de profesor
         $request->validate( [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email|unique:teachers,email',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($user->id),
+                Rule::unique('teachers', 'email')->ignore($teachers->id),
+            ],
             'cellphone' => 'required', 
             'subject' => 'required|string|max:255',
             'salary' => 'required',
             'started' => 'required',
+            'password' => 'nullable|string|min:8',
+            'password_confirmation' => 'nullable|same:password',
         ]);
 
         // Actualizar los datos del profesor

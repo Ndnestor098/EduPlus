@@ -28,15 +28,26 @@
                             <div>
                                 <label for="name">Nombre</label>
                                 <input type="text" name="name" id="name" required value="{{$user->name}}">
+                                @error('name')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
                                 <label for="email">Email</label>
                                 <input type="email" name="email" id="email" required value="{{$user->email}}">
+                                @error('email')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
+                            
                             <div>
                                 <label for="cellphone">Telefono</label>
                                 <input type="text" name="cellphone" id="cellphone" placeholder="Telefono *" value="{{ $user->cellphone }}" required >
+                                @error('cellphone')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
+
                             <div>
                                 <label for="subject">Asignatura</label>
                                 <select name="subject" id="subject">
@@ -52,14 +63,25 @@
                                     <option value="matematicas">Matematicas</option>
                                     <option value="edu_fisica">Educacion Fisica</option>
                                 </select>
+                                @error('subject')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
+
                             <div>
                                 <label for="salary">Salario</label>
                                 <input type="number" name="salary" id="salary" required value="{{$user->salary}}">
+                                @error('salary')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
+
                             <div>
                                 <label for="started">Fecha de Inicio</label>
                                 <input type="date" name="started" id="started" required value="{{$user->started}}">
+                                @error('started')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
                             
                             <div>
