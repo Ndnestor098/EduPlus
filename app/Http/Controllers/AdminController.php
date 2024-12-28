@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Administer;
 use App\Models\Qualification;
+use App\Models\RolesUser;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\User;
 use App\Services\AdministerServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -97,10 +99,24 @@ class AdminController extends Controller
     }
 
     // Eliminar un administrador existente
-    public function destroy(Request $request, AdministerServices $requestAdmin)
+    public function destroy(Request $request)
     {
-        // Eliminar el administrador con el ID proporcionado
-        $requestAdmin->deleteAdminister($request);
+        $request->validate([
+            'id' => 'required|numeric|exists:administer,id',
+            'email' => 'required|email|exists:users,email'
+        ]);
+
+        // Buscar el usuario asociado al correo electrónico del administrador
+        $user = User::where('email',$request->email)->first();
+
+        // Eliminar el rol del usuario
+        RolesUser::where("user_id", $user->id)->delete();
+
+        // Eliminar el usuario
+        $user->delete();
+
+        // Eliminar al administrador de la base de datos usando su ID
+        Administer::find($request->id)->delete();
 
         // Redirigir a la página principal de administradores después de eliminar exitosamente
         return redirect(route("administrador"));

@@ -9,28 +9,6 @@ use Illuminate\Http\Request;
 
 class AdministerServices
 {
-    // Función para verificar si el email ya está en uso
-    public function checkEmailNew(Request $request)
-    {
-        try {
-            // Verificar si el email ya está en uso en la tabla de usuarios
-            if (User::where('email', $request->email)->first()->email == $request->email) {
-                return redirect()->back()->with('errors', 'Email ya en uso.');
-            }
-        } catch (\Throwable $th) {
-            // Manejar excepción si no se encuentra el email en la tabla de usuarios
-        }
-
-        try {
-            // Verificar si el email ya está en uso en la tabla de administradores
-            if (Administer::where('email', $request->email)->first()->email == $request->email) {
-                return redirect()->back()->with('errors', 'Email ya en uso.');
-            }
-        } catch (\Throwable $th) {
-            // Manejar excepción si no se encuentra el email en la tabla de administradores
-        }
-    }
-
     // Función para crear un nuevo administrador
     public function createAdminister(Request $request)
     {
@@ -90,19 +68,4 @@ class AdministerServices
         }
     }
 
-    // Función para eliminar un administrador
-    public function deleteAdminister(Request $request)
-    {
-        // Buscar el usuario asociado al correo electrónico del administrador
-        $user = User::where("email", $request->email)->first();
-
-        // Eliminar el rol del usuario
-        RolesUser::where("user_id", $user->id)->delete();
-
-        // Eliminar el usuario
-        $user->delete();
-
-        // Eliminar al administrador de la base de datos usando su ID
-        Administer::find($request->id_admin)->delete();
-    }
 }

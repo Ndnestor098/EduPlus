@@ -28,28 +28,39 @@
                             <div>
                                 <label for="name">Nombre</label>
                                 <input type="text" name="name" id="name" required value="{{$user->name}}">
+                                @error('name')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
                                 <label for="email">Email</label>
                                 <input type="email" name="email" id="email" required value="{{$user->email}}">
+                                @error('email')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
                                 <label for="cellphone">Telefono</label>
                                 <input type="number" name="cellphone" id="cellphone" placeholder="Telefono *" value="{{$user->cellphone}}" required>
+                                @error('cellphone')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
                                 <label for="salary">Salario</label>
                                 <input type="number" name="salary" id="salary" required value="{{$user->salary}}">
+                                @error('salary')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
                                 <label for="started">Fecha de Inicio</label>
                                 <input type="date" name="started" id="started" required value="{{$user->started}}">
+                                @error('started')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
                             </div>
-                            <p class="error text-center font-semibold" style="color: rgb(161, 44, 44)">
-                                @if (gettype($errors) != gettype((object)array('1'=>1)))
-                                    {{ $errors }}
-                                @endif
-                            </p>
+                            
                             <div>
                                 <button type="submit" class="button-update">Actualizar</button>
                             </div>
@@ -57,9 +68,8 @@
                         <form action="" method="POST" class="form mt-5" enctype="application/x-www-form-urlencoded" novalidate autocomplete="on">
                             @csrf
                             @method("delete")
-                            <input type="hidden" name="id"  value="{{auth()->user()->id}}">
-                            <input type="hidden" name="email"  value="{{$user->email}}">
-                            <input type="hidden" name="id_admin" value="{{$user->id}}">
+                            <input type="hidden" name="id"  value="{{$user->id}}">
+                            <input type="hidden" name="email" value="{{$user->email}}">
                             <button type="submit" class="button-delete">Eleminar</button>
                         </form>
                     </div>
