@@ -34,7 +34,7 @@ class AdminController extends Controller
                 'orden' => $request->orden
             ]);
 
-            Cache::put('admin', $admin, 600);
+            Cache::put('admin', $admin, now()->addMinutes(10));
         }
 
         // Retornar la vista con la lista paginada de administradores

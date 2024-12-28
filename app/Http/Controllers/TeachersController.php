@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Teacher;
 use App\Models\User;
 use App\Services\TeacherAdminServices;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
@@ -29,7 +28,7 @@ class TeachersController extends Controller
                 $teachers = Teacher::orderBy("name", "asc")->get();
             }
 
-            Cache::put('teacher', $teachers, 600);
+            Cache::put('teacher', $teachers, now()->addMinutes(10));
         }
         
 
@@ -125,6 +124,8 @@ class TeachersController extends Controller
 
         // Eliminar al profesor de la base de datos usando su ID
         Teacher::find($request->id)->delete();
+
+        Cache::forget('teacher');
 
         // Redirigir a la página de administración de profesores
         return redirect(route("teacher.admin"));

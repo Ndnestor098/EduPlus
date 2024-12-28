@@ -83,7 +83,7 @@
                             </div>
                             
                             <div>
-                                <button type="submit" class="button-update">Agregar</button>
+                                <button type="submit" class="button-update">Agregar Administrador</button>
                             </div>
                         </form>
                     </div>

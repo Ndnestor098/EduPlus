@@ -9,28 +9,6 @@ use Illuminate\Http\Request;
 
 class StudentAdminServices
 {
-    // Función para verificar si el email ya está en uso
-    public function checkEmailNew(Request $request)
-    {
-        try {
-            // Verificar si el email ya está en uso en la tabla de usuarios
-            if (User::where('email', $request->email)->first()->email == $request->email) {
-                return redirect()->back()->with('errors', 'Email ya en uso.');
-            }
-        } catch (\Throwable $th) {
-            // Manejar excepción si no se encuentra el email en la tabla de usuarios
-        }
-
-        try {
-            // Verificar si el email ya está en uso en la tabla de estudiantes
-            if (student::where('email', $request->email)->first()->email == $request->email) {
-                return redirect()->back()->with('errors', 'Email ya en uso.');
-            }
-        } catch (\Throwable $th) {
-            // Manejar excepción si no se encuentra el email en la tabla de estudiantes
-        }
-    }
-
     // Función para crear un nuevo estudiante
     public function createStudent(Request $request)
     {

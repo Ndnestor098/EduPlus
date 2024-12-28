@@ -101,7 +101,7 @@
                             </div>
                             
                             <div>
-                                <button type="submit" class="button-update">Agregar</button>
+                                <button type="submit" class="button-update">Agregar Profesor</button>
                             </div>
                         </form>
                     </div>

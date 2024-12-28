@@ -7,21 +7,31 @@ use App\Services\NoteServices;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Services\StudentAdminServices;
+use Illuminate\Support\Facades\Cache;
 
 class StudentController extends Controller
 {
     // Vizualizar la página principal de estudiantes
     public function index(Request $request)
     {
-        // Obtener la lista de estudiantes ordenados por curso y aplicar filtros si se proporcionan
-        $students = Student::orderBy('course', 'ASC')
+        if(Cache::has('student') && Cache::has('course')){
+            $students = Cache::get('student');
+            $course = Cache::get('course');
+        } else {
+            // Obtener la lista de estudiantes ordenados por curso y aplicar filtros si se proporcionan
+            $students = Student::orderBy('course', 'ASC')
             ->none($request->all())
             ->course($request->get('course'))
             ->name($request->get('name'))
             ->get();
 
-        // Obtener la lista de cursos disponibles para mostrar en los filtros
-        $course = Student::select('course')->distinct()->orderBy('course')->get();
+            // Obtener la lista de cursos disponibles para mostrar en los filtros
+            $course = Student::select('course')->distinct()->orderBy('course')->get();
+
+            Cache::put('student', $students, now()->addMinutes(10));
+            Cache::put('course', $course, now()->addMinutes(10));
+        }
+        
 
         // Retornar la vista con la lista de estudiantes y los cursos disponibles
         return view('studentAdmin.index', ['students'=>$students, 'course' => $course]);
@@ -45,27 +55,27 @@ class StudentController extends Controller
     public function create()
     {
         // Retornar la vista para agregar un nuevo estudiante
-        return view("studentAdmin.add");
+        return view("studentAdmin.create");
     }
 
     // Creación de estudiante con método PUT
     public function store(Request $request, StudentAdminServices $requestStudent)
     {
         // Validar las entradas proporcionadas para crear un estudiante
-        $validator = Validator::make($request->all(), [
-            // Agregar reglas de validación para cada campo
+        $request->validate([
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users,email|unique:students,email',
+            'course' => 'required|max:255',
+            'cellphone' => 'required|max:255',
+            'password' => 'required|min:8',
+            'password_confirmation' => 'required|max:255|same:password'
         ]);
-
-        // Verificar si la validación falla y redirigir con un mensaje de error si es así
-        if ($validator->fails()) {
-            return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
-        }
-
-        // Comprobar si el correo electrónico ingresado pertenece a otro usuario
-        $requestStudent->checkEmailNew($request);
 
         // Crear el nuevo estudiante con los datos proporcionados
         $requestStudent->createStudent($request);
+
+        Cache::forget('student');
+        Cache::forget('course');
 
         // Redirigir a la página principal de estudiantes después de crear exitosamente
         return redirect(route("student.admin"));
@@ -89,16 +99,11 @@ class StudentController extends Controller
             // Agregar reglas de validación para cada campo
         ]);
 
-        // Verificar si la validación falla y redirigir con un mensaje de error si es así
-        if ($validator->fails()) {
-            return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
-        }
-
-        // Comprobar si el correo electrónico ingresado pertenece a otro usuario
-        $requestStudent->checkEmailNew($request);
-
         // Actualizar los detalles del estudiante con los datos proporcionados
         $requestStudent->updateStudent($request);
+
+        Cache::forget('student');
+        Cache::forget('course');
 
         // Redirigir a la página principal de estudiantes después de actualizar exitosamente
         return redirect(route("student.admin"));
@@ -109,6 +114,9 @@ class StudentController extends Controller
     {
         // Eliminar el estudiante con el ID proporcionado
         $requestStudent->deleteStudent($request);
+
+        Cache::forget('student');
+        Cache::forget('course');
 
         // Redirigir a la página principal de estudiantes después de eliminar exitosamente
         return redirect(route("student.admin"));
