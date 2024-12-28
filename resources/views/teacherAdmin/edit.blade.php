@@ -61,11 +61,23 @@
                                 <label for="started">Fecha de Inicio</label>
                                 <input type="date" name="started" id="started" required value="{{$user->started}}">
                             </div>
-                            <p class="error text-center font-semibold" style="color: rgb(161, 44, 44)">
-                                @if (gettype($errors) != gettype((object)array('1'=>1)))
-                                    {{ $errors }}
-                                @endif
-                            </p>
+                            
+                            <div>
+                                <label for="password">Password</label>
+                                <input type="password" name="password" id="password" placeholder="Password *" value="{{ old('password') }}" required>
+                                @error('password')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="password_confirmation">Confirmar Password</label>
+                                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmar Password *" required>
+                                @error('password_confirmation')
+                                    <p class="text-center font-semibold text-rojo">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <div>
                                 <button type="submit" class="button-update">Actualizar</button>
                             </div>

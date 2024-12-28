@@ -41,31 +41,29 @@ class AdministerServices
     {
         // Buscar el administrador por su ID
         $admin = Administer::find($request->id);
+        $user = User::where("email", $admin->email)->first();
 
         // Si el email ha cambiado
         if($admin->email != $request->email){
-            // Actualizar los datos del usuario
-            $user = User::where("email", $admin->email)->first();
-            $user->name = $request->name;
             $user->email = $request->email;
-            $user->save();
 
-            // Actualizar los datos del administrador
-            $admin->name = $request->name;
             $admin->email = $request->email;
-            $admin->cellphone = $request->cellphone;
-            $admin->salary = $request->salary;
-            $admin->started = $request->started;
-            $admin->save();
-
-        } else {
-            // Si el email no ha cambiado, solo actualizar otros datos del administrador
-            $admin->name = $request->name;
-            $admin->salary = $request->salary;
-            $admin->cellphone = $request->cellphone;
-            $admin->started = $request->started;
-            $admin->save();
         }
+
+        if(Hash::make($request->password) != $user->password){
+            $user->password = Hash::make($request->password);
+        }
+        
+        // update users
+        $user->name = $request->name;
+        $user->save();
+        
+        // update teacher
+        $admin->name = $request->name;
+        $admin->salary = $request->salary;
+        $admin->cellphone = $request->cellphone;
+        $admin->started = $request->started;
+        $admin->save();
     }
 
 }

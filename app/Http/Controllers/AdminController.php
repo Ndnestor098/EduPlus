@@ -10,7 +10,7 @@ use App\Models\User;
 use App\Services\AdministerServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -59,6 +59,7 @@ class AdminController extends Controller
             'cellphone' => 'required|string|min:8',
             'started' => 'required|date',
             'password' => 'required|string|min:8',
+            'password_confirmation' => 'required|same:password',
         ]);
 
         // Crear el nuevo administrador con los datos proporcionados
@@ -83,10 +84,20 @@ class AdminController extends Controller
     // Actualizar los detalles de un administrador existente
     public function update(Request $request, AdministerServices $requestAdmin)
     {
+        $administer = Administer::find($request->id);
+        $user = User::where("email", $administer->email)->first();
+        
         // Validar las entradas proporcionadas para actualizar un administrador
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email|unique:administer,email',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($user->id),
+                Rule::unique('administer', 'email')->ignore($administer->id),
+            ],
             'salary' => 'required|numeric',
             'cellphone' => 'required|string|min:8',
             'started' => 'required|date',

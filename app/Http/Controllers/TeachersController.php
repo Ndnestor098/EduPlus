@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Teacher;
+use App\Models\User;
 use App\Services\TeacherAdminServices;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\Rule;
 
 class TeachersController extends Controller
 {
@@ -45,20 +47,28 @@ class TeachersController extends Controller
     //Crear profesores (Admin)
     public function store(Request $request, TeacherAdminServices $requestTeacher)
     {
-        // Validar las entradas del formulario de creación de profesor
-        $validator = Validator::make($request->all(), [
+        $teachers = Teacher::find($request->id);
+        $user = User::where("email", $teachers->email)->first();
+
+        // Validar las entradas del formulario de creacion de profesor
+        $request->validate( [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:teachers',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($user->id),
+                Rule::unique('teachers', 'email')->ignore($teachers->id),
+            ],
+            'cellphone' => 'required', 
             'subject' => 'required|string|max:255',
-            'cellphone' => 'required',
             'salary' => 'required',
             'started' => 'required',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
+            'password_confirmation' => 'required|same:password',
         ]);
         
-        // Verificar si el email ya existe en la base de datos
-        $requestTeacher->checkEmailNew($request);
-
         // Crear un nuevo profesor con los datos proporcionados
         $requestTeacher->createTeacher($request);
 
@@ -101,10 +111,18 @@ class TeachersController extends Controller
     }
 
     //Eliminar profesores (Admin)
-    public function destroy(Request $request, TeacherAdminServices $requestTeacher)
+    public function destroy(Request $request)
     {
-        // Eliminar el profesor de la base de datos
-        $requestTeacher->deleteTeacher($request);
+        $request->validate( [
+            'id_teacher' => 'required',
+            'email' => 'required|string|email|exists:users,email',
+        ]);
+
+        // Eliminar el usuario asociado al correo electrónico del profesor
+        User::where("email", $request->email)->delete();
+
+        // Eliminar al profesor de la base de datos usando su ID
+        Teacher::find($request->id_teacher)->delete();
 
         // Redirigir a la página de administración de profesores
         return redirect(route("teacher.admin"));
