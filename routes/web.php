@@ -30,21 +30,21 @@ Route::middleware(['auth', 'verified'])->controller(NotificationController::clas
 // ============================================== Admin Routes ==============================================
 Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(AdminController::class)->group(function(){
     // ==================================== Admin show ====================================
-    Route::get("/administrator", 'index')->name('administrador');
+    Route::get("/administrator", 'index')->name('administrator');
 
     // ==================================== Admin add ====================================
-    Route::get("/administrator/add", 'create')->name('administrador.add');
+    Route::get("/administrator/add", 'create')->name('administrator.add');
     Route::put("/administrator/add", 'store');
 
     // ==================================== Admin edit ====================================
-    Route::get("/administrator/edit", 'edit')->name('administrador.edit');
+    Route::get("/administrator/edit", 'edit')->name('administrator.edit');
     Route::post("/administrator/edit", 'update');
 
     // ==================================== Admin destroy ====================================
-    Route::delete("/administrator/edit", 'destroy');
+    Route::delete("/administrator/edit", 'destroy')->name('administrator.destroy');
 
     //Vizualizar Calificaciones
-    Route::get("/marks/admin/", 'showMarks')->name("admin.calification");
+    Route::get("/marks/admin/", 'qualifications')->name("administrator.qualifications");
 });
 
 Route::middleware(['auth', 'verified', AdminMiddleware::class])->controller(TeachersController::class)->group(function(){

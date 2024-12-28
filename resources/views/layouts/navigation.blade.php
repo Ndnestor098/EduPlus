@@ -26,11 +26,11 @@
                             {{ __('Alumnos') }}
                         </x-nav-link>
 
-                        <x-nav-link :href="route('administrador')" :active="request()->routeIs('administrador')">
+                        <x-nav-link :href="route('administrator')" :active="request()->routeIs('administrator')">
                             {{ __('Administradores') }}
                         </x-nav-link>
 
-                        <x-nav-link :href="route('admin.calification')" :active="request()->routeIs('admin.calification')">
+                        <x-nav-link :href="route('administrator.qualifications')" :active="request()->routeIs('administrator.qualifications')">
                             {{ __('Calificaciones') }}
                         </x-nav-link>
                     @endif
@@ -153,7 +153,7 @@
                     {{ __('Alumnos') }}
                 </x-responsive-nav-link>
 
-                <x-responsive-nav-link :href="route('administrador')" :active="request()->routeIs('administrador')">
+                <x-responsive-nav-link :href="route('administrator')" :active="request()->routeIs('administrator')">
                     {{ __('Administradores') }}
                 </x-responsive-nav-link>
             @endif

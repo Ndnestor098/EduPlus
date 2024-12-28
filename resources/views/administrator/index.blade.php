@@ -6,7 +6,7 @@
     <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
 
     <x-slot name="header">
-        <a href="{{route("administrador")}}" class="font-semibold text-xl text-gray-800 leading-tight">
+        <a href="{{route("administrator")}}" class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Administradores') }}
         </a>
     </x-slot>

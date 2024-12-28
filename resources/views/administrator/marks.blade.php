@@ -6,7 +6,7 @@
     <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
 
     <x-slot name="header">
-        <a href="{{route('admin.calification')}}" class="font-semibold text-xl text-gray-800 leading-tight">
+        <a href="{{route('administrator.qualifications')}}" class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Calificaciones Generales') }}
         </a>
     </x-slot>
@@ -23,14 +23,17 @@
                             <div class="ml-5 w-full">
                                 <select name="course" id="course">
                                     <option value="" selected disabled>Selecciona un Curso:</option>
+                                    
                                     @foreach ($course as $item)
                                         <option value="{{$item->course}}">Curso {{$item->course}}</option>
                                     @endforeach
                                 </select>
                             </div> 
+
                             <div class="ml-5 w-full">
                                 <input type="text" name="name" id="name" placeholder="Buscar Estudiante">
                             </div>
+
                             <div class="flex items-center justify-center w-full md:justify-end">
                                 <button class="button-search mr-5">Buscar</button>
                             </div>
@@ -57,117 +60,94 @@
                                     {{ $item->student->name }} 
                                 </a>
                             </td>
+
                             <td class="text-center w-6">
                                 <a href="{{route("student.qualification.alone", ['subject'=>'matematicas'])}}">
                                     {{ $item->student->course }} 
                                 </a>
                             </td>
-                            <td class="text-center w-6" @if($item->matematicas < 6) style="background-color: #e969697c; font-weight: 600;" 
-                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
-                                                        @endif>
-                                                        @if($item->matematicas)
-                                                            <a href="{{route("student.qualification.alone", ['subject'=>'matematicas'])}}">
-                                                                {{ $item->matematicas }} 
-                                                            </a>
-                                                        @else 
-                                                            No hay nota 
-                                                        @endif
-                                                    
+
+                            <td class="text-center  {{ !empty($item->matematicas) ? $item->matematicas < 6 ? 'bg-[#e969697c]' : 'bg-[#3cc2437a]' : ''}}">
+                                    @if($item->matematicas)
+                                        <a href="{{route("student.qualification.alone", ['subject'=>'matematicas'])}}">
+                                            {{ $item->matematicas }} 
+                                        </a>
+                                    @else 
+                                        No hay nota 
+                                    @endif                    
                             </td>
 
-                            <td class="text-center" @if($item->ingles < 6) style="background-color: #e969697c; font-weight: 600;"
-                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
-                                                        @endif>
-                                                        @if($item->ingles)
-                                                            <a href="{{route("student.qualification.alone", ['subject'=>'ingles'])}}">
-                                                                {{ $item->ingles }}
-                                                            </a> 
-                                                        @else 
-                                                            No hay nota 
-                                                        @endif
-                                                    
+                            <td class="text-center {{ !empty($item->ingles) ? $item->ingles < 6 ? 'bg-[#e969697c]' : 'bg-[#3cc2437a]' : ''}}">
+                                    @if($item->ingles)
+                                        <a href="{{route("student.qualification.alone", ['subject'=>'ingles'])}}">
+                                            {{ $item->ingles }}
+                                        </a> 
+                                    @else 
+                                        No hay nota 
+                                    @endif                    
                             </td>
 
-                            <td class="text-center" @if($item->fisica < 6) style="background-color: #e969697c; font-weight: 600;"
-                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
-                                                        @endif>
-                                                        @if($item->fisica)
-                                                            <a href="{{route("student.qualification.alone", ['subject'=>'fisica'])}}">
-                                                                {{ $item->fisica }} 
-                                                            </a>
-                                                        @else 
-                                                            No hay nota 
-                                                        @endif
-                                                    
+                            <td class="text-center {{ !empty($item->fisica) ? $item->fisica < 6 ? 'bg-[#e969697c]' : 'bg-[#3cc2437a]' : ''}}">
+                                    @if($item->fisica)
+                                        <a href="{{route("student.qualification.alone", ['subject'=>'fisica'])}}">
+                                            {{ $item->fisica }} 
+                                        </a>
+                                    @else 
+                                        No hay nota 
+                                    @endif                    
                             </td>
 
-                            <td class="text-center" @if($item->ciencia < 6) style="background-color: #e969697c; font-weight: 600;"
-                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
-                                                        @endif>
-                                                        @if($item->ciencia)
-                                                            <a href="{{route("student.qualification.alone", ['subject'=>'ciencia'])}}">
-                                                                {{ $item->ciencia }} 
-                                                            </a>
-                                                        @else 
-                                                            No hay nota 
-                                                        @endif
-                                                    
+                            <td class="text-center {{ !empty($item->ciencia) ? $item->ciencia < 6 ? 'bg-[#e969697c]' : 'bg-[#3cc2437a]' : ''}}">
+                                @if($item->ciencia)
+                                    <a href="{{route("student.qualification.alone", ['subject'=>'ciencia'])}}">
+                                        {{ $item->ciencia }} 
+                                    </a>
+                                @else 
+                                    No hay nota 
+                                @endif
                             </td>
 
-                            <td class="text-center" @if($item->computacion < 6) style="background-color: #e969697c; font-weight: 600;"
-                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
-                                                        @endif>
-                                                        @if($item->computacion)
-                                                            <a href="{{route("student.qualification.alone", ['subject'=>'computacion'])}}">
-                                                                {{ $item->computacion }}
-                                                            </a> 
-                                                        @else 
-                                                            No hay nota 
-                                                        @endif
-                                                    
+                            <td class="text-center {{ !empty($item->computacion) ? $item->computacion < 6 ? 'bg-[#e969697c]' : 'bg-[#3cc2437a]' : ''}}">
+                                @if($item->computacion)
+                                    <a href="{{route("student.qualification.alone", ['subject'=>'computacion'])}}">
+                                        {{ $item->computacion }}
+                                    </a> 
+                                @else 
+                                    No hay nota 
+                                @endif
                             </td>
 
-                            <td class="text-center" @if($item->literatura < 6) style="background-color: #e969697c; font-weight: 600;"
-                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
-                                                        @endif>
-                                                        @if($item->literatura)
-                                                            <a href="{{route("student.qualification.alone", ['subject'=>'literatura'])}}">
-                                                                {{ $item->literatura }} 
-                                                            </a>
-                                                        @else 
-                                                            No hay nota 
-                                                        @endif
-                                                    
+                            <td class="text-center {{ !empty($item->literatura) ? $item->literatura < 6 ? 'bg-[#e969697c]' : 'bg-[#3cc2437a]' : ''}}">
+                                @if($item->literatura)
+                                    <a href="{{route("student.qualification.alone", ['subject'=>'literatura'])}}">
+                                        {{ $item->literatura }} 
+                                    </a>
+                                @else 
+                                    No hay nota 
+                                @endif
                             </td>
 
-                            <td class="text-center" @if($item->arte < 6) style="background-color: #e969697c; font-weight: 600;"
-                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
-                                                        @endif>
-                                                        @if($item->arte)
-                                                            <a href="{{route("student.qualification.alone", ['subject'=>'arte'])}}">
-                                                                {{ $item->arte }}
-                                                            </a> 
-                                                        @else 
-                                                            No hay nota 
-                                                        @endif
-                                                    
+                            <td class="text-center {{ !empty($item->arte) ? $item->arte < 6 ? 'bg-[#e969697c]' : 'bg-[#3cc2437a]' : ''}}">
+                                @if($item->arte)
+                                    <a href="{{route("student.qualification.alone", ['subject'=>'arte'])}}">
+                                        {{ $item->arte }}
+                                    </a> 
+                                @else 
+                                    No hay nota 
+                                @endif
                             </td>
 
-                            <td class="text-center" @if($item->historia < 6) style="background-color: #e969697c; font-weight: 600;"
-                                                        @else style="background-color: #3cc2437a; font-weight: 600;" 
-                                                        @endif>
-                                                        @if($item->historia)<a href="{{route("student.qualification.alone", ['subject'=>'historia'])}}">
-                                                            {{ $item->historia }} 
-                                                        </a>
-
-                                                        @else 
-                                                            No hay nota 
-                                                        @endif
-                                                    
+                            <td class="text-center {{ !empty($item->historia) ? $item->historia < 6 ? 'bg-[#e969697c]' : 'bg-[#3cc2437a]' : ''}}">
+                                @if($item->historia)
+                                    <a href="{{route("student.qualification.alone", ['subject'=>'historia'])}}">
+                                        {{ $item->historia }} 
+                                    </a>
+                                @else 
+                                    No hay nota 
+                                @endif
                             </td>
                         </tr>
                         @endforeach
-                        
                     </table>
                     <div style="margin-top: 15px">
                         {{$students->links()}}

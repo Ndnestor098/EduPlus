@@ -140,27 +140,32 @@ class AdminController extends Controller
         return redirect(route("administrador"));
     }
 
-    public function showMarks(Request $request)
+    public function qualifications(Request $request)
     {
-        // Obtener todos los cursos distintos ordenados
-        $course = Student::select('course')->distinct()->orderBy('course')->get();
+        if(Cache::has('course_qualification') && Cache::has('qualification')){
+            $course = Cache::get('course_qualification');
+            $students = Cache::get('qualification');
+        } else {
+            // Obtener todos los cursos distintos ordenados
+            $course = Student::select('course')->distinct()->orderBy('course')->get();
 
-        // Obtener todos los estudiantes en orden
-        $students = Qualification::with('student')
-            ->whereHas('student', function($query) use ($request){
-                if($request->name){
-                    $query->where('name', 'LIKE', "%$request->name%");
-                }
-                if($request->course){
-                    $query->where('course', $request->course);
-                }
-            })
-            ->orderBy("student_id")
-            ->paginate(10);
+            // Obtener todos los estudiantes en orden
+            $students = Qualification::with('student')
+                ->whereHas('student', function($query) use ($request){
+                    if($request->name){
+                        $query->where('name', 'LIKE', "%$request->name%");
+                    }
+                    if($request->course){
+                        $query->where('course', $request->course);
+                    }
+                })
+                ->orderBy("student_id")
+                ->paginate(10);
 
-        // Mantener los valores de las variables en la URL
-        $students->appends($request->query());
-        
+            // Mantener los valores de las variables en la URL
+            $students->appends($request->query());
+        }
+
         return view("administrator.marks", ['course' => $course, 'students'=>$students]);
     }
 }

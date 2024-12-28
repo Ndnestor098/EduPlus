@@ -6,7 +6,7 @@
     <x-slot name='navigation'>@include('layouts.navigation')</x-slot>
 
     <x-slot name="header">
-        <a href='{{route("administrador")}}' class="font-semibold text-xl text-gray-800 leading-tight">
+        <a href='{{route("administrator")}}' class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Administrador') }}
         </a>
     </x-slot>
@@ -18,7 +18,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 container mx-auto">
                     <div class="flex gap-5 mb-8">
-                        <a href='{{route("administrador")}}'><img src="/assets/img/back.png" alt="back" style="height: 25px"></a><span class="text-lg font-semibold">Crea un nuevo administrador</span>
+                        <a href='{{route("administrator")}}'><img src="/assets/img/back.png" alt="back" style="height: 25px"></a><span class="text-lg font-semibold">Crea un nuevo administrador</span>
                     </div>
 
                     <div class="flex items-center justify-center flex-col">
