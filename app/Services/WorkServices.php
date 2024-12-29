@@ -81,10 +81,10 @@ class WorkServices
     {
         // Obtener el porcentaje de puntuación del tipo de trabajo
         $scored = Percentages::whereHas('workType', function ($query) use ($request) {
-            $query->where('name', $request->qualification);
-        })
-        ->with('workType')
-        ->first();
+                $query->where('name', $request->qualification);
+            })
+            ->with('workType')
+            ->first();
 
         // Encontrar el trabajo por su ID
         $work = Work::find($request->id);
@@ -98,18 +98,10 @@ class WorkServices
             'course' => intval($request->course),
             'deliver' => $request->deliver,
             'work_type_id' => WorkType::where('name', $request->qualification)->first()->id,
-            'public' => $request->public
+            'public' => $request->public,
+            'image' => $image ? json_encode($image) : $work->image,
+            'file' => $file ? json_encode($file) : $work->file
         ];
-
-        // Si se proporciona una nueva imagen, actualizarla
-        if($image){
-            $updates['image'] = $image ? json_encode($image) : null;
-        }
-
-        // Si se proporciona un nuevo archivo, actualizarlo
-        if($file){
-            $updates['file'] = $file ? json_encode($file) : null;
-        }
 
         // Actualizar el trabajo con los cambios
         $work->update($updates);

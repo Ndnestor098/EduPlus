@@ -35,12 +35,12 @@
                                 <textarea name="description" id="description" cols="40" rows="10" required autofocus placeholder="Descripcion *"></textarea>
                             </div>
                             <div>
-                                <label for="file">File (pdf, doc, etc..) <span>No obligatorio</span></label>
-                                <input type="file" name="file[]" id="file" accept=".doc,.docx,.xls,.xlsx,.pdf,.ppt,.pptx" multiple required>
+                                <label for="files">File (pdf, doc, etc..) <span>No obligatorio</span></label>
+                                <input type="file" name="files[]" id="files" accept=".doc,.docx,.xls,.xlsx,.pdf,.ppt,.pptx" multiple>
                             </div>
                             <div>
-                                <label for="image">Imagen <span>No obligatorio</span></label>
-                                <input type="file" name="image[]" id="image" accept="image/*" multiple required>
+                                <label for="images">Imagen <span>No obligatorio</span></label>
+                                <input type="file" name="images[]" id="images" accept="image/*" multiple>
                             </div>
                             <div>
                                 <label>Materia</label>

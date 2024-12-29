@@ -82,7 +82,7 @@ class WorksTeacherController extends Controller
         //filtrado para la lista de cursos o años
         $course = student::select('course')->orderBy('course')->distinct()->get();
 
-        return view('teacher.work.add-work', ['info' => $info, 'course' => $course]);
+        return view('teacher.work.create', ['info' => $info, 'course' => $course]);
     }
 
     // Agregar una nueva tarea
@@ -98,10 +98,6 @@ class WorksTeacherController extends Controller
             'public' => 'required'
         ]);
 
-        // Inicializar variables para el archivo y la imagen
-        $file = null;
-        $image = null;
-        
         // Si se sube un archivo, procesarlo
         if($request->hasFile('files')) {
             // Validar el archivo en la solicitud
@@ -124,18 +120,13 @@ class WorksTeacherController extends Controller
         // Agregar la tarea con los datos proporcionados
         $work = $requestWork->addWork($request, $file, $image);
 
-        Cache::flush();
-
         // Obtener los alumnos correspondientes
-        $students = Student::where('course', $work->course)->get();
+        $students = Student::where('course', $request->course)->get();
 
         // Enviar notificación a los alumnos
         Notification::send($students, new TeacherUpAssignment($work));
 
         if(in_array($request->qualification, ["Examen oral", "Examen escrito", "Proyecto", "Exposicion"])){
-
-            $students = student::where('course', $request->course)->get();
-
             foreach ($students as $value) {
                 WorkStudent::create([
                     'name' => $value->name,
@@ -151,6 +142,8 @@ class WorksTeacherController extends Controller
             return redirect()->route('teacher.exam');
         }
 
+        Cache::flush();
+
         return redirect()->route('teacher.works');
     }
 
@@ -161,14 +154,14 @@ class WorksTeacherController extends Controller
         $course = student::select('course')->orderBy('course')->distinct()->get();
         $mt = $request->mt;
 
-        return view('teacher.work.edit-work', ['work' => $work, 'course' => $course, 'mt'=>$mt]);
+        return view('teacher.work.edit', ['work' => $work, 'course' => $course, 'mt'=>$mt]);
     }
 
     // Actualizar una tarea existente
     public function update(Request $request, WorkServices $requestWork)
     {
         // Validar los datos recibidos del formulario
-        $validator = Validator::make($request->all(),[
+        $request->validate([
             'title' => 'required',
             'description' => 'required',
             'course' => 'required',
@@ -176,30 +169,26 @@ class WorksTeacherController extends Controller
             'deliver' => 'required',
             'public' => 'required'
         ]);
-
-        // Ver si las validaciones se cumplen
-        if ($validator->fails()) {
-            return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
-        }
-
-        // Inicializar variables para el archivo y la imagen
-        $file = null;
-        $image = null;
         
         // Si se sube un archivo, procesarlo
         if($request->hasFile('files'))
         {
-            $file = $requestWork->addFileWork($request);
+            // Validar el archivo en la solicitud
+            $request->validate([
+                'files' => 'required|max:20480', // Tamaño máximo ajustado a 20MB
+            ]);
 
-            if(!$file) return redirect()->back()->with('errors', 'Error en la carga de los archivos.');
+            $file = $requestWork->addFileWork($request);
         }
 
         // Si se sube una imagen, procesarla
         if($request->hasFile('images'))
         {
+            $request->validate([
+                'images' => 'required|max:15360', // Tamaño máximo ajustado a 4MB
+            ]);
+
             $image = $requestWork->addImageWork($request);
-            
-            if(!$image) return redirect()->back()->with('errors', 'Error en la carga de los imagenes.');
         }
 
         // Actualizar la tarea con los datos proporcionados
