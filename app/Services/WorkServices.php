@@ -14,30 +14,20 @@ class WorkServices
     // Método para agregar un archivo de trabajo
     public function addFileWork(Request $request)
     {
-        try {
-            // Validar el archivo en la solicitud
-            $request->validate([
-                'files' => 'required|max:20480', // Tamaño máximo ajustado a 20MB
-            ]);
-
-            // Guardar rutas de archivos y de imágenes
-            $filePaths = [];
-            if ($request->hasFile('files')) {
-                foreach ($request->file('files') as $files) {
-                    if ($files->isValid()) {
-                        $fileName = uniqid() . '.' . $files->getClientOriginalExtension();
-                        $filePath = $files->storeAs('public/files', $fileName);
-                        $filePaths[] = Storage::url($filePath);
-                    } else {
-                        return false;
-                    }
-                }
+        // Guardar rutas de archivos y de imágenes
+        $filePaths = [];
+        
+        foreach ($request->file('files') as $files) {
+            if ($files->isValid()) {
+                $fileName = uniqid() . '.' . $files->getClientOriginalExtension();
+                $filePath = $files->storeAs('public/files', $fileName);
+                $filePaths[] = Storage::url($filePath);
+            } else {
+                return false;
             }
-            return $filePaths;
-        } catch (ValidationException $e) {
-            // Capturar los errores de validación y devolverlos en la respuesta
-            return false;
         }
+
+        return $filePaths;
     }
 
     // Método para agregar una imagen de trabajo

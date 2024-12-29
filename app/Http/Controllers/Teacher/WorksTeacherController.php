@@ -103,16 +103,17 @@ class WorksTeacherController extends Controller
         $image = null;
         
         // Si se sube un archivo, procesarlo
-        if($request->hasFile('files'))
-        {
-            $file = $requestWork->addFileWork($request);
+        if($request->hasFile('files')) {
+            // Validar el archivo en la solicitud
+            $request->validate([
+                'files' => 'required|max:20480', // Tamaño máximo ajustado a 20MB
+            ]);
 
-            if(!$file) return redirect()->back()->with('errors', 'Error en la carga de los archivos.');
+            $file = $requestWork->addFileWork($request);
         }
 
         // Si se sube una imagen, procesarla
-        if($request->hasFile('images'))
-        {
+        if($request->hasFile('images')) {
             $request->validate([
                 'images' => 'required|max:15360', // Tamaño máximo ajustado a 4MB
             ]);
