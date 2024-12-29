@@ -44,7 +44,7 @@
                                 <th>F. Entrega</th>
                                 <th>Corregir</th>
                             </tr>
-                            @foreach($work as $item)
+                            @foreach($works as $item)
                                 <tr>
                                     <td>
                                         <a href="{{route("teacher.work.edit", ['name'=>$item->slug, 'id'=>$item->id])}}">{{ $item->title }}</a>

@@ -23,31 +23,41 @@ class WorksTeacherController extends Controller
     // Mostrar las tareas del profesor
     public function index(Request $request)
     {
-        // Obtener todos los cursos distintos ordenados
-        $course = student::select('course')->distinct()->orderBy('course')->get();
+        if(Cache::has('works_teacher') && Cache::has('method_exist') && Cache::has('course')){
+            $course = Cache::get('course');
+            $works = Cache::get('works_teacher');
+            $methodExist = Cache::get('method_exist');
+        } else {
+            // Obtener todos los cursos distintos ordenados
+            $course = student::select('course')->distinct()->orderBy('course')->get();
 
-        // Obtener el profesor actualmente autenticado
-        $teacher = Teacher::where('email', auth()->user()->email)->first();
+            // Obtener el profesor actualmente autenticado
+            $teacher = Teacher::where('email', auth()->user()->email)->first();
 
-        // Filtrar y obtener las tareas del profesor
-        $work = Work::with('workType')
-            ->where('subject', $teacher->subject)
-            ->whereHas('workType', function($query){
-                $query->where('name', 'Tarea');
-            })
-            ->none($request->all())
-            ->course($request->get('course'))
-            ->get();
+            // Filtrar y obtener las tareas del profesor
+            $works = Work::with('workType')
+                ->where('subject', $teacher->subject)
+                ->whereHas('workType', function($query){
+                    $query->where('name', 'Tarea');
+                })
+                ->none($request->all())
+                ->course($request->get('course'))
+                ->get();
 
-        // Obtener informacion de los metodos calificativos
-        $showMethod = Percentages::with('workType')->where('subject', $teacher->subject)->get();
-        
-        $methodExist = $showMethod->some(function($value){
-            return $value->workType->name == "Tarea";
-        });
+            // Obtener informacion de los metodos calificativos
+            $showMethod = Percentages::with('workType')->where('subject', $teacher->subject)->get();
+            
+            $methodExist = $showMethod->some(function($value){
+                return $value->workType->name == "Tarea";
+            });
+
+            Cache::put('works_teacher', $works, now()->addMinutes(10));
+            Cache::put('course', $course, now()->addMinutes(500));
+            Cache::put('method_exist', $methodExist, now()->addMinutes(10));
+        }
 
         // Retornar la vista con las tareas y cursos
-        return view('teacher.work.works', ['course' => $course, 'work' => $work, 'methodExist' => $methodExist]);
+        return view('teacher.work.works', ['course' => $course, 'works' => $works, 'methodExist' => $methodExist]);
     }
 
     // Obtener el orden de calificaciones según la materia y curso
