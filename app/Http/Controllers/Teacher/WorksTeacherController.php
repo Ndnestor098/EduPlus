@@ -66,18 +66,6 @@ class WorksTeacherController extends Controller
         return view('teacher.work.works', ['course' => $course, 'work' => $work, 'bool' => $bool, 'boolIf'=>$boolIf]);
     }
 
-    // Mostrar formulario para agregar una nueva tarea
-    public function create()
-    {
-        //Buscar los valores del teacher para el filtrado
-        $info = Teacher::where('email', auth()->user()->email)->first()->subject;
-
-        //filtrado para la lista de cursos o años
-        $course = student::select('course')->orderBy('course')->distinct()->get();
-
-        return view('teacher.work.add-work', ['info' => $info, 'course' => $course]);
-    }
-
     // Obtener el orden de calificaciones según la materia y curso
     public function orderQualification(Request $request)
     {
@@ -91,11 +79,23 @@ class WorksTeacherController extends Controller
             ->get();
     }
 
+    // Mostrar formulario para agregar una nueva tarea
+    public function create()
+    {
+        //Buscar los valores del teacher para el filtrado
+        $info = Teacher::where('email', auth()->user()->email)->first()->subject;
+
+        //filtrado para la lista de cursos o años
+        $course = student::select('course')->orderBy('course')->distinct()->get();
+
+        return view('teacher.work.add-work', ['info' => $info, 'course' => $course]);
+    }
+
     // Agregar una nueva tarea
     public function store(Request $request, WorkServices $requestWork)
     {
         // Validar los datos recibidos del formulario
-        $validator = Validator::make($request->all(),[
+        $request->validate([
             'title' => 'required',
             'description' => 'required',
             'course' => 'required',
@@ -103,11 +103,6 @@ class WorksTeacherController extends Controller
             'deliver' => 'required',
             'public' => 'required'
         ]);
-
-        // Ver si las validaciones se cumplen
-        if ($validator->fails()) {
-            return redirect()->back()->with('errors', 'Los datos proporcionados son incorrectos.');
-        }
 
         // Inicializar variables para el archivo y la imagen
         $file = null;
