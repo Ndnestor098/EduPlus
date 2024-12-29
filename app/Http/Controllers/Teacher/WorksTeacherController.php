@@ -113,9 +113,11 @@ class WorksTeacherController extends Controller
         // Si se sube una imagen, procesarla
         if($request->hasFile('images'))
         {
+            $request->validate([
+                'images' => 'required|max:15360', // Tamaño máximo ajustado a 4MB
+            ]);
+            
             $image = $requestWork->addImageWork($request);
-
-            if(!$image) return redirect()->back()->with('errors', 'Error en la carga de las imagenes.');
         }
 
         // Agregar la tarea con los datos proporcionados
@@ -129,7 +131,8 @@ class WorksTeacherController extends Controller
         // Enviar notificación a los alumnos
         Notification::send($students, new TeacherUpAssignment($work));
 
-        if($request->qualification == "Examen oral" || $request->qualification == "Examen escrito" || $request->qualification == "Proyecto" || $request->qualification == "Exposicion"){
+        if(in_array($request->qualification, ["Examen oral", "Examen escrito", "Proyecto", "Exposicion"])){
+
             $students = student::where('course', $request->course)->get();
 
             foreach ($students as $value) {

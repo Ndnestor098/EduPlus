@@ -43,31 +43,19 @@ class WorkServices
     // Método para agregar una imagen de trabajo
     public function addImageWork(Request $request)
     {
-        try {
-            // Validar la imagen en la solicitud
-            $request->validate([
-                'images' => 'required|max:15360', // Tamaño máximo ajustado a 4MB
-            ]);
-
-            // Verificar si la imagen es válida
-            $imagePaths = [];
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    if ($image->isValid()) {
-                        $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
-                        $imagePath = $image->storeAs('public/image', $imageName);
-                        $imagePaths[] = Storage::url($imagePath);
-                    } else {
-                        return false;
-                    }
-                }
-
+        $imagePaths = [];
+        
+        foreach ($request->file('images') as $image) {
+            if ($image->isValid()) {
+                $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
+                $imagePath = $image->storeAs('public/image', $imageName);
+                $imagePaths[] = Storage::url($imagePath);
+            } else {
+                return false;
             }
-            return $imagePaths;
-        } catch (ValidationException $e) {
-            // Capturar los errores de validación y devolverlos en la respuesta
-            return false;
         }
+
+        return $imagePaths;
     }
 
     // Método para agregar un trabajo
