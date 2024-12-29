@@ -38,32 +38,16 @@ class WorksTeacherController extends Controller
             ->none($request->all())
             ->course($request->get('course'))
             ->get();
-        
-        $bool = false;
-
-        foreach ($work as $value) {
-            foreach ($value->students as $item) {
-                if(!$item->qualification){
-                    $bool = true;
-                }
-            }
-        }
 
         // Obtener informacion de los metodos calificativos
         $showMethod = Percentages::with('workType')->where('subject', $teacher->subject)->get();
-
-        foreach ($showMethod as $method)
-        {
-            if($method->workType->name == "Tarea"){
-                $boolIf = true;
-                break;
-            }else{
-                $boolIf = false;
-            }
-        }
         
+        $methodExist = $showMethod->some(function($value){
+            return $value->workType->name == "Tarea";
+        });
+
         // Retornar la vista con las tareas y cursos
-        return view('teacher.work.works', ['course' => $course, 'work' => $work, 'bool' => $bool, 'boolIf'=>$boolIf]);
+        return view('teacher.work.works', ['course' => $course, 'work' => $work, 'methodExist' => $methodExist]);
     }
 
     // Obtener el orden de calificaciones según la materia y curso

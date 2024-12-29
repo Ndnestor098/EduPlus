@@ -21,12 +21,15 @@ class WorksStudentController extends Controller
     public function index(Request $request)
     {
         if($request->get('subject')){
-            $key = 'student-'.$request->get('subject');
-        } else {
-            $key = 'student';
+            Cache::forget('subject');
+            Cache::forget('works_student');
         }
 
-        if(!Cache::has($key)){
+        if(Cache::has('works_student') && Cache::has('subject')){
+            $works = Cache::get('works_student');
+            $subjects = Cache::get('subject');
+            
+        } else {
             // Obtener la información del estudiante actual y sus trabajos asociados
             $student = Student::with('works')->where('email', auth()->user()->email)->first();
 
@@ -35,29 +38,28 @@ class WorksStudentController extends Controller
 
             // Obtener los trabajos disponibles para el estudiante
             $works = Work::with('workType')
-                        ->whereHas('workType', function($query){
-                            $query->where("name", 'Tarea'); // Filtrar por el nombre del tipo de trabajo
-                        })
-                        ->where('course', $student->course) // Buscar las tareas del curso del estudiante
-                        ->whereNotIn('id', $excludedWorkIds) // Filtrar por los id que no necesitamos
-                        ->today() // Filtrar por trabajos asignados para hoy
-                        ->public() // Filtrar por trabajos públicos
-                        ->subject($request->get('subject')) // Filtrar por materia si se especifica
-                        ->get();
-
+                ->whereHas('workType', function($query){
+                    $query->where("name", 'Tarea'); // Filtrar por el nombre del tipo de trabajo
+                })
+                ->where('course', $student->course) // Buscar las tareas del curso del estudiante
+                ->whereNotIn('id', $excludedWorkIds) // Filtrar por los id que no necesitamos
+                ->today() // Filtrar por trabajos asignados para hoy
+                ->public() // Filtrar por trabajos públicos
+                ->subject($request->input('subject')) // Filtrar por materia si se especifica
+                ->get();
             
-            Cache::get($key, $works);
-        } else {
-            $works = Cache::put($key);
+            // Obtener las materias disponibles para mostrarlas en la interfaz
+            $subjects = Teacher::select('subject')
+                ->orderBy('subject')
+                ->distinct()
+                ->get();
+
+            Cache::put('works_student', $works, now()->addMinutes(10));
+            Cache::put('subject', $subjects, now()->addMinutes(10));
         }
-        // Obtener las materias disponibles para mostrarlas en la interfaz
-        $subjects = Teacher::select('subject')
-                            ->orderBy('subject')
-                            ->distinct()
-                            ->get();
 
         // Retornar la vista con la lista de trabajos disponibles y las materias
-        return view('student.works.index', ['works'=>$works, 'subjects'=>$subjects]);
+        return view('student.works.index', ['works' => $works, 'subjects' => $subjects]);
     }
 
     //Lectura individual de los trabajos
